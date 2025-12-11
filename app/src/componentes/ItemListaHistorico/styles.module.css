@@ -1,0 +1,55 @@
+.container {
+  width: 100%;
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+  max-height: 600px;
+  cursor: pointer;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+}
+
+.tabela tr {
+  background-color: #ffffff;
+  color: #0c0c0c;
+  font-weight: 500;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.tabela td {
+  padding: 10px;
+  font-size: 14px;
+  border-top: 1px solid #f3f3f3;
+}
+.tabela td:nth-child(1) {
+  width: 50px;
+}
+.tabela td:nth-child(2) {
+  width: 210px;
+}
+.tabela td:nth-child(3) {
+  width: 130px;
+}
+.tabela td:nth-child(4) {
+  width: 125px;
+}
+.tabela td:nth-child(5) {
+  width: 125px;
+}
+
+.tabela tr:nth-child(even) {
+  background-color: #ececec;
+}
+
+.tabela tr:hover {
+  font-weight: 600;
+  font-size: 15px;
+}

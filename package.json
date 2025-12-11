@@ -1,0 +1,30 @@
+{
+  "name": "amiguinho-balcao",
+  "version": "1.0.0",
+  "description": "Sistema de Balcão",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev:react": "npm --prefix app run dev",
+    "dev:electron": "wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .",
+    "start": "concurrently \"npm run dev:react\" \"npm run dev:electron\"",
+    "build-react": "cd app && npm run build",
+    "build": "npm run build-react && cross-env NODE_ENV=production electron-builder"
+  },
+  "keywords": [],
+  "author": "Seu Nome",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^38.3.0",
+    "electron-builder": "^26.0.12",
+    "rimraf": "^6.1.2",
+    "vite": "^7.2.6",
+    "wait-on": "^9.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "groq-sdk": "^0.37.0"
+  }
+}

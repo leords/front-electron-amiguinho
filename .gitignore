@@ -1,0 +1,35 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules (todos os níveis)
+node_modules/
+*/node_modules/
+
+# Build folders (todos os níveis)
+dist/
+*/dist/
+
+# Electron builds
+*.exe
+*.dll
+
+# Env files
+.env
+*/.env
+.env.local
+*/.env.local
+
+# OS / Editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Others
+*.local

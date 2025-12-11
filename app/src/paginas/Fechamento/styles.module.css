@@ -1,0 +1,397 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* LADO ESQUERDO - CONTADOR */
+.containerContador {
+  flex: 1;
+  max-width: 600px;
+}
+
+.tituloSection {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.tituloSection h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.icone {
+  color: #ff8c00;
+}
+
+.contador {
+  background-color: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.cabecalhoContador {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.cabecalhoContador h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tituloTabela {
+  display: grid;
+  grid-template-columns: 80px 1fr 140px;
+  gap: 15px;
+  padding: 12px 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.tituloTabela span {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.listaNotas {
+  max-height: 340px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 8px;
+}
+
+.listaNotas::-webkit-scrollbar {
+  width: 6px;
+}
+
+.listaNotas::-webkit-scrollbar-track {
+  background: #f1f3f5;
+  border-radius: 10px;
+}
+
+.listaNotas::-webkit-scrollbar-thumb {
+  background: #dee2e6;
+  border-radius: 10px;
+}
+
+.listaNotas::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
+}
+
+.rodapeContador {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 2px solid #f1f3f5;
+  margin-top: 15px;
+}
+
+.botaoLimpar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.botaoLimpar:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.botaoLimpar:active {
+  transform: translateY(0);
+}
+
+.totalContado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.totalContado span {
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.totalContado strong {
+  font-size: 24px;
+  color: #28a745;
+  font-weight: 700;
+}
+
+/* CONFERÊNCIA */
+.conferencia {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #ff8c00;
+}
+
+.linhaConferencia {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.linhaConferencia span {
+  font-size: 14px;
+  color: #495057;
+}
+
+.valorEsperado {
+  font-weight: 600;
+  color: #2c3e50 !important;
+}
+
+.valorOk {
+  font-weight: 700;
+  color: #28a745 !important;
+}
+
+.valorPositivo {
+  font-weight: 700;
+  color: #ffc107 !important;
+}
+
+.valorNegativo {
+  font-weight: 700;
+  color: #dc3545 !important;
+}
+
+/* LADO DIREITO - RESUMO */
+.containerTotal {
+  flex: 1;
+  max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.secaoTotal,
+.secaoFormas {
+  background-color: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.headerSecao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.headerSecao h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.headerSecao svg {
+  color: #ff8c00;
+}
+
+.cardTotalGeral {
+  margin-top: 10px;
+}
+
+.secaoFormas h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #495057;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gridCartoes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.infoAdicional {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.infoAdicional p {
+  font-size: 14px;
+  color: #6c757d;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.infoAdicional strong {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+/* MASCOTE */
+.mascote {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background-color: white;
+  border-top: 2px solid #f1f3f5;
+}
+
+.logo {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 15px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.textoMascote {
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1200px) {
+  .main {
+    flex-direction: column;
+  }
+
+  .containerContador,
+  .containerTotal {
+    max-width: 100%;
+  }
+
+  .gridCartoes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 20px 15px;
+  }
+
+  .tituloSection h1 {
+    font-size: 22px;
+  }
+
+  .contador {
+    padding: 20px 15px;
+  }
+
+  .tituloTabela {
+    grid-template-columns: 60px 1fr 120px;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .rodapeContador {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .totalContado {
+    align-items: center;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+  }
+
+  .gridCartoes {
+    grid-template-columns: 1fr;
+  }
+
+  .botaoLimpar {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .tituloSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .cabecalhoContador {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .badge {
+    align-self: flex-start;
+  }
+}

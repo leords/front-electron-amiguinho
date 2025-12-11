@@ -1,0 +1,289 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.principal {
+  flex: 1;
+  padding: 40px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* CABEÇALHO */
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.saudacao h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.emoji {
+  display: inline-block;
+  animation: wave 2s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(20deg);
+  }
+  75% {
+    transform: rotate(-20deg);
+  }
+}
+
+.saudacao p {
+  font-size: 16px;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* ESTATÍSTICAS */
+.estatisticas {
+  display: flex;
+  gap: 15px;
+}
+
+.estatCard {
+  background: white;
+  border-radius: 12px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+  min-width: 200px;
+}
+
+.estatCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.estatIcone {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff8c00;
+  flex-shrink: 0;
+}
+
+.estatInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.estatInfo span {
+  font-size: 13px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.estatInfo strong {
+  font-size: 20px;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+/* BOTÕES DO MENU */
+.menuBotoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* MASCOTE */
+.containerMascote {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  padding: 35px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.containerMascote::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 140, 0, 0.08) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+}
+
+.dicaDia {
+  flex: 1;
+  z-index: 1;
+}
+
+.dicaDia h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.emojiDica {
+  font-size: 24px;
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.dicaDia p {
+  font-size: 15px;
+  color: #6c757d;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 500px;
+}
+
+.mascote {
+  width: 220px;
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
+  animation: float 3s ease-in-out infinite;
+  z-index: 1;
+}
+
+.diaSemana {
+  padding-top: 15px;
+  color: #2c3e50;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1024px) {
+  .menuBotoes {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .containerMascote {
+    flex-direction: column;
+    text-align: center;
+    gap: 25px;
+  }
+
+  .dicaDia p {
+    max-width: 100%;
+  }
+
+  .mascote {
+    width: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .principal {
+    padding: 25px 15px;
+    gap: 30px;
+  }
+
+  .cabecalho {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .saudacao h1 {
+    font-size: 28px;
+  }
+
+  .estatisticas {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .estatCard {
+    width: 100%;
+  }
+
+  .menuBotoes {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .saudacao h1 {
+    font-size: 24px;
+  }
+
+  .containerMascote {
+    padding: 25px 20px;
+  }
+
+  .dicaDia h3 {
+    font-size: 18px;
+  }
+
+  .dicaDia p {
+    font-size: 14px;
+  }
+
+  .mascote {
+    width: 150px;
+  }
+}

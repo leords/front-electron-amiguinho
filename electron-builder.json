@@ -1,0 +1,27 @@
+{
+  "appId": "com.amiguinho.balcao",
+  "productName": "Amiguinho Balcao",
+  "directories": {
+    "output": "dist",
+    "app": "."
+  },
+  "files": [
+    "index.js",
+    "preload.js",
+    "backend/**/*",
+    "app/dist/**/*",
+    "package.json",
+    "node_modules/**/*",
+    ".env"
+  ],
+  "extraResources": [
+    {
+      "from": ".env",
+      "to": ".env"
+    }
+  ],
+  "asar": false,
+  "win": {
+    "target": "nsis"
+  }
+}

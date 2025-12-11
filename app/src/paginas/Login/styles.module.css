@@ -1,0 +1,208 @@
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.containerMascote {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.boasVindas {
+  max-width: 500px;
+  width: 100%;
+}
+
+.titulo {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #ff8c00;
+  margin-bottom: 10px;
+}
+
+.subTitulo {
+  font-size: 1.125rem;
+  color: #999;
+  text-align: center;
+}
+
+.imagemMascote {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.mascote {
+  max-width: 350px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.containerLogin {
+  flex: 1;
+  background: linear-gradient(180deg, #ff9300 0%, #ffbe00 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  position: relative;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  border-radius: 12px;
+  padding: 50px 40px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.logoContainer {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.logo {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formulario p {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 13px;
+  color: rgb(60, 60, 241);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.formulario p:hover {
+  color: rgb(8, 8, 238);
+}
+
+.input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #333;
+  background: white;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: #999;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+.botao {
+  width: 100%;
+  padding: 14px;
+  background-color: #2c1810;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.botao:hover {
+  background-color: #1a0f09;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 24, 16, 0.3);
+}
+
+.botao:active {
+  transform: translateY(0);
+}
+
+.rodape {
+  position: absolute;
+  bottom: 20px;
+  font-size: 0.75rem;
+  margin: 0;
+  text-align: center;
+}
+
+.logoTitulo {
+  flex: auto;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+.logoTitulo h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #cc0606;
+}
+.logoTitulo p {
+  font-size: 15px;
+  text-align: center;
+}
+
+.logoSusto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 150px;
+}
+
+@media (max-width: 968px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .imagemMascote {
+    flex: 0;
+    padding: 30px 20px;
+  }
+
+  .titulo {
+    font-size: 2.5rem;
+  }
+
+  .containerMascote {
+    display: none;
+  }
+
+  .containerLogin {
+    flex: 1;
+  }
+
+  .rodape {
+    position: static;
+    margin-top: 30px;
+    text-align: center;
+  }
+}
