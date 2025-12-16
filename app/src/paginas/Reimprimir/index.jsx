@@ -3,14 +3,41 @@ import Rodape from "../../componentes/Rodape";
 import styles from "./styles.module.css";
 import logo from "../../assets/logo.jpg";
 
-import ItemListaPedido from "../../componentes/ItemListaPedido";
-import { useLocation, useNavigate } from "react-router-dom";
+import { data, useLocation, useNavigate } from "react-router-dom";
+import { useProdutos } from "../../hooks/useProdutos";
+import { useEffect, useState } from "react";
+import { gerarCupom } from "../../utils/gerarCupom";
 
 export default function Reimprimir() {
+  const [nomeProduto, setNomeProduto] = useState("");
   const { state } = useLocation();
   const navegar = useNavigate();
 
+  const { carregando, produtos } = useProdutos();
+
   const cupom = state;
+
+  const handleImprimirSegundaVia = async () => {
+    //CRIAR CUPOM FORMATADO PRA IMPRESSÃO!
+    const cupomFormatado = {
+      tipo: "segundaVia",
+      motivo: "PRODUTO JÁ CARREGADO!",
+      data: cupom.data,
+      cliente: cupom.cliente,
+      formaPagamento: cupom.formaPagamento.nome,
+      vendedor: cupom.vendedor,
+      nomeUsuario: cupom.nomeUsuario,
+      itens: cupom.itens.map((item) => ({
+        produtoId: item.produtoId,
+        nome: produtos.find((p) => p.id === item.produtoId)?.nome || "",
+        quantidade: item.quantidade,
+        valorUnit: item.valorUnit,
+      })),
+    };
+
+    const html = gerarCupom(cupomFormatado);
+    window.IMPRESSORA.imprimir(html);
+  };
 
   if (!cupom) {
     navegar("/historico");
@@ -27,32 +54,94 @@ export default function Reimprimir() {
         <section className={styles.central}>
           {/* CONTAINER LISTA */}
           <div className={styles.containerLista}>
-            <p>Cupom</p>
-            <div className={styles.lista}>
-              <div className={styles.tituloLista}>
-                <h2 className={styles.itemLista1}>ID</h2>
-                <h2 className={styles.itemLista2}>Produto</h2>
-                <h2 className={styles.itemLista3}>Qtd</h2>
-                <h2 className={styles.itemLista4}>Preço und</h2>
-                <h2 className={styles.itemLista5}>Preço total</h2>
+            <div className={styles.cupomFiscal}>
+              <div className={styles.cupomHeader}>
+                <h2>SEGUNDA VIA DA NOTA</h2>
+                <span className={styles.badge}>{cupom.itens.length} items</span>
               </div>
-              {cupom.itens.map((item) => (
-                <ItemListaPedido
-                  key={item.id}
-                  produto={item}
-                  onRemover={""}
-                  botaoRemover={false}
-                />
-              ))}
-            </div>
-            <div className={styles.valores}>
-              <p>{`Valor total:  R$ ${cupom.total.toFixed(2)}`}</p>
-              <p>{`Forma de pagamento: ${cupom.formaPagamento}`}</p>
-            </div>
-            <div className={styles.botoes}>
-              <button>Imprimir 2º via</button>
+
+              <div className={styles.tabelaCupom}>
+                <div className={styles.tabelaHeader}>
+                  <span>Qtd</span>
+                  <span>Produto</span>
+                  <span>Preço und</span>
+                  <span>Total</span>
+                  <span></span>
+                </div>
+
+                <div className={styles.tabelaBody}>
+                  {cupom.itens.map((item) => (
+                    <div key={item.id} className={styles.itemRow}>
+                      <span>{item.quantidade}</span>
+                      <span>
+                        {produtos.find((p) => p.id === item.produtoId)?.nome ||
+                          "Produto não encontrado"}
+                      </span>
+                      <span>
+                        {item.valorUnit.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </span>
+                      <span>
+                        {item.valorTotal.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </span>
+                      <span></span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.resumo}>
+                <div className={styles.resumoItem}>
+                  <span>Quantidade total:</span>
+                  <span className={styles.destaque}>
+                    {cupom.itens.reduce(
+                      (acc, item) => acc + item.quantidade,
+                      0
+                    )}{" "}
+                    unidades
+                  </span>
+                </div>
+                <div className={styles.resumoItem}>
+                  <span>Subtotal:</span>
+                  <span>
+                    {" "}
+                    {cupom.total.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </span>
+                </div>
+                <div className={styles.totalFinal}>
+                  <span>TOTAL:</span>
+                  <span className={styles.valorTotal}>
+                    R${" "}
+                    {cupom.total.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Forma de Pagamento</label>
+
+                <option>{cupom.formaPagamento.nome}</option>
+              </div>
+
+              <div className={styles.botoesFinais}>
+                <button onClick={handleImprimirSegundaVia}>
+                  Imprimir 2º via
+                </button>
+              </div>
             </div>
           </div>
+
           <div className={styles.containerLogo}>
             <img
               src={logo}

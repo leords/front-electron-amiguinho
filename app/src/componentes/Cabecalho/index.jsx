@@ -9,7 +9,7 @@ export default function Cabecalho() {
   const { sair, usuario } = usarAuth();
   const [climaAtual, setClimaAtual] = useState({});
 
-  // Pegar o clima atual do dia = 1m é igual a 60000 ms
+  // Pegar o clima atual do dia = 1 minuto é igual a 60000 ms
   useEffect(() => {
     const buscarClimaAtual = async () => {
       const clima = await window.API.buscarClima("Canoinhas");

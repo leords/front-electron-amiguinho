@@ -30,19 +30,19 @@
   border-top: 1px solid #f3f3f3;
 }
 .tabela td:nth-child(1) {
-  width: 50px;
+  width: 100px;
 }
 .tabela td:nth-child(2) {
-  width: 210px;
+  width: 150px;
 }
 .tabela td:nth-child(3) {
-  width: 130px;
+  width: 180px;
 }
 .tabela td:nth-child(4) {
   width: 125px;
 }
 .tabela td:nth-child(5) {
-  width: 125px;
+  width: 120px;
 }
 
 .tabela tr:nth-child(even) {

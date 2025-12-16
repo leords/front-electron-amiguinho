@@ -13,13 +13,25 @@ import {
   MagnifyingGlassIcon,
   FileTextIcon,
 } from "@phosphor-icons/react";
+import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 
 export default function Historico() {
   const [dataAtual, setDataAtual] = useState("");
-  const [pedidosFiltrados, setPedidosFiltrados] = useState(vendas);
+  const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [totalVendas, setTotalVendas] = useState(0);
   const [totalItens, setTotalItens] = useState(0);
+  const [nomeMaquina, setNomeMaquina] = useState("");
+
+  // Carregar nome da maquina que vem de .env
+  useEffect(() => {
+    async function carregarMaquina() {
+      const nome = await window.ENV.pegarNomeMaquina();
+      setNomeMaquina(nome);
+    }
+
+    carregarMaquina();
+  }, []);
 
   // Inicializa com a data atual
   useEffect(() => {
@@ -32,41 +44,20 @@ export default function Historico() {
 
   // Filtra pedidos conforme a data selecionada
   useEffect(() => {
-    if (!dataAtual) return;
+    if (!dataAtual || !nomeMaquina) return;
 
     const filtrarPedidos = async () => {
       setCarregando(true);
 
       try {
-        const dataFiltro = dataFormatadaFiltro(dataAtual);
-        console.log("Buscando pedidos para:", dataFiltro);
-
-        // Simula delay de busca no banco
-        await new Promise((resolve) => setTimeout(resolve, 300));
-
-        // Aqui você faria a chamada real ao banco de dados
-        // const resultado = await buscarPedidosPorData(dataFiltro);
-
-        // Por enquanto, filtra os dados mock
-        const pedidosDoDia = vendas.filter((venda) => {
-          // Ajuste a lógica de filtro conforme o formato da sua data
-          return venda.data && venda.data.includes(dataFiltro);
+        const resultado = await buscarPedido({
+          setor: "balcao",
+          vendedor: nomeMaquina,
+          dataInicio: dataAtual,
+          dataFim: dataAtual,
         });
 
-        setPedidosFiltrados(pedidosDoDia);
-
-        // Calcula totais
-        const total = pedidosDoDia.reduce(
-          (acc, venda) => acc + (venda.total || 0),
-          0
-        );
-        const itens = pedidosDoDia.reduce(
-          (acc, venda) => acc + (venda.quantidade || 0),
-          0
-        );
-
-        setTotalVendas(total);
-        setTotalItens(itens);
+        setPedidosFiltrados(resultado);
       } catch (error) {
         console.error("Erro ao filtrar pedidos:", error);
         alert("Erro ao buscar pedidos. Tente novamente.");
@@ -76,7 +67,27 @@ export default function Historico() {
     };
 
     filtrarPedidos();
-  }, [dataAtual]);
+  }, [dataAtual, nomeMaquina]);
+
+  // Calcular total do cupom
+  useEffect(() => {
+    // Calcula totais
+    const total = pedidosFiltrados.reduce((acc, pedido) => {
+      // array de pedidos
+      return (
+        acc + // acumulador geral
+        pedido.itens.reduce((soma, item) => soma + item.valorTotal || 0, 0) //array de itens do pedido
+      ); // soma = total do pedido atual.
+      // o ultimo zero indica que a soma começa em zero.
+    }, 0);
+
+    setTotalVendas(total);
+  }, [pedidosFiltrados]);
+
+  // Apenas para listar. //TESTANDO
+  useEffect(() => {
+    console.log("Pedidos filtrados", pedidosFiltrados);
+  }, [pedidosFiltrados]);
 
   const tratarAlteracao = (e) => {
     const novaData = e.target.value;
@@ -176,9 +187,9 @@ export default function Historico() {
             <div className={styles.tabelaWrapper}>
               <div className={styles.tituloLista}>
                 <h3 className={styles.itemLista1}>ID</h3>
-                <h3 className={styles.itemLista2}>DATA/HORA</h3>
-                <h3 className={styles.itemLista3}>TOTAL</h3>
-                <h3 className={styles.itemLista4}>ITENS</h3>
+                <h3 className={styles.itemLista2}>Data-Horário</h3>
+                <h3 className={styles.itemLista3}>Balcão-Vendedor</h3>
+                <h3 className={styles.itemLista4}>TOTAL</h3>
                 <h3 className={styles.itemLista5}>PAGAMENTO</h3>
               </div>
 

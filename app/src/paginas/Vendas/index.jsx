@@ -5,85 +5,32 @@ import Rodape from "../../componentes/Rodape";
 import styles from "./styles.module.css";
 import logo from "../../assets/logo.jpg";
 import ItemListaPedido from "../../componentes/ItemListaPedido";
-import { LerFormaPagamento } from "../../operadores/API/formaPagamento/lerFormaPagamento";
 import { usarAuth } from "../../componentes/Context/authContext";
-import { NovoPedidoBalcao } from "../../operadores/API/novoPedido/novoPedidoBalcao";
+import { NovoPedidoBalcao } from "../../operadores/API/pedido/novoPedidoBalcao.js";
 import { useProdutos } from "../../hooks/useProdutos.js";
+import { useFormaPagamento } from "../../hooks/useFormaPagamento.js";
+import { gerarCupom } from "../../utils/gerarCupom.js";
 
 export default function Vendas() {
   const [nome, setNome] = useState("");
-  //const [produtos, setProdutos] = useState([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [quantidade, setQuantidade] = useState(1);
   const [cupom, setCupom] = useState([]);
-  const [formaPagamento, setFormaPagamento] = useState("A VISTA");
-  const [listaFormaPagamento, setListaFormaPagamento] = useState([]);
+  const [formaPagamento, setFormaPagamento] = useState(1);
   const [abrirOpcaoNome, setAbrirOpcaoNome] = useState(false);
+  const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
 
   const { usuario } = usarAuth();
   const { produtos, carregando, erro } = useProdutos();
+  const {
+    listaFormaPagamento,
+    carregandoFormasPagamento,
+    erroHookFormaPagamento,
+  } = useFormaPagamento();
 
-  //if (!usuario) {
-  // window.location.href = "/";
-
-  // lista de produtos
-  // useEffect(() => {
-  //   const buscarProduto = async () => {
-  //     const produtoStorage = localStorage.getItem("produtos");
-
-  //     if (produtoStorage) {
-  //       try {
-  //         const json = JSON.parse(produtoStorage);
-
-  //         if (Array.isArray(json) && json.length > 0) {
-  //           setProdutos(json);
-  //           return;
-  //         }
-  //       } catch (e) {
-  //         console.warn("JSON inválido no storage, limpando");
-  //         localStorage.removeItem("produtos");
-  //       }
-  //     }
-
-  //     const retornoProdutoAPI = await LerProduto();
-
-  //     localStorage.setItem("produtos", JSON.stringify(retornoProdutoAPI));
-  //     setProdutos(retornoProdutoAPI);
-  //   };
-
-  //   buscarProduto();
-  // }, []);
-
-  // lista de forma de pagamentos
-  useEffect(() => {
-    const buscarForma = async () => {
-      const formasStorage = localStorage.getItem("formas");
-
-      if (formasStorage) {
-        try {
-          const json = JSON.parse(formasStorage);
-
-          if (Array.isArray(json) && json.length > 0) {
-            setListaFormaPagamento(json);
-            return;
-          }
-        } catch (e) {
-          console.warn("JSON inválido no storage, limpando");
-          localStorage.removeItem("formas");
-        }
-      }
-
-      const retornoFormaPagamentoAPI = await LerFormaPagamento({
-        status: "ATIVO",
-        solicitante: "BALCAO",
-      });
-
-      localStorage.setItem("formas", JSON.stringify(retornoFormaPagamentoAPI));
-      setListaFormaPagamento(retornoFormaPagamentoAPI);
-    };
-    buscarForma();
-  }, []);
-
+  if (!usuario) {
+    window.location.href = "/";
+  }
   // criando a lista de opções a partir de produtos
   const options = produtos.map((p) => ({
     value: p.id,
@@ -121,6 +68,7 @@ export default function Vendas() {
     setQuantidade(1);
   };
 
+  // Função para somar quantidade * preço
   const totalProduto = (preco, qtd) => (preco * qtd).toFixed(2);
 
   // Soma o total do cupom
@@ -170,7 +118,24 @@ export default function Vendas() {
       })),
     };
 
+    const pedidoImprimir = {
+      cliente: nome || "",
+      formaPagamento: nomeFormaPagamento,
+      vendedor: "Balcão 1",
+      nomeUsuario: usuario.nome,
+      itens: cupom.map((item) => ({
+        produtoId: item.id,
+        nome: item.nome,
+        quantidade: item.quantidade,
+        valorUnit: item.precoUndVenda,
+      })),
+    };
+
     const retornoAPI = await NovoPedidoBalcao("balcao", pedido);
+    const html = gerarCupom(pedidoImprimir);
+
+    window.IMPRESSORA.imprimir(html);
+
     alert(retornoAPI.mensagem);
 
     // Resetar formulário
@@ -381,7 +346,17 @@ export default function Vendas() {
               <label>Forma de Pagamento</label>
               <select
                 value={formaPagamento}
-                onChange={(e) => setFormaPagamento(e.target.value)}
+                onChange={(e) => {
+                  const id = e.target.value;
+
+                  setFormaPagamento(id);
+
+                  const nome =
+                    listaFormaPagamento.find((forma) => forma.id === Number(id))
+                      ?.nome || "";
+
+                  setNomeFormaPagamento(nome);
+                }}
                 className={styles.selectPagamento}
               >
                 {listaFormaPagamento?.map((forma) => (

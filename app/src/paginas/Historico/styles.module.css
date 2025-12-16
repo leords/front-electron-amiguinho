@@ -221,7 +221,7 @@
 
 .tituloLista {
   display: grid;
-  grid-template-columns: 60px 1fr 140px 100px 140px;
+  grid-template-columns: 100px 150px 180px 125px 120px;
   gap: 15px;
   padding: 12px 15px;
   background-color: #f8f9fa;
@@ -334,7 +334,6 @@
   height: 200px;
   object-fit: contain;
   margin-bottom: 20px;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 .mascoteTexto {

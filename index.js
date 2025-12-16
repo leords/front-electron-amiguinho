@@ -72,3 +72,47 @@ ipcMain.handle("buscar-clima", async (_, cidade) => {
 ipcMain.handle("limpar-storages", async (_) => {
   return await limparStorages();
 });
+
+ipcMain.handle("pegar-nome-maquina", async () => {
+  return process.env.NOME_MAQUINA;
+});
+
+// Ouvimos o evento vindo do preload (window.electronAPI.imprimir)
+ipcMain.on("imprimir-cupom", async (event, htmlContent) => {
+  // Converte o HTML recebido em uma URL no formato data:text/html
+  // Isso permite carregar HTML direto da memória, sem precisar criar arquivo físico
+  const finalURL =
+    "data:text/html;charset=utf-8," + encodeURIComponent(htmlContent);
+
+  // Criamos uma janela invisível apenas para carregar o HTML e imprimir
+  const printWindow = new BrowserWindow({
+    show: false, // A janela não aparece na tela (janela fantasma)
+    webPreferences: {
+      nodeIntegration: false, // Mantém a janela mais segura
+      contextIsolation: true, // Evita acesso indevido ao contexto do Electron
+    },
+  });
+
+  // Carrega o HTML convertido para data URL
+  printWindow.loadURL(finalURL);
+
+  // Só imprimimos depois que o HTML terminar de carregar
+  printWindow.webContents.once("did-finish-load", () => {
+    // Envia diretamente para a impressora
+    printWindow.webContents.print(
+      {
+        silent: true, // Imprime sem abrir o diálogo do Windows
+        printBackground: true, // Respeita estilos e fundos definidos no HTML
+      },
+      (success, error) => {
+        // Callback acionado quando a impressão termina
+
+        if (!success) console.error("Erro ao imprimir:", error);
+        else console.log("Impressão concluída com sucesso.");
+
+        // Fecha a janela invisível após finalizar a impressão
+        printWindow.close();
+      }
+    );
+  });
+});

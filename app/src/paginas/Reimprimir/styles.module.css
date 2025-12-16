@@ -2,18 +2,22 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: #f5f5f5;
 }
+
 .cabecalho {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 40px;
-  padding-left: 80px;
+  flex: 1;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 40px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
 }
+
 .container main {
   flex: 1;
-  padding: 30px 0px;
+  padding: 30px 20px;
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
@@ -23,137 +27,235 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   padding: 10px 20px 40px 40px;
-}
-
-.containerLogo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.containerLogo img {
-  width: 300px;
+  gap: 40px;
 }
 
 .containerLista {
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
 }
 
-.containerLista p {
-  margin-bottom: 10px;
-}
-
-.lista {
-  height: 400px;
-  width: 700px;
-  border: solid 1px rgb(173, 173, 173);
-  border-radius: 5px;
-  box-shadow: 1px 1px 1px rgb(173, 173, 173);
-}
-
-.botoes {
+.containerLogo {
   display: flex;
-  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+}
+
+.containerLogo img {
+  width: 100%;
+  max-width: 300px;
+}
+
+/* CUPOM FISCAL */
+.cupomFiscal {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.cupomHeader {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  border-radius: 5px;
-  margin-top: 20px;
-}
-
-.botoes button {
-  width: 700px;
-  height: 50px;
-  box-shadow: 1px 1px 1px rgb(173, 173, 173);
-  border-radius: 5px;
-  border: solid 1px rgb(173, 173, 173);
-  font-size: 20px;
-  font-weight: 500;
-  color: rgb(253, 253, 253);
-  background: linear-gradient(135deg, #279a46, #09d92f);
-}
-
-.botoes button:hover {
-  background: linear-gradient(135deg, #09d92f, #279a46);
-  border: solid 2px rgb(173, 173, 173);
-  font-size: 22px;
-}
-
-.tituloLista {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  margin-top: 14px;
   margin-bottom: 20px;
 }
-.itemLista1 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
-  font-size: 13px;
-  font-weight: 600;
-}
-.itemLista2 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 220px;
-  font-size: 13px;
-  font-weight: 600;
-}
-.itemLista3 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 70px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-left: 20px;
-}
-.itemLista4 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 125px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-left: 30px;
-}
-.itemLista5 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 125px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-left: 10px;
+
+.cupomHeader h2 {
+  font-size: 20px;
+  color: #333;
+  margin: 0;
 }
 
-.valores {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 20px;
-  width: 100%;
-  padding-left: 20px;
+.badge {
+  background: #ff9800;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* TABELA */
+.tabelaCupom {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.tabelaHeader {
+  display: grid;
+  grid-template-columns: 70px 1fr 120px 120px 50px;
   gap: 10px;
+  padding: 12px 15px;
+  background: #f8f9fa;
+  font-weight: 600;
+  font-size: 13px;
+  color: #555;
+  border-bottom: 1px solid #ddd;
 }
 
-.valores p {
-  padding: 4px 20px 4px 20px;
-  border-radius: 5px;
-  border: solid 1px rgb(173, 173, 173);
-  box-shadow: 1px;
+.tabelaHeader span:nth-child(1) {
+  text-align: center;
+}
 
+.tabelaHeader span:nth-child(2) {
+  text-align: left;
+}
+
+.tabelaHeader span:nth-child(3),
+.tabelaHeader span:nth-child(4) {
+  text-align: right;
+}
+
+.tabelaHeader span:nth-child(5) {
+  text-align: center;
+}
+
+.tabelaBody {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.itemRow {
+  display: grid;
+  grid-template-columns: 70px 1fr 120px 120px 50px;
+  gap: 10px;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  align-items: center;
   font-size: 14px;
+}
+
+.itemRow:last-child {
+  border-bottom: none;
+}
+
+.itemRow:hover {
+  background: #f8f9fa;
+}
+
+.itemRow span:nth-child(1) {
+  text-align: center;
   font-weight: 600;
+}
+
+.itemRow span:nth-child(2) {
+  font-weight: 500;
+}
+
+.itemRow span:nth-child(3),
+.itemRow span:nth-child(4) {
+  text-align: right;
+}
+
+.itemRow span:nth-child(5) {
+  text-align: center;
+}
+
+/* RESUMO */
+.resumo {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.resumoItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.destaque {
+  font-weight: 600;
+  color: #333;
+}
+
+.totalFinal {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0 0 0;
+  margin-top: 15px;
+  border-top: 2px solid #ddd;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.valorTotal {
+  color: #28a745;
+  font-size: 24px;
+}
+
+/* FORM */
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+.selectPagamento {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  background: white;
+}
+
+/* BOTÕES */
+.botoesFinais {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.botoesFinais button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #28a745, #218838);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.botoesFinais button:hover {
+  background: linear-gradient(135deg, #218838, #1e7e34);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* RESPONSIVO */
+@media (max-width: 1024px) {
+  .central {
+    flex-direction: column;
+  }
+
+  .containerLogo {
+    width: 100%;
+  }
 }

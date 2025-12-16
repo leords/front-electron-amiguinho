@@ -2,6 +2,14 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 console.log("PRELOAD CARREGADO!");
 
+contextBridge.exposeInMainWorld("IMPRESSORA", {
+  imprimir: (html) => ipcRenderer.send("imprimir-cupom", html),
+});
+
+contextBridge.exposeInMainWorld("ENV", {
+  pegarNomeMaquina: () => ipcRenderer.invoke("pegar-nome-maquina"),
+});
+
 contextBridge.exposeInMainWorld("API", {
   buscarClima: (cidade) => ipcRenderer.invoke("buscar-clima", cidade),
 });
