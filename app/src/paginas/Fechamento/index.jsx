@@ -11,6 +11,8 @@ import {
   ChartPieSlice,
   Eraser,
 } from "@phosphor-icons/react";
+import { buscarFechamentoBalcao } from "../../operadores/API/fechamento/buscarFechamentoBalcao";
+import { dataFormatadaCalendario } from "../../utils/data";
 
 export default function Fechamento() {
   const [duzentos, setDuzentos] = useState(0);
@@ -20,15 +22,46 @@ export default function Fechamento() {
   const [dez, setDez] = useState(0);
   const [cinco, setCinco] = useState(0);
   const [dois, setDois] = useState(0);
-
-  // Dados mock - aqui viriam do banco de dados
+  const [nomeMaquina, setNomeMaquina] = useState("");
+  // já criei o state desta forma para evitar usar .? nas variaveis.
   const [vendaDia, setVendaDia] = useState({
-    total: 5000.0,
-    dinheiro: 1000.0,
-    cartao: 350.0,
-    pix: 650.0,
-    interno: 2000.0,
+    total: 0,
+    interno: 0,
+    resultado: {
+      a_vista: 0,
+      cartao: 0,
+      pix: 0,
+    },
   });
+
+  // Carregar nome da maquina que vem de .env
+  useEffect(() => {
+    async function carregarMaquina() {
+      const nome = await window.ENV.pegarNomeMaquina();
+      setNomeMaquina(nome);
+    }
+
+    carregarMaquina();
+  }, []);
+
+  // Simulação de busca de dados do dia
+  useEffect(() => {
+    const dataFormatada = dataFormatadaCalendario();
+
+    // Aqui você faria a chamada ao banco de dados
+    const buscarVendasDia = async () => {
+      const dados = await buscarFechamentoBalcao({
+        data: dataFormatada,
+        vendedor: "b1",
+      });
+      setVendaDia(dados);
+    };
+    buscarVendasDia();
+  }, []);
+
+  useEffect(() => {
+    console.log("dados", vendaDia);
+  }, [vendaDia]);
 
   const limpar = () => {
     const confirmar = window.confirm(
@@ -54,17 +87,12 @@ export default function Fechamento() {
     cinco * 5 +
     dois * 2;
 
-  const diferenca = totalContado - vendaDia.dinheiro;
+  const diferenca = totalContado - vendaDia.resultado.a_vista;
 
-  // Simulação de busca de dados do dia
   useEffect(() => {
-    // Aqui você faria a chamada ao banco de dados
-    // const buscarVendasDia = async () => {
-    //   const dados = await api.get('/vendas/hoje');
-    //   setVendaDia(dados);
-    // };
-    // buscarVendasDia();
-  }, []);
+    console.log("dados", vendaDia);
+    console.log("vendedor", nomeMaquina);
+  }, [vendaDia]);
 
   return (
     <div className={styles.container}>
@@ -166,7 +194,7 @@ export default function Fechamento() {
                 <div className={styles.linhaConferencia}>
                   <span>Dinheiro esperado:</span>
                   <span className={styles.valorEsperado}>
-                    {vendaDia.dinheiro.toLocaleString("pt-BR", {
+                    {vendaDia.resultado.a_vista.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
@@ -215,17 +243,17 @@ export default function Fechamento() {
             <h3>Formas de Pagamento</h3>
             <div className={styles.gridCartoes}>
               <CartaoContador
-                valor={vendaDia.dinheiro}
+                valor={vendaDia.resultado.a_vista}
                 metodo="Dinheiro"
                 total={vendaDia.total}
               />
               <CartaoContador
-                valor={vendaDia.cartao}
+                valor={vendaDia.resultado.cartao}
                 metodo="Cartão"
                 total={vendaDia.total}
               />
               <CartaoContador
-                valor={vendaDia.pix}
+                valor={vendaDia.resultado.pix}
                 metodo="PIX"
                 total={vendaDia.total}
               />
