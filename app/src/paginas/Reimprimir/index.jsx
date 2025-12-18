@@ -3,10 +3,11 @@ import Rodape from "../../componentes/Rodape";
 import styles from "./styles.module.css";
 import logo from "../../assets/logo.jpg";
 
-import { data, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useProdutos } from "../../hooks/useProdutos";
 import { useEffect, useState } from "react";
 import { gerarCupom } from "../../utils/gerarCupom";
+import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 
 export default function Reimprimir() {
   const [nomeProduto, setNomeProduto] = useState("");
@@ -135,9 +136,14 @@ export default function Reimprimir() {
               </div>
 
               <div className={styles.botoesFinais}>
-                <button onClick={handleImprimirSegundaVia}>
-                  Imprimir 2º via
-                </button>
+                <AlertaRadix
+                  titulo="2ª via do pedido"
+                  descricao="Você realmente deseja imprimir ?"
+                  tratar={handleImprimirSegundaVia}
+                  confirmarTexto="Sim, imprimir segunda via!"
+                  cancelarTexto="Sair"
+                  trigger={<button>Imprimir 2º via</button>}
+                />
               </div>
             </div>
           </div>

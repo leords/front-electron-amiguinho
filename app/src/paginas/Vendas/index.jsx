@@ -10,6 +10,9 @@ import { NovoPedidoBalcao } from "../../operadores/API/pedido/novoPedidoBalcao.j
 import { useProdutos } from "../../hooks/useProdutos.js";
 import { useFormaPagamento } from "../../hooks/useFormaPagamento.js";
 import { gerarCupom } from "../../utils/gerarCupom.js";
+import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
+import { usarToast } from "../../componentes/Context/toastContext";
+import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 
 export default function Vendas() {
   const [nome, setNome] = useState("");
@@ -21,6 +24,8 @@ export default function Vendas() {
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
 
   const { usuario } = usarAuth();
+  const { mensagem, setMensagem } = usarToast();
+
   const { produtos, carregando, erro } = useProdutos();
   const {
     listaFormaPagamento,
@@ -136,18 +141,20 @@ export default function Vendas() {
 
     window.IMPRESSORA.imprimir(html);
 
-    alert(retornoAPI.mensagem);
+    // mandando a msg de retornoAPI para o context
+    setMensagem(retornoAPI.mensagem);
 
     // Resetar formulário
     setNome("");
     setCupom([]);
     setProdutoSelecionado(null);
     setQuantidade(1);
-    setFormaPagamento("");
+    setFormaPagamento(1);
   };
 
   return (
     <div className={styles.container}>
+      <ToastRadix mensagem={mensagem} />
       <Cabecalho />
 
       <main className={styles.main}>
@@ -369,19 +376,35 @@ export default function Vendas() {
 
             {/* BOTÕES DE AÇÃO */}
             <div className={styles.botoesAcao}>
-              <button
-                className={styles.botaoCancelar}
-                onClick={handleCancelarPedido}
-              >
-                Cancelar Pedido
-              </button>
-              <button
-                className={styles.botaoGerar}
-                onClick={handleGerarPedido}
-                disabled={cupom.length === 0}
-              >
-                Gerar Pedido
-              </button>
+              {/* BOTÃO DE CANCELAR PEDIDO*/}
+              <AlertaRadix
+                titulo="Cancelar pedido"
+                descricao="Você realmente deseja cancelar o pedido?"
+                tratar={handleCancelarPedido}
+                confirmarTexto="Confirmar cancelamento"
+                cancelarTexto="Sair"
+                trigger={
+                  <button className={styles.botaoCancelar}>
+                    Cancelar Pedido
+                  </button>
+                }
+              />
+              {/* BOTÃO DE GERAR PEDIDO */}
+              <AlertaRadix
+                titulo="Gerar pedido"
+                descricao="Você realmente deseja gerar o pedido?"
+                tratar={handleGerarPedido}
+                confirmarTexto="Sim, gerar pedido!"
+                cancelarTexto="Sair"
+                trigger={
+                  <button
+                    className={styles.botaoGerar}
+                    disabled={cupom.length === 0}
+                  >
+                    Gerar Pedido
+                  </button>
+                }
+              />
             </div>
           </div>
         </div>

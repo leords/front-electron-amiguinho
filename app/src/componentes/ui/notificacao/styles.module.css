@@ -1,0 +1,35 @@
+/* Container que segura todos os toasts */
+.toast-container {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 2147483647;
+}
+
+/* Toast individual */
+.toast {
+  all: unset; /* blindagem contra CSS global */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 280px;
+  max-width: 400px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  background-color: #333;
+  color: #fff;
+  font-family: var(--fonte-primaria);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Botão fechar */
+.toast-close {
+  all: unset;
+  cursor: pointer;
+  margin-left: 12px;
+  font-weight: bold;
+  color: #fff;
+}

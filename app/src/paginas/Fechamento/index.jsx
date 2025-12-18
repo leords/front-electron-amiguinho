@@ -13,6 +13,7 @@ import {
 } from "@phosphor-icons/react";
 import { buscarFechamentoBalcao } from "../../operadores/API/fechamento/buscarFechamentoBalcao";
 import { dataFormatadaCalendario } from "../../utils/data";
+import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 
 export default function Fechamento() {
   const [duzentos, setDuzentos] = useState(0);
@@ -172,10 +173,19 @@ export default function Fechamento() {
 
             {/* Rodapé com total e botão limpar */}
             <div className={styles.rodapeContador}>
-              <button className={styles.botaoLimpar} onClick={limpar}>
-                <Eraser size={18} weight="bold" />
-                Limpar
-              </button>
+              <AlertaRadix
+                titulo="Limpar contador"
+                descricao="Você realmente deseja limpar?"
+                tratar={limpar}
+                confirmarTexto="Sim, limpar!"
+                cancelarTexto="Sair"
+                trigger={
+                  <button className={styles.botaoLimpar}>
+                    <Eraser size={18} weight="bold" />
+                    Limpar
+                  </button>
+                }
+              />
 
               <div className={styles.totalContado}>
                 <span>Total Contado:</span>

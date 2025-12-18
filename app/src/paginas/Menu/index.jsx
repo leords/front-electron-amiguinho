@@ -15,10 +15,6 @@ export default function Menu() {
   const [saudacao, setSaudacao] = useState("");
   const [mensagemDoDia, setMensagemDoDia] = useState("");
   const [diaSemana, setDiaSemana] = useState("");
-  const [estatisticas, setEstatisticas] = useState({
-    vendasHoje: 12,
-    totalHoje: 5000.0,
-  });
 
   // Gera o dia da semana extenso
   useEffect(() => {

@@ -3,6 +3,7 @@ import styles from "./styles.module.css";
 import { useNavigate } from "react-router-dom";
 import { usarAuth } from "../Context/authContext";
 import { useEffect, useState } from "react";
+import { AlertaRadix } from "../ui/alerta/alerta.jsx";
 
 export default function Cabecalho() {
   const navegar = useNavigate();
@@ -35,6 +36,7 @@ export default function Cabecalho() {
 
   // Deslogar
   const tratarSair = async () => {
+    console.log("Deslogar");
     try {
       await sair();
     } catch (error) {
@@ -57,14 +59,22 @@ export default function Cabecalho() {
             >
               <HouseLineIcon size={28} />
             </button>
-            <button
-              title="Sair"
-              onClick={tratarSair}
-              className={styles.iconeBotao}
-              aria-label="Sair da conta"
-            >
-              <SignOutIcon size={28} />
-            </button>
+            <AlertaRadix
+              titulo="Deslogar da conta"
+              descricao="Você realmente deseja sair da sua conta?"
+              tratar={tratarSair}
+              confirmarTexto="Confirmar sair"
+              cancelarTexto="Cancelar"
+              trigger={
+                <button
+                  title="Sair"
+                  className={styles.iconeBotao}
+                  aria-label="Sair da conta"
+                >
+                  <SignOutIcon size={28} />
+                </button>
+              }
+            />
           </div>
           <p>
             {climaAtual.temperatura < 14 ? (

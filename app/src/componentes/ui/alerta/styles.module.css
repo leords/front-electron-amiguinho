@@ -1,0 +1,71 @@
+/* MANTENDO NO CSS INLINE PARA FORÇAR!!! */
+.overlay {
+  all: unset; /*// all: unset usado para isolar o Radix de CSS global/stacking context do app*/
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 2147483646;
+}
+
+/* Caixa do diálogo */
+.content {
+  /* MANTENDO NO CSS INLINE PARA FORÇAR!!! */
+  all: unset;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+  font-family: var(--fonte-primaria);
+  color: #1a1a1a;
+
+  z-index: 2147483647;
+  min-width: 320px;
+}
+
+/* Título */
+.title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+}
+
+/* Descrição */
+.description {
+  margin-top: 8px;
+  font-size: 0.875rem; /* 14px */
+  color: #555;
+}
+
+/* Área dos botões */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Botão cancelar */
+.cancel {
+  all: unset;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #e5e5e5;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+/* Botão confirmar */
+.confirm {
+  all: unset;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #dc2626;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
