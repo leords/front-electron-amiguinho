@@ -13,6 +13,7 @@ import { gerarCupom } from "../../utils/gerarCupom.js";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
+import { gerarOrcamento } from "../../utils/gerarOrcamento";
 
 export default function Vendas() {
   const [nome, setNome] = useState("");
@@ -135,6 +136,23 @@ export default function Vendas() {
         valorUnit: item.precoUndVenda,
       })),
     };
+
+    if (nomeFormaPagamento === "ORÇAMENTO") {
+      const html = gerarOrcamento(pedidoImprimir);
+
+      window.IMPRESSORA.imprimir(html);
+
+      setMensagem("Orçamento gerado com sucesso!");
+
+      // Resetar formulário
+      setNome("");
+      setCupom([]);
+      setProdutoSelecionado(null);
+      setQuantidade(1);
+      setFormaPagamento(1);
+
+      return;
+    }
 
     const retornoAPI = await NovoPedidoBalcao("balcao", pedido);
     const html = gerarCupom(pedidoImprimir);
@@ -367,7 +385,7 @@ export default function Vendas() {
                 className={styles.selectPagamento}
               >
                 {listaFormaPagamento?.map((forma) => (
-                  <option key={forma.value} value={forma.id}>
+                  <option key={forma.id} value={forma.id}>
                     {forma.nome}
                   </option>
                 ))}

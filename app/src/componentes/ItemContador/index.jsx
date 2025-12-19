@@ -39,26 +39,21 @@ export default function ItemContador({
         step="1"
       ></input>
 
-      <input
-        className={styles.nota}
-        value={
-          nota
-            ? parseFloat(nota).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })
-            : ""
-        }
-      ></input>
+      <output className={styles.nota}>
+        {nota
+          ? parseFloat(nota).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })
+          : "R$ 0,00"}
+      </output>
 
-      <input
-        className={styles.total}
-        value={parseFloat(quantidade * nota).toLocaleString("pt-BR", {
+      <output className={styles.total}>
+        {parseFloat(quantidade * nota).toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         })}
-        onChange={alterarQuantidade(quantidade)}
-      ></input>
+      </output>
     </div>
   );
 }

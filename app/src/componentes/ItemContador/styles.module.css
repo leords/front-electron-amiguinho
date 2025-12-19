@@ -24,7 +24,9 @@
 }
 
 .nota {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 35px;
   width: 200px;
   border-radius: 5px;
@@ -39,7 +41,9 @@
 }
 
 .total {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 35px;
   width: 130px;
   border-radius: 5px;

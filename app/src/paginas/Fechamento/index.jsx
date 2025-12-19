@@ -204,7 +204,7 @@ export default function Fechamento() {
                 <div className={styles.linhaConferencia}>
                   <span>Dinheiro esperado:</span>
                   <span className={styles.valorEsperado}>
-                    {vendaDia.resultado.a_vista.toLocaleString("pt-BR", {
+                    {vendaDia.resultado.a_vista?.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
