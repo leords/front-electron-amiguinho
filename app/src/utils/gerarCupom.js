@@ -317,11 +317,22 @@ export function gerarCupom(dados) {
       ${`${dados.vendedor}: ${dados.nomeUsuario}`}
     </div>
 
-    <p id="title">
+    ${
+      dados.cliente
+        ? `
+      <p id="title">
+      Na data de ${dataHora} eu, ${dados.cliente} paguei por esta unica via de nota a Amigao Distribuidora de Bebidas LTDA,
+      CNPJ 41.836.758/0001-41, ou a sua ordem, a quantia de ${valorTotalFormatado} em moeda corrente deste pais,
+      pagavel em Canoinhas - SC.
+    </p>`
+        : `<p id="title">
       Na data de ${dataHora} paguei por esta unica via de nota a Amigao Distribuidora de Bebidas LTDA,
       CNPJ 41.836.758/0001-41, ou a sua ordem, a quantia de ${valorTotalFormatado} em moeda corrente deste pais,
       pagavel em Canoinhas - SC.
-    </p>
+    </p>`
+    }
+
+
 
     <div class="divider"></div>
 

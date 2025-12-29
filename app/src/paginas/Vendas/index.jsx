@@ -333,7 +333,7 @@ export default function Vendas() {
                     onChange={(e) => {
                       setNome(e.target.value);
                     }}
-                    placeholder="CPF ou CNPJ"
+                    placeholder="Nome e número do documento"
                   />
                 </div>
               ) : (
