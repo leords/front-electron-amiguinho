@@ -45,11 +45,10 @@ export default function Fechamento() {
     carregarMaquina();
   }, []);
 
-  // Simulação de busca de dados do dia
+  // AQUI PRECISA CONFIGURAR O VENDEDOR COMO VENDEDOR QUE ESTA SALVO NO .ENV
   useEffect(() => {
     const dataFormatada = dataFormatadaCalendario();
 
-    // Aqui você faria a chamada ao banco de dados
     const buscarVendasDia = async () => {
       const dados = await buscarFechamentoBalcao({
         data: dataFormatada,

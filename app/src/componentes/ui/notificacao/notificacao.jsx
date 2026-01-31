@@ -8,7 +8,7 @@ export function ToastRadix({ mensagem, duracao = 4000 }) {
   const { setMensagem } = usarToast();
 
   // é um useEffect.
-  // Se existir msg seta open como true, da um time de 4000ms, seta false e limpa a msg do context
+  // Se existir mensagem, seta OPEN como true, da um time de 4000ms e seta OPEN como false e limpa a msg do context
   React.useEffect(() => {
     if (mensagem) setOpen(true);
 

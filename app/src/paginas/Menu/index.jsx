@@ -2,6 +2,8 @@ import {
   ShoppingCartIcon,
   ClockCounterClockwiseIcon,
   CoinsIcon,
+  ChartLine,
+  CurrencyCircleDollar
 } from "@phosphor-icons/react";
 import MenuButton from "../../componentes/Botao/index";
 import mascote from "../../assets/mascote.png";
@@ -14,23 +16,6 @@ import GerarVersiculo from "../../utils/gerarVersiculo";
 export default function Menu() {
   const [saudacao, setSaudacao] = useState("");
   const [mensagemDoDia, setMensagemDoDia] = useState("");
-  const [diaSemana, setDiaSemana] = useState("");
-
-  // Gera o dia da semana extenso
-  useEffect(() => {
-    const diaDaSemana = async () => {
-      const hojeDiaSeamana = new Date().toLocaleDateString("pt-BR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-
-      setDiaSemana(hojeDiaSeamana);
-    };
-
-    diaDaSemana();
-  }, []);
 
   // Busca via groq a mensagem do dia.
   useEffect(() => {
@@ -109,6 +94,22 @@ export default function Menu() {
             destino="/fechamento"
             imagem={<CoinsIcon size={70} weight="duotone" />}
           />
+
+          <MenuButton
+            titulo="Dashboard"
+            descricao="Conferir números de venda"
+            corBG="linear-gradient(135deg, #455a64 0%, #78909c 100%)"
+            destino="/dashboard"
+            imagem={<ChartLine size={70} weight="duotone" />}
+          />
+
+          <MenuButton
+            titulo="Fechar balcão"
+            descricao="Finalizar operações do dia"
+            corBG="linear-gradient(135deg, #ff8c00 0%, #ffa726 100%)"
+            destino="/fechar-balcao"
+            imagem={<CurrencyCircleDollar size={70} weight="duotone" />}
+          />
         </div>
 
         {/* Mascote e mensagem do dia */}
@@ -118,7 +119,6 @@ export default function Menu() {
               <span className={styles.emojiDica}>💡</span> Mensagem do Dia
             </h3>
             <p>{mensagemDoDia}</p>
-            <p className={styles.diaSemana}>{diaSemana}</p>
           </div>
           <img
             src={mascote}

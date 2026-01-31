@@ -7,6 +7,7 @@ import Fechamento from "../paginas/Fechamento/index.jsx";
 import Reimprimir from "../paginas/Reimprimir/index.jsx";
 import { AuthProvedor } from "../componentes/Context/authContext.jsx";
 import { ToastProvedor } from "../componentes/Context/toastContext.jsx";
+import Dashboard from "../paginas/Dashboard/index.jsx";
 
 export function Navegador() {
   return (
@@ -20,6 +21,8 @@ export function Navegador() {
             <Route path="/venda" element={<Vendas />} />
             <Route path="/fechamento" element={<Fechamento />} />
             <Route path="/reimprimir" element={<Reimprimir />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/fechar-balcao" element={<Reimprimir />} />
           </Routes>
         </ToastProvedor>
       </AuthProvedor>

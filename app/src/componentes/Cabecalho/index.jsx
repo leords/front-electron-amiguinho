@@ -9,6 +9,24 @@ export default function Cabecalho() {
   const navegar = useNavigate();
   const { sair, usuario } = usarAuth();
   const [climaAtual, setClimaAtual] = useState({});
+    const [diaSemana, setDiaSemana] = useState("");
+
+
+    // Gera o dia da semana extenso
+  useEffect(() => {
+    const diaDaSemana = async () => {
+      const hojeDiaSeamana = new Date().toLocaleDateString("pt-BR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+
+      setDiaSemana(hojeDiaSeamana);
+    };
+
+    diaDaSemana();
+  }, []);
 
   // Pegar o clima atual do dia = 1 minuto é igual a 60000 ms
   useEffect(() => {
@@ -76,13 +94,14 @@ export default function Cabecalho() {
               }
             />
           </div>
-          <p>
+          <p>📅 {diaSemana}</p>
+          <p>  
             {climaAtual.temperatura < 14 ? (
               <span className={styles.iconeClima}>🌥️</span>
             ) : (
               <span className={styles.iconeClima}>☀️</span>
             )}
-            {Math.round(climaAtual.temperatura)}°, {climaAtual.condicao}
+            {Math.round(climaAtual.temperatura)}°, {climaAtual.condicao} 
           </p>
         </div>
       </div>

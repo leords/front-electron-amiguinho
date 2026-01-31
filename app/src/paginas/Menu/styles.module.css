@@ -156,6 +156,10 @@
 .dicaDia {
   flex: 1;
   z-index: 1;
+} 
+
+.dicaDia p {
+  white-space: pre-line;
 }
 
 .dicaDia h3 {
@@ -166,6 +170,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  
 }
 
 .emojiDica {
