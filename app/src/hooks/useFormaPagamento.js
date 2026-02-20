@@ -18,7 +18,7 @@ export function useFormaPagamento() {
           return json;
         }
       } catch (e) {
-        console.log("JSON inválido no storage, limpando");
+        console.log("JSON inválido no storage, limpando", e);
         localStorage.removeItem("formas");
       }
     }

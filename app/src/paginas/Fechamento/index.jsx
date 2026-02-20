@@ -52,7 +52,7 @@ export default function Fechamento() {
     const buscarVendasDia = async () => {
       const dados = await buscarFechamentoBalcao({
         data: dataFormatada,
-        vendedor: "b1",
+        vendedor: "b1", //AQUI
       });
       setVendaDia(dados);
     };
@@ -88,11 +88,6 @@ export default function Fechamento() {
     dois * 2;
 
   const diferenca = totalContado - vendaDia.resultado.a_vista;
-
-  useEffect(() => {
-    console.log("dados", vendaDia);
-    console.log("vendedor", nomeMaquina);
-  }, [vendaDia]);
 
   return (
     <div className={styles.container}>

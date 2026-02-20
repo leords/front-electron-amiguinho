@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 const api = axios.create({
@@ -5,30 +6,26 @@ const api = axios.create({
   timeout: 5000,
 });
 
-export const buscarFormaPagamento = async () => {
+export const criarMovimentacao = async (dados) => {
   const token = localStorage.getItem("token");
 
   try {
-    const resposta = await api.get("/buscar-formas-pagamento", {
+    const resposta = await api.post("/criar-movimentacao", dados, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    // sempre que é retorno da api = .data
     return resposta.data;
   } catch (error) {
     if (error.response) {
       throw new Error(
-        //pegando o erro vindo do backend
-        error.response.data || "Erro ao buscar formas de pagamentos"
+        error.response.data.mensagem || "Erro ao buscar movimentação"
       );
     }
     if (error.request) {
-      // Requisição enviada, mas backend não respondeu
-      throw new Error("Servidor não respondeu. Tente novamente.");
+      throw new Error("Servidor não respondeu, tente novamente");
     }
-    // Erros internos (axios, rede, js, etc)
     throw new Error(error.message || "Erro inesperado");
   }
 };

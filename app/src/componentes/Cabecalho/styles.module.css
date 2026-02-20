@@ -4,6 +4,7 @@
   width: 100%;
   align-items: center;
   justify-content: space-between;
+  padding-bottom: 20px;
 }
 
 .cabecalho {
@@ -11,8 +12,8 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 20px 40px;
-  background-color: white;
+  padding: 10px 40px 1px 40px;
+  background-color: rgb(255, 255, 255);
   border-bottom: 2px solid #f0f0f0;
 }
 

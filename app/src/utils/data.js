@@ -1,5 +1,5 @@
 import { format, parseISO } from "date-fns";
-import { da, ptBR } from "date-fns/locale";
+import { ptBR } from "date-fns/locale";
 
 // date-fns só aceita objetos DATE válidos
 

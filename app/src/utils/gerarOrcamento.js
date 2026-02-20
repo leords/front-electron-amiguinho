@@ -1,4 +1,4 @@
-import { dataFormatada, dataHoraFormatada } from "./data.js";
+import { dataHoraFormatada } from "./data.js";
 
 export function gerarOrcamento(dados) {
   // Chamando a função para data conforme a solitação.
@@ -350,7 +350,7 @@ export function gerarOrcamento(dados) {
     <div id="footer">
       <div id="div-logo">
         <img 
-          src="https://lh3.googleusercontent.com/d/1AgCeS49Thw9b7Qc7m9yzqFhl09HfbATD"
+          src="https://lh3.googleusercontent.com/d/1JAfTMDVupxRlmNubCr4ZzP0h9WVBfBUH"
           alt="Amigao Distribuidora"
         >
       </div>

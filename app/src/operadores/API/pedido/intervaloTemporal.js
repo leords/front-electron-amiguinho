@@ -5,12 +5,11 @@ const api = axios.create({
     timeout: 5000
 });
 // :setor, dataInicio(2025-12-12), dataFim(2025-12-12)
-export const TopProdutos = async (setor, params = {}) => { 
+export const TopProdutos = async (setor) => { 
     const token = localStorage.getItem("token");
 
     try {
         const resposta = await api.get(`/intervalo-temporal/${setor}`, {
-            params,
             headers: {
                 Authorization: `Bearer ${token}`
             }

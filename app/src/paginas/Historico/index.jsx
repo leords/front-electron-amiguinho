@@ -6,7 +6,6 @@ import logo from "../../assets/logo.jpg";
 import ItemListaHistorico from "../../componentes/ItemListaHistorico/index.jsx";
 import {
   dataFormatadaCalendario,
-  dataFormatadaFiltro,
 } from "../../utils/data.js";
 import {
   CalendarBlankIcon,
@@ -20,18 +19,8 @@ export default function Historico() {
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [totalVendas, setTotalVendas] = useState(0);
-  const [totalItens, setTotalItens] = useState(0);
-  const [nomeMaquina, setNomeMaquina] = useState("");
+  const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
 
-  // Carregar nome da maquina que vem de .env
-  useEffect(() => {
-    async function carregarMaquina() {
-      const nome = await window.ENV.pegarNomeMaquina();
-      setNomeMaquina(nome);
-    }
-
-    carregarMaquina();
-  }, []);
 
   // Inicializa com a data atual
   useEffect(() => {

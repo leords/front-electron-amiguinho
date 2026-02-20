@@ -12,7 +12,7 @@ export default function Cabecalho() {
     const [diaSemana, setDiaSemana] = useState("");
 
 
-    // Gera o dia da semana extenso
+  // GERA O NOME DA SEMANA EM EXTENSO.
   useEffect(() => {
     const diaDaSemana = async () => {
       const hojeDiaSeamana = new Date().toLocaleDateString("pt-BR", {
@@ -28,7 +28,7 @@ export default function Cabecalho() {
     diaDaSemana();
   }, []);
 
-  // Pegar o clima atual do dia = 1 minuto é igual a 60000 ms
+  // PEGA O CLIMA ATUAL DO DIA.
   useEffect(() => {
     const buscarClimaAtual = async () => {
       const clima = await window.API.buscarClima("Canoinhas");
@@ -40,6 +40,7 @@ export default function Cabecalho() {
     };
     buscarClimaAtual();
 
+  // ATUALIZA A CADA 5 MINUTOS.  (1 minuto é igual a 60000 ms)
     const intervalo = setInterval(() => {
       buscarClimaAtual();
     }, 300000);
@@ -47,12 +48,13 @@ export default function Cabecalho() {
     return () => clearInterval(intervalo);
   }, []);
 
-  // Voltar ao menu inicial
+
+  // VOLTAR AO MENU INICIAL.
   const tratarVoltarMenu = () => {
     navegar("/menu");
   };
 
-  // Deslogar
+  // DESLOGAR.
   const tratarSair = async () => {
     console.log("Deslogar");
     try {
@@ -66,7 +68,10 @@ export default function Cabecalho() {
   return (
     <header className={styles.cabecalho}>
       <div className={styles.container}>
-        <h1 className={styles.titulo}>Sistema de vendas Amiguinho</h1>
+        <div>
+          <h1 className={styles.titulo}>Sistema de vendas Amiguinho</h1>
+          <p>Usuário conectado: {usuario?.nome || "Carregando..."}</p>
+        </div>
         <div className={styles.botoescabecalho}>
           <div className={styles.botoes}>
             <button
@@ -105,7 +110,6 @@ export default function Cabecalho() {
           </p>
         </div>
       </div>
-      <p>Usuário conectado: {usuario?.nome || "Carregando..."}</p>
     </header>
   );
 }

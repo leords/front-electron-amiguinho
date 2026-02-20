@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Select from "react-select";
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
@@ -23,15 +23,14 @@ export default function Vendas() {
   const [formaPagamento, setFormaPagamento] = useState(1);
   const [abrirOpcaoNome, setAbrirOpcaoNome] = useState(false);
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
+  const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
 
   const { usuario } = usarAuth();
   const { mensagem, setMensagem } = usarToast();
 
-  const { produtos, carregando, erro } = useProdutos();
+  const { produtos, carregando} = useProdutos();
   const {
-    listaFormaPagamento,
-    carregandoFormasPagamento,
-    erroHookFormaPagamento,
+    listaFormaPagamento
   } = useFormaPagamento();
 
   if (!usuario) {
@@ -77,7 +76,7 @@ export default function Vendas() {
   // Função para somar quantidade * preço
   const totalProduto = (preco, qtd) => (preco * qtd).toFixed(2);
 
-  // Soma o total do cupom
+  // Soma o total do cupom 
   const totalPedido = cupom
     .reduce((acc, item) => acc + item.precoUndVenda * item.quantidade, 0)
     .toFixed(2);
@@ -101,10 +100,12 @@ export default function Vendas() {
 
   // Gerar pedido
   const handleGerarPedido = async () => {
+    //valida a existencia de ao menos 1 produto no pedido
     if (cupom.length === 0) {
       alert("Adicione produtos ao cupom antes de gerar o pedido!");
       return;
     }
+    // valida a existencia da forma de pagamento esta preenchiada
     if (!formaPagamento) {
       alert("Selecione a forma de pagamento!");
       return;
@@ -114,7 +115,7 @@ export default function Vendas() {
     const pedido = {
       cliente: nome || "",
       formaPagamentoId: formaPagamento,
-      vendedor: "b1",
+      vendedor: nomeMaquina,
       nomeUsuario: usuario.nome,
       usuarioId: usuario.id,
       itens: cupom.map((item) => ({
@@ -123,11 +124,11 @@ export default function Vendas() {
         valorUnit: item.precoUndVenda,
       })),
     };
-
+    // Este pedido neste formato será enviado para a impressão
     const pedidoImprimir = {
       cliente: nome || "",
       formaPagamento: nomeFormaPagamento,
-      vendedor: "Balcão 1",
+      vendedor: nomeMaquina === 'b1' ? 'Balcao 01' : nomeMaquina === 'b2' ? 'Balcao 02': null ,
       nomeUsuario: usuario.nome,
       itens: cupom.map((item) => ({
         produtoId: item.id,
@@ -154,9 +155,11 @@ export default function Vendas() {
       return;
     }
 
+    //enviar pedido via API
     const retornoAPI = await NovoPedidoBalcao("balcao", pedido);
     const html = gerarCupom(pedidoImprimir);
 
+    // enviar para impressora
     window.IMPRESSORA.imprimir(html);
 
     // mandando a msg de retornoAPI para o context

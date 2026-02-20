@@ -8,6 +8,7 @@ import Reimprimir from "../paginas/Reimprimir/index.jsx";
 import { AuthProvedor } from "../componentes/Context/authContext.jsx";
 import { ToastProvedor } from "../componentes/Context/toastContext.jsx";
 import Dashboard from "../paginas/Dashboard/index.jsx";
+import FechamentoBalcao from "../paginas/FechamentoBalcao/index.jsx";
 
 export function Navegador() {
   return (
@@ -22,7 +23,7 @@ export function Navegador() {
             <Route path="/fechamento" element={<Fechamento />} />
             <Route path="/reimprimir" element={<Reimprimir />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/fechar-balcao" element={<Reimprimir />} />
+            <Route path="/fechar-balcao" element={<FechamentoBalcao />} />
           </Routes>
         </ToastProvedor>
       </AuthProvedor>
