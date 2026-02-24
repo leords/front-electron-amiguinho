@@ -240,6 +240,14 @@
 /* ============================================================
    FORMULÁRIO DE MOVIMENTAÇÃO
    ============================================================ */
+
+.maquininha {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+
 .entradaManual {
   background-color: #ffffff;
   border-radius: 14px;

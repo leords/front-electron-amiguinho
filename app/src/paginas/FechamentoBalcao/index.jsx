@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState} from 'react';
 import Cabecalho from '../../componentes/Cabecalho'
 import Rodape from '../../componentes/Rodape'
 import styles from './styles.module.css'
-import { dataFormatadaCalendario } from '../../utils/data';
+import { dataFormatadaCalendario, dataHoraFormatada } from '../../utils/data';
 import { buscarFechamentoBalcao } from '../../operadores/API/fechamento/buscarFechamentoBalcao';
 import { buscarFechamentos } from '../../operadores/API/AjusteFechamento/buscarFechamentos'
 import { criarMovimentacao } from '../../operadores/API/movimentacao/criarMovimentacao'
@@ -22,21 +22,20 @@ import ItemContador from '../../componentes/ItemContador';
 import { AlertaRadix } from '../../componentes/ui/alerta/alerta';
 import Select from "react-select";
 import { criarFechamento } from '../../operadores/API/AjusteFechamento/criarFechamento';
+import { buscarMovimentacao } from '../../operadores/API/movimentacao/buscarMovimentacao';
 
-// Tipos de movimentação de caixa
+// Tipos de movimentação de caixa.
 const tiposMovimentacao = [
   { value: 'saida', label: '🔻 Saida', tipo: 'saida' },
   { value: 'entrada', label: '🔺 Entrada', tipo: 'entrada' },
 ];
-
+// Descrições de balcões disponiveis.
 const balcaoOptions = [
   { value: 'b1', label: 'Balcão 1' },
   { value: 'b2', label: 'Balcão 2' },
 ];
 
 export default function FechamentoBalcao() {
-  //const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
-
   // --- Estados do contador de notas ---
   const [duzentos, setDuzentos] = useState(0);
   const [cem, setCem] = useState(0);
@@ -57,10 +56,11 @@ export default function FechamentoBalcao() {
   const [valorManutencao, setValorManutencao] = useState('');
   const [descricaoManutencao, setDescricaoManutencao] = useState('');
   const [erroFormulario, setErroFormulario] = useState('');
+
   const [mensagem, setMensagem] = useState('')
 
   // --- Estado da lista de manutenções ---
-  const [manutencoes, setManutencoes] = useState([]);
+  const [movimentacoes, setMovimentacoes] = useState([]);
 
   // --- Busca o total do fechamento de vendas conforme o balcão escolhido.
   useEffect(() => {
@@ -87,7 +87,6 @@ export default function FechamentoBalcao() {
   }, [balcao]);
 
 
-  // Talvez aqui será preciso usar o UseFocusEffect
   // --- Busca o fechamento em aberto referente ao balcao e data
   useEffect(() => {
     const dataFormatada = dataFormatadaCalendario();
@@ -95,20 +94,29 @@ export default function FechamentoBalcao() {
     const buscarFechamentoBalcaoDia = async () => {
       try {
         // buscando fechamento
-        let fechamentoBalcao = await buscarFechamentos({
-          data: dataFormatada,
-          vendedor: balcao.value,
-        });
+        let fechamentoBalcao = await buscarFechamentos(
+          'balcao',
+          {
+            data: dataFormatada,
+            vendedor: balcao.value,
+          }
+        );
+
+        console.log('Fechamento retornado: ', fechamentoBalcao)
+
         setFechamentoAtual(fechamentoBalcao);
 
       // Se não encontrar fechamento balcão, crie! 
-      if(!fechamentoBalcao) {
-        await criarFechamento('balcao', balcao.value)
-
-        fechamentoBalcao = await buscarFechamentos({
-          data: dataFormatada,
-          vendedor: balcao.value,
-        });
+      if(fechamentoBalcao == null) {
+        console.log('Criando fechamento balcão')
+        await criarFechamento('balcao', { vendedor: balcao.value })
+        fechamentoBalcao = await buscarFechamentos(
+          'balcao',
+          {
+            data: dataFormatada,
+            vendedor: balcao.value,
+          }
+        );
       }
       // setando o novo fechamento criado.
       setFechamentoAtual(fechamentoBalcao);
@@ -124,7 +132,30 @@ export default function FechamentoBalcao() {
 
   }, [balcao]);
 
-  // Cria uma nova movimentação de caixa
+
+  // --- Listar movimentações do dia referente ao balcao e data
+  const buscarMovimentacoes = async () => {
+
+      console.log(fechamentoAtual.id)
+      try {
+        const listaMovimentacoes = await buscarMovimentacao(
+          fechamentoAtual.id
+        );
+
+        console.log('Movimentações: ', listaMovimentacoes)
+
+        setMovimentacoes(listaMovimentacoes); 
+        
+      } catch (error) {
+        console.log(error)
+      }
+  }
+  useEffect(() => {
+    buscarMovimentacoes();
+  }, [fechamentoAtual]);
+
+
+  // --- Cria uma nova movimentação de caixa
   const novaMovimentacao = async () => {
 
     if (!descricaoManutencao || typeof descricaoManutencao !== 'string') {
@@ -137,10 +168,13 @@ export default function FechamentoBalcao() {
     }
 
     const novaManutencao = {
-      tipo: tipoMovimentacao,
+      fechamentoId: fechamentoAtual.id,
+      tipo: tipoMovimentacao.value,
       descricao: descricaoManutencao.trim(),
       valor: valorManutencao
     };
+
+    console.log('Nova manutenção:', novaManutencao);
 
     const movimentacao = await criarMovimentacao(novaManutencao);
 
@@ -151,7 +185,11 @@ export default function FechamentoBalcao() {
       setValorManutencao('');
       setDescricaoManutencao('');
       setTipoMovimentacao(tiposMovimentacao[0])
+
+      // chamando novamente a função de buscar movimentações.
+      await buscarMovimentacoes()
   }
+
 
   // --- Cancelar formulário ---
   const cancelarFormulario = () => {
@@ -161,11 +199,13 @@ export default function FechamentoBalcao() {
     setErroFormulario('');
   };
 
+
   // --- Limpar contador ---
   const limparContador = () => {
     setDuzentos(0); setCem(0); setCinquenta(0);
     setVinte(0); setDez(0); setCinco(0); setDois(0);
   };
+
 
   // PAREI AQUI PARA AJUSTAR O BACKEND, MSG DE ERROS!!!
   // --- Remover manutenção ---
@@ -173,6 +213,9 @@ export default function FechamentoBalcao() {
     try {
       await deletarMovimentacao(id)
       setMensagem('Manutenção de caixa excluída com sucesso!')
+      
+      // chamando novamente a função de buscar movimentações.
+      await buscarMovimentacoes()
     } catch (error) {
       if(error.response.data.codigo === "MOVIMENTACAO_NOT_FOUND") {
         setMensagem(error.response.data.mensagem)
@@ -196,16 +239,24 @@ export default function FechamentoBalcao() {
   const valorEsperado = vendaBalcao?.resultado?.a_vista ?? 0;
   const diferenca = totalContado - valorEsperado;
 
+  const valorPix = vendaBalcao?.resultado?.pix ?? 0;
+  const valorCartao = vendaBalcao?.resultado?.cartão ?? 0;
+  const valorTotalMaquininha = valorPix + valorCartao;
 
 
   // --- Totais das manutenções ---
-  const totalEntradas = manutencoes
-    .filter(m => m.tipo.tipo === 'entrada')
+  const totalEntradas = movimentacoes
+    .filter(m => m.tipo === 'entrada')
     .reduce((acc, m) => acc + m.valor, 0);
 
-  const totalSaidas = manutencoes
-    .filter(m => m.tipo.tipo === 'saida')
+  const totalSaidas = movimentacoes
+    .filter(m => m.tipo === 'saida')
     .reduce((acc, m) => acc + m.valor, 0);
+
+
+  const valorFinalFechamentoAvista = valorEsperado + totalEntradas - totalSaidas
+
+  // -----------------------------
 
   const formatarMoeda = (valor) =>
     Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -293,9 +344,17 @@ export default function FechamentoBalcao() {
             {totalContado > 0 && (
               <div className={styles.conferencia}>
                 <div className={styles.linhaConferencia}>
+                    <span>Movimentações positivas</span>
+                    <span style={{color: '#2f9e44', fontWeight: 'bold'}}>+{formatarMoeda(totalEntradas)}</span>
+                </div>
+                <div className={styles.linhaConferencia} style={{marginBottom: '20px'}}>
+                    <span>Movimentações negativas</span>
+                    <span style={{color: '#c92a2a', fontWeight: 'bold'}}>-{formatarMoeda(totalSaidas)}</span>
+                </div>
+                <div className={styles.linhaConferencia}>
                   <span>Dinheiro esperado (à vista):</span>
                   <span className={styles.valorEsperado}>
-                    {carregandoVendas ? '...' : formatarMoeda(valorEsperado)}
+                    {carregandoVendas ? '...' : formatarMoeda(valorFinalFechamentoAvista)}
                   </span>
                 </div>
                 <div className={styles.linhaConferencia}>
@@ -323,14 +382,26 @@ export default function FechamentoBalcao() {
 
             {/* FORMULÁRIO DE ENTRADA */}
             <div className={styles.entradaManual}>
+              {/* TOTAL DE VENDAS MAQUININHA */}
+                <div className={styles.cabecalhoFormulario}>
+                  <ReceiptIcon size={22} weight="duotone" className={styles.icone} />
+                  <h2>Total de vendas no cartão e pix: <strong style={{color: '#e67700', marginLeft:'10px', fontSize:'22px'}}>{formatarMoeda(valorTotalMaquininha)}</strong></h2>
+              </div>
+              <div className={styles.maquininha}>
+                <label style={{color:'#e67700', fontSize:'15px', fontWeight:'600'}}>Cartão: {formatarMoeda(valorCartao)}</label>
+                <label style={{color:'#1a1f2e', fontSize:'15px', fontWeight:'600'}}>Pix: {formatarMoeda(valorPix)}</label>
+              </div>
+            </div>
+            <div className={styles.entradaManual}>
               <div className={styles.cabecalhoFormulario}>
                 <ReceiptIcon size={22} weight="duotone" className={styles.icone} />
                 <h2>Movimentação de Caixa</h2>
               </div>
 
               <div className={styles.gridFormulario}>
-                {/* Tipo */}
+                {/* Selecionar o Tipo de manutenção */}
                 <div className={styles.campoForm}>
+                  <strong style={{color: '#ff8c00', fontSize: '26px', marginBottom:'15px'}}> {balcao.label} </strong>
                   <label className={styles.labelForm}>Tipo</label>
                   <Select
                     classNamePrefix="custom"
@@ -352,7 +423,7 @@ export default function FechamentoBalcao() {
                   step="0.01"
                   placeholder="0,00"
                   value={valorManutencao}
-                  onChange={(e) => setValorManutencao(e.target.value)}
+                  onChange={(e) => setValorManutencao(Number(e.target.value))}
                 />
               </div>
 
@@ -368,7 +439,7 @@ export default function FechamentoBalcao() {
                 />
               </div>
 
-              {/* Mensagem de erro */}
+              {/* Mensagem de erro - setErroFormulario*/}
               {erroFormulario && (
                 <div className={styles.msgErro}>{erroFormulario}</div>
               )}
@@ -378,18 +449,29 @@ export default function FechamentoBalcao() {
                 <button className={styles.botaoCancelar} onClick={cancelarFormulario}>
                   Cancelar
                 </button>
-                <button className={styles.botaoSalvar} onClick={novaMovimentacao}>
-                  <PlusCircleIcon size={18} weight="bold" />
-                  Salvar movimentação
-                </button>
+                    <AlertaRadix
+                      titulo="Salvar movimentação"
+                      descricao={`Deseja adicionar nova movimentação no caixa do ${balcao.label}?`}
+                      tratar={novaMovimentacao}
+                      confirmarTexto="Adicionar"
+                      cancelarTexto="Cancelar"
+                      trigger={
+                        <button className={styles.botaoSalvar} title="Adicionar">
+                          <PlusCircleIcon size={18} weight="bold"  />
+                          Salvar movimentação.
+                        </button>
+                      }
+                    />
               </div>
+
             </div>
 
             {/* LISTA DE MANUTENÇÕES */}
             <div className={styles.listaManutencoes}>
               <div className={styles.cabecalhoLista}>
                 <h3>Movimentações do dia</h3>
-                {manutencoes.length > 0 && (
+                {movimentacoes.length > 0 && (
+                  // Totais de manutenções positivas e negativas cadastradas.
                   <div className={styles.resumoMovimentacoes}>
                     <span className={styles.resumoEntrada}>
                       <ArrowUpIcon size={14} weight="bold" />
@@ -402,36 +484,31 @@ export default function FechamentoBalcao() {
                   </div>
                 )}
               </div>
-
-              {manutencoes.length === 0 ? (
+              {movimentacoes.length === 0 ? (
                 <div className={styles.listaVazia}>
                   <ReceiptIcon size={40} weight="duotone" className={styles.iconeVazio} />
                   <p>Nenhuma movimentação registrada ainda.</p>
                 </div>
               ) : (
                 <div className={styles.itensManutencao}>
-                  {manutencoes.map((m) => (
-                    <div key={m.id} className={`${styles.itemManutencao} ${styles[`item_${m.tipo.tipo}`]}`}>
+                  {movimentacoes.map((m) => (
+                    <div key={m.id} className={`${styles.itemManutencao} ${styles[`item_${m.tipo}`]}`}>
                       <div className={styles.itemIconeTipo}>
-                        {m.tipo.tipo === 'entrada'
+                        {m.tipo === 'entrada'
                           ? <ArrowUpIcon size={16} weight="bold" />
-                          : m.tipo.tipo === 'saida'
+                          : m.tipo === 'saida'
                           ? <ArrowDownIcon size={16} weight="bold" />
                           : <ReceiptIcon size={16} weight="bold" />}
                       </div>
                       <div className={styles.itemInfo}>
-                        <div className={styles.itemTopo}>
-                          <span className={styles.itemTipo}>{m.tipo.label}</span>
-                          <span className={styles.itemBalcao}>{m.balcao}</span>
-                        </div>
                         <p className={styles.itemDescricao}>{m.descricao}</p>
                         <div className={styles.itemRodape}>
                           <span className={styles.itemHora}>
                             <ClockIcon size={12} />
-                            {m.hora}
+                            {dataHoraFormatada(m.data)}
                           </span>
-                          <strong className={`${styles.itemValor} ${styles[`valor_${m.tipo.tipo}`]}`}>
-                            {m.tipo.tipo === 'saida' ? '- ' : '+ '}
+                          <strong className={`${styles.itemValor} ${styles[`valor_${m.tipo}`]}`}>
+                            {m.tipo === 'saida' ? '- ' : '+ '}
                             {formatarMoeda(m.valor)}
                           </strong>
                         </div>
@@ -455,7 +532,7 @@ export default function FechamentoBalcao() {
             </div>
 
           </div>
-          {/* fim colunaManutencao */}
+
 
         </div>
       </main>

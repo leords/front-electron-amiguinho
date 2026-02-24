@@ -11,7 +11,7 @@ export const criarFechamento = async (setor, dados) => {
 
   try {
     const resposta = await api.post(`/criar-fechamento/${setor}`, 
-      {dados} ,
+      dados,
       { 
         headers: { Authorization: `Bearer ${token}`},
       }
