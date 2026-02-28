@@ -14,21 +14,16 @@ export const buscarFormaPagamento = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    // sempre que é retorno da api = .data
+    console.log("resposta.data", resposta.data)
     return resposta.data;
+
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        //pegando o erro vindo do backend
-        error.response.data || "Erro ao buscar formas de pagamentos"
-      );
+      throw new Error(error.response.data || "Erro ao buscar formas de pagamentos");
     }
     if (error.request) {
-      // Requisição enviada, mas backend não respondeu
       throw new Error("Servidor não respondeu. Tente novamente.");
     }
-    // Erros internos (axios, rede, js, etc)
     throw new Error(error.message || "Erro inesperado");
   }
 };

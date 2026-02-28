@@ -1,0 +1,30 @@
+.loadingContainer {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #ffffff, #f5f7fa);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  z-index: 9998;
+}
+
+.logoAnimada {
+  width: 400px;
+  animation: pulse 5.1s ease-in-out infinite;
+}
+
+.loadingContainer p {
+  font-size: 16px;
+  z-index: 9999;
+  margin-top: -100px;
+  color: rgb(88, 88, 87);
+  margin-bottom: 10px;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+  100% { transform: scale(1); opacity: 1; }
+}

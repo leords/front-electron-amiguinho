@@ -41,7 +41,7 @@ export const AuthProvedor = ({ children }) => {
       nivelAcesso: credenciais.usuario.nivelAcesso,
     });
 
-    navegar("/menu");
+    navegar("/sincronizar");
   };
 
   const sair = () => {

@@ -9,6 +9,7 @@ import { AuthProvedor } from "../componentes/Context/authContext.jsx";
 import { ToastProvedor } from "../componentes/Context/toastContext.jsx";
 import Dashboard from "../paginas/Dashboard/index.jsx";
 import FechamentoBalcao from "../paginas/FechamentoBalcao/index.jsx";
+import Sincronizar from "../paginas/Sincronizar/index.jsx";
 
 export function Navegador() {
   return (
@@ -17,6 +18,7 @@ export function Navegador() {
         <ToastProvedor>
           <Routes>
             <Route path="/" element={<PaginaLogin />} />
+            <Route path="/sincronizar" element={<Sincronizar />} />
             <Route path="/menu" element={<Menu />} />
             <Route path="/historico" element={<Historico />} />
             <Route path="/venda" element={<Vendas />} />

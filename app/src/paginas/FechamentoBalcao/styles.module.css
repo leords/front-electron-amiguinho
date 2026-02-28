@@ -40,6 +40,11 @@
   flex-shrink: 0;
 }
 
+.iconeFinalizado {
+  color: #868079;
+  flex-shrink: 0;
+}
+
 .badgeData {
   margin-left: auto;
   background-color: #fff3e0;
@@ -244,8 +249,10 @@
 .maquininha {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: start;
+  padding-left: 30px;
 }
+  
 
 
 .entradaManual {
@@ -611,6 +618,37 @@
   color: #c92a2a;
 }
 
+.botaoFechar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 80px;
+  margin-bottom: 20px;
+}
+
+.botaoFechar button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 50px;
+  width: 65%;
+  border-radius: 8px;
+  color: white;
+  background-color: #2f9e44;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.botaoFechar button:hover {
+  background-color: #2b8a3e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(47, 158, 68, 0.3);
+}
+
 /* ============================================================
    RESPONSIVIDADE
    ============================================================ */
@@ -670,3 +708,4 @@
     width: 100%;
   }
 }
+

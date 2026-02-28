@@ -5,6 +5,7 @@ import styles from "./styles.module.css";
 import { authAPI } from "../../operadores/API/autenticacaoUsuario.js";
 import { usarAuth } from "../../componentes/Context/authContext.jsx";
 import { useState } from "react";
+import Spinner from "../../componentes/Spinner/index.jsx";
 
 export default function Login() {
   const [usuario, setUsuario] = useState("");
@@ -14,17 +15,27 @@ export default function Login() {
 
   const { login } = usarAuth();
 
-  //const navegar = useNavigate();
-
   async function iniciarLogin(event) {
     event.preventDefault();
+
+    setCarregamento(true)
+
+    const tempoMinimo = 2000
+    const inicio = Date.now() //pega data do inicio da execução
+
     try {
-      setCarregamento(true);
       const dadosUsuario = await authAPI({ usuario, senha });
+
+      const tempoPassado = Date.now() - inicio // pega data final da execução - a de inicio
+      const restante = tempoMinimo - tempoPassado // final - inicio
+
+      if(restante > 0) {
+        await new Promise(resolve => setTimeout(resolve, restante))
+      }
+
       login(dadosUsuario);
     } catch (error) {
       alert(error.message);
-    } finally {
       setCarregamento(false);
     }
   }
@@ -61,39 +72,45 @@ export default function Login() {
                 className={styles.logo}
               />
             </div>
+            {carragamento ? (
+              <Spinner />
+            ) : (
+              <form onSubmit={iniciarLogin}>
+                <div className={styles.formulario}>
+                  <input
+                    type="text"
+                    placeholder="Digite seu usuário"
+                    value={usuario || ""}
+                    onChange={(e) => setUsuario(e.target.value)}
+                    className={styles.input}
+                    required
+                  />
 
-            <form onSubmit={iniciarLogin}>
-              <div className={styles.formulario}>
-                <input
-                  type="text"
-                  placeholder="Digite seu usuário"
-                  value={usuario || ""}
-                  onChange={(e) => setUsuario(e.target.value)}
-                  className={styles.input}
-                  required
-                />
+                  <input
+                    type="password"
+                    placeholder="Digite sua senha"
+                    value={senha || ""}
+                    onChange={(e) => setSenha(e.target.value)}
+                    className={styles.input}
+                    required
+                  />
 
-                <input
-                  type="password"
-                  placeholder="Digite sua senha"
-                  value={senha || ""}
-                  onChange={(e) => setSenha(e.target.value)}
-                  className={styles.input}
-                  required
-                />
+                  <button type="submit" className={styles.botao}>
+                    Entrar
+                  </button>
+                  <p
+                    onClick={() => {
+                      setRender("email");
+                    }}
+                  >
+                    Esqueci minha senha
+                  </p>
+                </div>
+              </form>
+            )
+            }
 
-                <button type="submit" className={styles.botao}>
-                  Entrar
-                </button>
-                <p
-                  onClick={() => {
-                    setRender("email");
-                  }}
-                >
-                  Esqueci minha senha
-                </p>
-              </div>
-            </form>
+
           </div>
 
           {/* RODAPÉ */}
@@ -199,6 +216,7 @@ export default function Login() {
           </p>
         </div>
       )}
+
     </div>
   );
 }

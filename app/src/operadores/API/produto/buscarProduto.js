@@ -5,7 +5,7 @@ const api = axios.create({
   timeout: 5000,
 });
 
-export const BuscarProduto = async (params = {}) => {
+export const BuscarProduto = async () => {
   const token = localStorage.getItem("token");
 
   try {
@@ -14,10 +14,10 @@ export const BuscarProduto = async (params = {}) => {
         Authorization: `Bearer ${token}`,
       },
     });
-
+    
     return resposta.data;
   } catch (error) {
-    if (error.reponse) {
+    if (error.response) {
       throw new Error(error.response.data || "Erro ao buscar produtos");
     }
     if (error.request) {

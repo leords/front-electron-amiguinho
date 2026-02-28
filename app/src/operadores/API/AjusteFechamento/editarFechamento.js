@@ -5,15 +5,15 @@ const api = axios.create({
   timeout: 5000,
 });
 
-export const editarFechamento = async (id, status) => {
+export const editarFechamento = async (id, dados) => {
   const token = localStorage.getItem("token");
 
   try {
-    const resposta = await api.patch(`/editar-fechamento/${id}`, status, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const resposta = await api.patch(`/editar-fechamento/${id}`,
+      dados, 
+      {
+      headers: { Authorization: `Bearer ${token}` },
+      });
 
     return resposta.data;
   } catch (error) {

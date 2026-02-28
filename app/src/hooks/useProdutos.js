@@ -35,7 +35,7 @@ export function useProdutos() {
         const lista = await buscarProduto();
         setProduto(lista);
       } catch (error) {
-        setErro(e);
+        setErro(error);
       } finally {
         setCarregando(false);
       }
