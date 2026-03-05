@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000,
+  timeout: 20000,
 });
 
 export const buscarFormaPagamento = async () => {
@@ -14,10 +14,11 @@ export const buscarFormaPagamento = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("resposta.data", resposta.data)
+    console.log("Requisição de buscar formas de pagamento realizada!")
     return resposta.data;
 
   } catch (error) {
+    console.log("error", error)
     if (error.response) {
       throw new Error(error.response.data || "Erro ao buscar formas de pagamentos");
     }

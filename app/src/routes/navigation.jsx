@@ -10,6 +10,7 @@ import { ToastProvedor } from "../componentes/Context/toastContext.jsx";
 import Dashboard from "../paginas/Dashboard/index.jsx";
 import FechamentoBalcao from "../paginas/FechamentoBalcao/index.jsx";
 import Sincronizar from "../paginas/Sincronizar/index.jsx";
+import HistoricoValesInterno from "../paginas/HistoricoValesInterno/index.jsx";
 
 export function Navegador() {
   return (
@@ -26,6 +27,7 @@ export function Navegador() {
             <Route path="/reimprimir" element={<Reimprimir />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/fechar-balcao" element={<FechamentoBalcao />} />
+            <Route path="/vales-interno" element={<HistoricoValesInterno />} />
           </Routes>
         </ToastProvedor>
       </AuthProvedor>

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000,
+  timeout: 30000,
 });
 
 export const BuscarProduto = async () => {
@@ -15,6 +15,7 @@ export const BuscarProduto = async () => {
       },
     });
     
+    console.log("Requisição de buscar produtos realizada!")
     return resposta.data;
   } catch (error) {
     if (error.response) {

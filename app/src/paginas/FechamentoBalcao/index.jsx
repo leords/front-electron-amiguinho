@@ -71,7 +71,7 @@ export default function FechamentoBalcao() {
   const { mensagem, setMensagem } = usarToast();
 
   // --- Estado para determinar render de fechamento finalizado.
-  const {statusFechamento, setStatusFechamento} = useState(false)
+  const [statusFechamento, setStatusFechamento] = useState(false)
 
   // --- Estado da lista de manutenções ---
   const [movimentacoes, setMovimentacoes] = useState([]);
@@ -117,6 +117,7 @@ export default function FechamentoBalcao() {
         );
 
         console.log('Fechamento retornado: ', fechamentoBalcao)
+        console.log('Status fechamento: ', statusFechamento)
         
         setFechamentoAtual(fechamentoBalcao);
 
@@ -124,6 +125,7 @@ export default function FechamentoBalcao() {
       // Se não encontrar fechamento balcão, crie!
       if(fechamentoBalcao == null) {
         await criarFechamento('balcao', { vendedor: balcao.value })
+
         fechamentoBalcao = await buscarFechamentos(
           'balcao',
           {
@@ -307,8 +309,8 @@ export default function FechamentoBalcao() {
 
         {/* TÍTULO DA PÁGINA */}
         <div className={styles.tituloSection}>
-          <CalculatorIcon size={32} weight="duotone" className={styles.icone} />
-          <h1>Fechamento de Caixa</h1>
+            <CalculatorIcon size={32} weight="duotone" className={styles.icone} />
+            <h1>Fechamento de Caixa</h1>
           <span className={styles.badgeData}>
             {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
           </span>
@@ -325,7 +327,6 @@ export default function FechamentoBalcao() {
         </div>
 
         <div className={styles.containerLados}>
-          {  /* fechamentoAtual.status === 'aberto' */}
           {fechamentoAtual?.status === "aberto"
           
           ? 
@@ -333,6 +334,7 @@ export default function FechamentoBalcao() {
           <>
             {/* CONTADOR DE NOTAS */}
             <div className={styles.contador}>
+              <h1 className={styles.valoTotal} >Total de vendas: <strong>{formatarMoeda(vendaBalcao?.total ?? 0)}</strong> </h1>          
               <h1 className={styles.valorEsperado} >Valor esperado em dinheiro: <strong>{formatarMoeda(valorEsperado)}</strong> </h1>
               <div className={styles.cabecalhoContador}>
                 <h2>

@@ -29,9 +29,9 @@ export default function Vendas() {
   const { mensagem, setMensagem } = usarToast();
 
   const { produtos, carregando} = useProdutos();
-  const {
-    listaFormaPagamento
-  } = useFormaPagamento();
+
+  // WEB HOOK
+  const { listaFormaPagamento } = useFormaPagamento();
 
   if (!usuario) {
     window.location.href = "/";

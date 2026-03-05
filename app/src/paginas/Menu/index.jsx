@@ -3,7 +3,8 @@ import {
   ClockCounterClockwiseIcon,
   CoinsIcon,
   ChartLine,
-  CurrencyCircleDollar
+  CurrencyCircleDollar,
+  HandWithdrawIcon
 } from "@phosphor-icons/react";
 import MenuButton from "../../componentes/Botao/index";
 import mascote from "../../assets/mascote.png";
@@ -110,6 +111,15 @@ export default function Menu() {
             destino="/fechar-balcao"
             imagem={<CurrencyCircleDollar size={70} weight="duotone" />}
           />
+
+          <MenuButton
+            titulo="Vales internos"
+            descricao="Consultar historico de vales internos"
+            corBG="linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)"
+            destino="/vales-interno"
+            imagem={<HandWithdrawIcon size={70} weight="duotone" />}
+          />
+
         </div>
 
         {/* Mascote e mensagem do dia */}

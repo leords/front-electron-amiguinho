@@ -11,7 +11,7 @@ export default function Sincronizar() {
 
     useEffect(() => {
         async function sincronizar() {
-            const tempoMinimo = 20000;
+            const tempoMinimo = 10000;
             const inicio = Date.now(); //pega data do inicio da execução
 
             try {

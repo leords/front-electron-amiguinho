@@ -95,6 +95,22 @@
   gap: 10px;
 }
 
+.valoTotal {
+    font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  text-align: center;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 8px;
+
+  background-color: #f7f6f6;
+}
+
+.valoTotal strong {
+  color: #f75409
+}
+
 .valorEsperado {
   font-size: 22px;
   font-weight: 600;
