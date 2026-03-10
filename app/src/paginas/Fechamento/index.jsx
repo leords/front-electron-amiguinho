@@ -14,6 +14,7 @@ import {
 import { buscarFechamentoBalcao } from "../../operadores/API/fechamento/buscarFechamentoBalcao";
 import { dataFormatadaCalendario } from "../../utils/data";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
+import { formatarMoeda } from "../../utils/formartarMoeda";
 
 export default function Fechamento() {
   const [duzentos, setDuzentos] = useState(0);
@@ -23,7 +24,6 @@ export default function Fechamento() {
   const [dez, setDez] = useState(0);
   const [cinco, setCinco] = useState(0);
   const [dois, setDois] = useState(0);
-  const [nomeMaquina, setNomeMaquina] = useState("");
   // já criei o state desta forma para evitar usar .? nas variaveis.
   const [vendaDia, setVendaDia] = useState({
     total: 0,
@@ -35,34 +35,24 @@ export default function Fechamento() {
     },
   });
 
-  // Carregar nome da maquina que vem de .env
-  useEffect(() => {
-    async function carregarMaquina() {
-      const nome = await window.ENV.pegarNomeMaquina();
-      setNomeMaquina(nome);
-    }
 
-    carregarMaquina();
-  }, []);
-
-  // AQUI PRECISA CONFIGURAR O VENDEDOR COMO VENDEDOR QUE ESTA SALVO NO .ENV
+  // BUSCA FECHAMENTO DO BALCAO.
   useEffect(() => {
     const dataFormatada = dataFormatadaCalendario();
-
+    // vendedor do balcão é fixo no .env
+    const nome = import.meta.env.VITE_NOME_MAQUINA;
+  
     const buscarVendasDia = async () => {
       const dados = await buscarFechamentoBalcao({
         data: dataFormatada,
-        vendedor: "b1", //AQUI
+        vendedor: nome, 
       });
       setVendaDia(dados);
     };
     buscarVendasDia();
   }, []);
 
-  useEffect(() => {
-    console.log("dados", vendaDia);
-  }, [vendaDia]);
-
+  //LIMPAR INPUT DE NOTAS
   const limpar = () => {
     const confirmar = window.confirm(
       "Deseja limpar todos os valores do contador?"
@@ -184,10 +174,7 @@ export default function Fechamento() {
               <div className={styles.totalContado}>
                 <span>Total Contado:</span>
                 <strong>
-                  {totalContado.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+                  {formatarMoeda(totalContado)}
                 </strong>
               </div>
             </div>
@@ -198,10 +185,7 @@ export default function Fechamento() {
                 <div className={styles.linhaConferencia}>
                   <span>Dinheiro esperado:</span>
                   <span className={styles.valorEsperado}>
-                    {vendaDia.resultado.a_vista?.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
+                    {formatarMoeda(vendaDia.resultado?.a_vista)}
                   </span>
                 </div>
                 <div className={styles.linhaConferencia}>
@@ -215,10 +199,7 @@ export default function Fechamento() {
                         : styles.valorNegativo
                     }
                   >
-                    {Math.abs(diferenca).toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
+                    {formatarMoeda(Math.abs(diferenca))}
                     {diferenca > 0 && " (sobra)"}
                     {diferenca < 0 && " (falta)"}
                   </span>

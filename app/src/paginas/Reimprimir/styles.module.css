@@ -78,6 +78,30 @@
   margin: 0;
 }
 
+.botaoVoltar { 
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #f02020;
+  color: #f0f0f0;
+  transition: all 0.3s;
+}
+
+.botaoVoltar:hover {
+  background: #fd1c1c;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+
+  font-size: 14px;
+}
+
 .badge {
   background: #ff9800;
   color: white;

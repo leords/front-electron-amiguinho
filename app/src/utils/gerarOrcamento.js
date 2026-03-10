@@ -1,4 +1,5 @@
 import { dataHoraFormatada } from "./data.js";
+import { formatarMoeda } from "./formartarMoeda.js";
 
 export function gerarOrcamento(dados) {
   // Chamando a função para data conforme a solitação.
@@ -7,13 +8,6 @@ export function gerarOrcamento(dados) {
       ? dataHoraFormatada(dados.data)
       : dataHoraFormatada();
 
-  // Função para formatar valor em Real.
-  function formatarValor(valor) {
-    return valor.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-  }
 
   // Calcular total da lista de produtos.
   let totalGeral = 0;
@@ -22,7 +16,7 @@ export function gerarOrcamento(dados) {
   });
 
   // Formatando valor total.
-  const valorTotalFormatado = formatarValor(totalGeral);
+  const valorTotalFormatado = formatarMoeda(totalGeral);
 
   // Gerar HTML dos itens
   let itensHTML = "";
@@ -33,8 +27,8 @@ export function gerarOrcamento(dados) {
       <div class="item">
         <p>${item.quantidade}</p>
         <p>${item.nome}</p>
-        <p>${formatarValor(Number(item.valorUnit))}</p>
-        <p>${formatarValor(valorTotal)}</p>
+        <p>${formatarMoeda(Number(item.valorUnit))}</p>
+        <p>${formatarMoeda(valorTotal)}</p>
       </div>
     `;
   });

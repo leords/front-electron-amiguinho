@@ -13,6 +13,7 @@ import {
   FileTextIcon,
 } from "@phosphor-icons/react";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
+import { formatarMoeda } from "../../utils/formartarMoeda";
 
 export default function Historico() {
   const [dataAtual, setDataAtual] = useState("");
@@ -30,6 +31,7 @@ export default function Historico() {
     };
     inicializarData();
   }, []);
+
 
   // Filtra pedidos conforme a data selecionada
   useEffect(() => {
@@ -58,6 +60,7 @@ export default function Historico() {
     filtrarPedidos();
   }, [dataAtual, nomeMaquina]);
 
+
   // Calcular total do cupom
   useEffect(() => {
     // Calcula totais
@@ -73,17 +76,16 @@ export default function Historico() {
     setTotalVendas(total);
   }, [pedidosFiltrados]);
 
-  // Apenas para listar. //TESTANDO
-  useEffect(() => {
-    console.log("Pedidos filtrados", pedidosFiltrados);
-  }, [pedidosFiltrados]);
 
+  //Seta nova data do input no state
   const tratarAlteracao = (e) => {
     const novaData = e.target.value;
     setDataAtual(novaData);
   };
 
-  const limparFiltro = () => {
+
+  //Seta dia atual no input e no state
+  const setarHoje = () => {
     const hoje = dataFormatadaCalendario();
     setDataAtual(hoje);
   };
@@ -116,7 +118,7 @@ export default function Historico() {
                 />
                 <button
                   className={styles.botaoLimpar}
-                  onClick={limparFiltro}
+                  onClick={setarHoje}
                   title="Voltar para hoje"
                 >
                   Hoje
@@ -128,6 +130,7 @@ export default function Historico() {
 
         {/* Cards de resumo */}
         <div className={styles.resumoCards}>
+
           {/* Total pedidos */}
           <div className={styles.card}>
             <div className={styles.cardHeader}>
@@ -141,6 +144,7 @@ export default function Historico() {
               {pedidosFiltrados.length === 1 ? "pedido" : "pedidos"} no dia
             </span>
           </div>
+
           {/* Total em vendas */}
           <div className={styles.card}>
             <div className={styles.cardHeader}>
@@ -150,10 +154,7 @@ export default function Historico() {
               </div>
             </div>
             <p className={styles.cardValor}>
-              {totalVendas.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
+              {formatarMoeda(totalVendas)}
             </p>
             <span className={styles.cardSubtitulo}>faturamento do dia</span>
           </div>

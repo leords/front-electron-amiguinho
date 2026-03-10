@@ -5,18 +5,23 @@ import logo from "../../assets/logo.jpg";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { useProdutos } from "../../hooks/useProdutos";
-import { useEffect, useState } from "react";
 import { gerarCupom } from "../../utils/gerarCupom";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
+import { formatarMoeda } from "../../utils/formartarMoeda";
+import { ArrowCircleLeftIcon } from "@phosphor-icons/react";
 
 export default function Reimprimir() {
-  const [nomeProduto, setNomeProduto] = useState("");
   const { state } = useLocation();
   const navegar = useNavigate();
 
-  const { carregando, produtos } = useProdutos();
+  const { produtos } = useProdutos();
 
   const cupom = state;
+
+  const handleVoltar = () => {
+    navegar(-1);
+  };
+
 
   const handleImprimirSegundaVia = async () => {
     //CRIAR CUPOM FORMATADO PRA IMPRESSÃO!
@@ -57,6 +62,7 @@ export default function Reimprimir() {
           <div className={styles.containerLista}>
             <div className={styles.cupomFiscal}>
               <div className={styles.cupomHeader}>
+                <button className={styles.botaoVoltar} onClick={handleVoltar} > < ArrowCircleLeftIcon size={22} weight="regular"/> voltar</button>
                 <h2>SEGUNDA VIA DA NOTA</h2>
                 <span className={styles.badge}>{cupom.itens.length} items</span>
               </div>
@@ -79,16 +85,10 @@ export default function Reimprimir() {
                           "Produto não encontrado"}
                       </span>
                       <span>
-                        {item.valorUnit.toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
+                        {formatarMoeda(item.valorUnit)}
                       </span>
                       <span>
-                        {item.valorTotal.toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
+                        {formatarMoeda(item.valorTotal)}
                       </span>
                       <span></span>
                     </div>
@@ -111,20 +111,14 @@ export default function Reimprimir() {
                   <span>Subtotal:</span>
                   <span>
                     {" "}
-                    {cupom.total.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
+                    {formatarMoeda(cupom.total)}
                   </span>
                 </div>
                 <div className={styles.totalFinal}>
                   <span>TOTAL:</span>
                   <span className={styles.valorTotal}>
                     R${" "}
-                    {cupom.total.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
+                    {formatarMoeda(cupom.total)}
                   </span>
                 </div>
               </div>

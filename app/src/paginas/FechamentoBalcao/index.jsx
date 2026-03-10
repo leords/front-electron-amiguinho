@@ -114,11 +114,7 @@ export default function FechamentoBalcao() {
             data: dataFormatada,
             vendedor: balcao.value,
           }
-        );
-
-        console.log('Fechamento retornado: ', fechamentoBalcao)
-        console.log('Status fechamento: ', statusFechamento)
-        
+        );        
         setFechamentoAtual(fechamentoBalcao);
 
         
@@ -155,8 +151,6 @@ export default function FechamentoBalcao() {
         const listaMovimentacoes = await buscarMovimentacao(
           fechamentoAtual.id
         );
-
-        console.log('Movimentações: ', listaMovimentacoes)
 
         setMovimentacoes(listaMovimentacoes); 
         
@@ -244,8 +238,6 @@ export default function FechamentoBalcao() {
       totalSistema: vendaBalcao?.resultado?.a_vista ?? 0,
       totalInformado: totalContado ?? 0
     }
-
-    console.log("dados: ", dados)
 
       try {
         await editarFechamento(fechamentoAtual.id, dados)

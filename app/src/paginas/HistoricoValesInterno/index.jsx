@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { useFormaPagamento } from "../../hooks/useFormaPagamento";
+import { formatarMoeda } from "../../utils/formartarMoeda";
 
 export default function HistoricoValesInterno() {
   const [dataInicio, setDataInicio] = useState("");
@@ -23,19 +24,19 @@ export default function HistoricoValesInterno() {
   const [carregando, setCarregando] = useState(false);
   const [totalVendas, setTotalVendas] = useState(0);
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
-  const [formaPagamento, setFormaPagamento] = useState(1);
+  const [formaPagamento, setFormaPagamento] = useState();
   const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
 
-    const {
-      listaFormaPagamento
-    } = useFormaPagamento();
+  const {
+    listaFormaPagamento
+  } = useFormaPagamento();
 
     // filtrando apenas nomes para listar vales internos.
     const ignorarItensLista = ['A VISTA', 'PIX', 'CARTÃO'];
     const listaFormasPagamentoFiltrada = listaFormaPagamento?.filter(forma => !ignorarItensLista.includes(forma.nome));
 
 
-  // Inicializa a data final com a data atual
+  // Inicializa a data final com a data atual.
   useEffect(() => {
     const inicializarData = async () => {
       const hoje = dataFormatadaCalendario();
@@ -45,7 +46,7 @@ export default function HistoricoValesInterno() {
     inicializarData();
   }, []);
 
-  // Filtra pedidos conforme a data selecionada
+  // Filtra pedidos conforme a data selecionada.
   useEffect(() => {
 
     if (!dataInicio || !dataFim ) return;
@@ -54,16 +55,19 @@ export default function HistoricoValesInterno() {
       setCarregando(true);
 
       try {
-        const resultado = await buscarPedido({
-          setor: "balcao",
-          vendedor: nomeMaquina,
-          dataInicio: dataInicio,
-          dataFim: dataFim,
-          formaPagamentoId: formaPagamento,
-          //formaPagamentoId
+        // valido formaPagamento para não fazer chamada na API undefined
+        if(formaPagamento) {
+          const resultado = await buscarPedido({
+            setor: "balcao",
+            vendedor: nomeMaquina,
+            dataInicio: dataInicio,
+            dataFim: dataFim,
+            formaPagamentoId: formaPagamento,
         });
 
         setPedidosFiltrados(resultado);
+        }
+
       } catch (error) {
         console.error("Erro ao filtrar pedidos:", error);
         alert("Erro ao buscar pedidos. Tente novamente.");
@@ -75,7 +79,7 @@ export default function HistoricoValesInterno() {
     filtrarPedidos();
   }, [dataInicio, dataFim, formaPagamento]);
 
-  // Calcular total do cupom
+  // Calcular total do cupom.
   useEffect(() => {
     // Calcula totais
     const total = pedidosFiltrados.reduce((acc, pedido) => {
@@ -90,27 +94,19 @@ export default function HistoricoValesInterno() {
     setTotalVendas(total);
   }, [pedidosFiltrados]);
 
-  // Apenas para listar. //TESTANDO
-  useEffect(() => {
-    console.log("Pedidos filtrados", pedidosFiltrados);
-  }, [pedidosFiltrados]);
-
-
-    // trata a alteração da data inicial
+  // Trata a alteração da data inicial.
   const tratarAlteracaoDataInicio = (e) => {
     const novaData = e.target.value;
     setDataInicio(novaData);
-
-    console.log('Tratar Inicio')
   };
 
-  // trata a alteração da data final
+  // Trata a alteração da data final.
   const tratarAlteracaoDataFim = (e) => {
     const novaData = e.target.value;
     setDataFim(novaData);
   };
 
-  // butão que seta a data atual como dataFim no filtro
+  // Botão que seta a data atual como dataFim no filtro.
   const setarHojeDataFimAutomatico = () => {
     const hoje = dataFormatadaCalendario();
     setDataFim(hoje);
@@ -123,8 +119,9 @@ export default function HistoricoValesInterno() {
       <main className={styles.principal}>
         {/* Cabeçalho com título e filtros */}
         <div className={styles.cabecalhoPage}>
+        
           <div className={styles.tituloSection}>
-            <NotepadIcon size={40} weight="duotone" className={styles.icone} />
+            <NotepadIcon  size={40} weight="duotone" className={styles.icone} />
             <h1 className={styles.menuTitulo}>Histórico de vales interno</h1>
           </div>
 
@@ -135,6 +132,7 @@ export default function HistoricoValesInterno() {
               {/* SELECIONAR FORMA DE PAGAMENTO. */}
               <select
                 value={formaPagamento}
+                
                 onChange={(e) => {
                   const id = e.target.value;
 
@@ -183,11 +181,11 @@ export default function HistoricoValesInterno() {
                 >
                   Hoje
                 </button>
-
               </div>
 
             </div>
           </div>
+          
         </div>
 
         {/* Cards de resumo */}
@@ -214,10 +212,7 @@ export default function HistoricoValesInterno() {
               </div>
             </div>
             <p className={styles.cardValor}>
-              {totalVendas.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
+              {formatarMoeda(totalVendas)}
             </p>
             <span className={styles.cardSubtitulo}>Valor total em vales internos.</span>
           </div>

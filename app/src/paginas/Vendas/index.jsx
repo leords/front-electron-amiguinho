@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Select from "react-select";
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
@@ -14,6 +14,7 @@ import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { gerarOrcamento } from "../../utils/gerarOrcamento";
+import { formatarMoeda } from "../../utils/formartarMoeda";
 
 export default function Vendas() {
   const [nome, setNome] = useState("");
@@ -24,6 +25,7 @@ export default function Vendas() {
   const [abrirOpcaoNome, setAbrirOpcaoNome] = useState(false);
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
   const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
+  const inputProduto = useRef(null);
 
   const { usuario } = usarAuth();
   const { mensagem, setMensagem } = usarToast();
@@ -36,6 +38,24 @@ export default function Vendas() {
   if (!usuario) {
     window.location.href = "/";
   }
+
+  // função para auxiliar no UX, alterar o input após o enter
+  const handleEnter = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      const form = e.target.form;
+      const elements = Array.from(
+        document.querySelectorAll("input:not([data-skip-enter])")
+      );
+
+      const index = elements.indexOf(e.target);
+
+      form.elements[index + 1]?.focus();
+    }
+  };
+
+
   // criando a lista de opções a partir de produtos
   const options = produtos.map((p) => ({
     value: p.id,
@@ -64,8 +84,11 @@ export default function Vendas() {
           ? { ...i, quantidade: i.quantidade + quantidade }
           : i
       );
+
+       inputProduto.current.focus();
     } else {
       novoCupom = [...cupom, { ...produtoSelecionado, quantidade }];
+       inputProduto.current.focus();
     }
 
     setCupom(novoCupom);
@@ -182,96 +205,98 @@ export default function Vendas() {
         {/* LADO ESQUERDO - ADICIONAR PRODUTOS */}
         <div className={styles.containerContador}>
           <h1>Nova Venda</h1>
+          <form>
+            <div className={styles.contador}>
+              <h1>Adicionar Produto</h1>
+              <div className={styles.formulario}>
+                {/* SELECIONAR PRODUTO */}
+                {carregando ? (
+                  <p>Carregando...</p>
+                ) : (
+                  <div className={styles.campo}>
+                    <label>Produto</label>
+                    <Select
+                      ref={inputProduto}
+                      classNamePrefix="custom"
+                      options={options}
+                      value={
+                        options.find(
+                          (opt) => opt.value === produtoSelecionado?.id
+                        ) || null
+                      }
+                      onChange={(opt) =>
+                        setProdutoSelecionado(
+                          produtos.find((p) => p.id === opt.value)
+                        )
+                      }
+                      placeholder="Selecione ou digite..."
+                      isSearchable
+                      noOptionsMessage={() => "Nenhum produto encontrado"}
+                      onKeyDown={handleEnter}
+                    />
+                  </div>
+                )}
 
-          <div className={styles.contador}>
-            <h1>Adicionar Produto</h1>
-            <div className={styles.formulario}>
-              {/* SELECIONAR PRODUTO */}
-              {carregando ? (
-                <p>Carregando...</p>
-              ) : (
+                {/* LINHA COM QUANTIDADE E PREÇO */}
+                <div className={styles.linha}>
+                  <div className={styles.campoMetade}>
+                    <label>Quantidade</label>
+                    <input
+                      type="number"
+                      value={quantidade}
+                      onChange={(e) => {
+                        const valor = parseInt(e.target.value) || 1;
+                        setQuantidade(valor > 0 ? valor : 1);
+                      }}
+                      min="1"
+                    />
+                  </div>
+
+                  <div className={styles.campoMetade}>
+                    <label>Preço unitário</label>
+                    <input
+                      type="text"
+                      value={
+                        produtoSelecionado
+                          ? `R$ ${Number(
+                              produtoSelecionado.precoUndVenda || 0
+                            ).toFixed(2)}`
+                          : "R$ 0,00"
+                      }
+                      readOnly
+                    />
+                  </div>
+                </div>
+
+                {/* TOTAL DO PRODUTO */}
                 <div className={styles.campo}>
-                  <label>Produto</label>
-                  <Select
-                    classNamePrefix="custom"
-                    options={options}
-                    value={
-                      options.find(
-                        (opt) => opt.value === produtoSelecionado?.id
-                      ) || null
-                    }
-                    onChange={(opt) =>
-                      setProdutoSelecionado(
-                        produtos.find((p) => p.id === opt.value)
-                      )
-                    }
-                    placeholder="Selecione ou digite..."
-                    isSearchable
-                    noOptionsMessage={() => "Nenhum produto encontrado"}
-                  />
-                </div>
-              )}
-
-              {/* LINHA COM QUANTIDADE E PREÇO */}
-              <div className={styles.linha}>
-                <div className={styles.campoMetade}>
-                  <label>Quantidade</label>
-                  <input
-                    type="number"
-                    value={quantidade}
-                    onChange={(e) => {
-                      const valor = parseInt(e.target.value) || 1;
-                      setQuantidade(valor > 0 ? valor : 1);
-                    }}
-                    min="1"
-                  />
-                </div>
-
-                <div className={styles.campoMetade}>
-                  <label>Preço unitário</label>
+                  <label>Total do produto</label>
                   <input
                     type="text"
+                    className={styles.inputTotal}
                     value={
                       produtoSelecionado
-                        ? `R$ ${Number(
-                            produtoSelecionado.precoUndVenda || 0
-                          ).toFixed(2)}`
+                        ? `R$ ${totalProduto(
+                            produtoSelecionado.precoUndVenda,
+                            quantidade
+                          )}`
                         : "R$ 0,00"
                     }
                     readOnly
                   />
                 </div>
-              </div>
 
-              {/* TOTAL DO PRODUTO */}
-              <div className={styles.campo}>
-                <label>Total do produto</label>
-                <input
-                  type="text"
-                  className={styles.inputTotal}
-                  value={
-                    produtoSelecionado
-                      ? `R$ ${totalProduto(
-                          produtoSelecionado.precoUndVenda,
-                          quantidade
-                        )}`
-                      : "R$ 0,00"
-                  }
-                  readOnly
-                />
+                {/* BOTÃO ADICIONAR */}
+                <button
+                  className={styles.botaoAdicionar}
+                  onClick={handleAddProduto}
+                  disabled={!produtoSelecionado}
+                >
+                  Adicionar ao Cupom
+                </button>
               </div>
-
-              {/* BOTÃO ADICIONAR */}
-              <button
-                className={styles.botaoAdicionar}
-                onClick={handleAddProduto}
-                disabled={!produtoSelecionado}
-              >
-                Adicionar ao Cupom
-              </button>
             </div>
-          </div>
-
+           </form>         
           {/* MASCOTE */}
           <div className={styles.mascote}>
             <img
@@ -352,19 +377,13 @@ export default function Vendas() {
               <div className={styles.linhaTotal}>
                 <span>Subtotal:</span>
                 <strong>
-                  {parseFloat(totalPedido).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+                  {formatarMoeda(totalPedido)}
                 </strong>
               </div>
               <div className={`${styles.linhaTotal} ${styles.totalFinal}`}>
                 <span>TOTAL:</span>
                 <strong>
-                  {parseFloat(totalPedido).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+                  {formatarMoeda(totalPedido)}
                 </strong>
               </div>
             </div>

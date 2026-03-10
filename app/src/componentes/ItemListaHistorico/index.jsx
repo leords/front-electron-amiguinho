@@ -1,4 +1,5 @@
-import { dataFormatada, dataHoraFormatada } from "../../utils/data";
+import { dataHoraFormatada } from "../../utils/data";
+import { formatarMoeda } from "../../utils/formartarMoeda";
 import styles from "./styles.module.css";
 import { useNavigate } from "react-router-dom";
 
@@ -20,10 +21,7 @@ export default function PedidoHistorico({ pedidos }) {
               <td>{dataHoraFormatada(pedido.data)}</td>
               <td>{`${pedido.vendedor} - ${pedido.nomeUsuario}`}</td>
               <td>
-                {pedido.total.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
+                {formatarMoeda(pedido.total)}
               </td>
               <td>{pedido.formaPagamento.nome}</td>
             </tr>
