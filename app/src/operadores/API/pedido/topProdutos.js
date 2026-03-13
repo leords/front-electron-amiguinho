@@ -5,7 +5,7 @@ const api = axios.create({
     timeout: 5000
     });
 
-// :setor, dataInicio(2025-12-12), dataFim(2025-12-12), quantidade(3)
+
 export const TopProdutos = async (setor, params = {}) => {
     const token = localStorage.getItem("token");
 

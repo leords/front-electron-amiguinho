@@ -17,7 +17,7 @@ export function useProdutos() {
           return json;
         }
       } catch (e) {
-        console.warn("JSON inválido no storage, limpando");
+        console.warn("JSON inválido no storage, limpando", e);
         localStorage.removeItem("produtos");
       }
     }

@@ -1,0 +1,107 @@
+/* ── react-select: custom theme ── */
+
+.custom__control {
+  width: 100%;
+  min-height: 38px !important;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+
+  border-radius: 8px !important;
+  border: 1px solid #dee2e6 !important;
+  box-shadow: none !important;
+  background-color: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.custom__control:hover {
+  border-color: #adb5bd !important;
+}
+
+.custom__control--is-focused {
+  border-color: #ff8c00 !important;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12) !important;
+}
+
+/* Placeholder */
+.custom__placeholder {
+  color: #adb5bd;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Valor selecionado */
+.custom__single-value {
+  color: #1a1f2e;
+  font-weight: 500;
+}
+
+/* Dropdown menu */
+.custom__menu {
+  border-radius: 10px !important;
+  border: 1px solid #e9ecef !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden;
+  margin-top: 4px !important;
+}
+
+.custom__menu-list {
+  padding: 4px !important;
+}
+
+/* Opções */
+.custom__option {
+  font-size: 14px;
+  font-weight: 400;
+  color: #495057;
+  border-radius: 6px;
+  padding: 9px 12px !important;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.custom__option--is-focused {
+  background-color: #fff3e0 !important;
+  color: #ff8c00 !important;
+}
+
+.custom__option--is-selected {
+  background-color: #ff8c00 !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* Botão de limpar (x) */
+.custom__clear-indicator {
+  color: #adb5bd;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.custom__clear-indicator:hover {
+  color: #f03e3e;
+}
+
+/* Seta do dropdown */
+.custom__dropdown-indicator {
+  color: #adb5bd;
+  transition: color 0.2s;
+}
+
+.custom__control:hover .custom__dropdown-indicator {
+  color: #495057;
+}
+
+/* Separador */
+.custom__indicator-separator {
+  background-color: #e9ecef !important;
+}
+
+/* Sem opções */
+.custom__no-options-message {
+  font-size: 13px;
+  color: #adb5bd;
+  text-align: center;
+  padding: 16px !important;
+}

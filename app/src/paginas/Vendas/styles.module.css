@@ -1,471 +1,529 @@
+/* ============================================================
+   VARIÁVEIS
+   ============================================================ */
+:root {
+  --orange:       #ff8c00;
+  --orange-light: #fff3e0;
+  --orange-mid:   #ffd699;
+  --green:        #2f9e44;
+  --green-light:  #ebfbee;
+  --red:          #c92a2a;
+  --red-light:    #fff5f5;
+  --red-mid:      #ffc9c9;
+  --gray-900:     #1a1f2e;
+  --gray-700:     #495057;
+  --gray-500:     #868e96;
+  --gray-300:     #dee2e6;
+  --gray-100:     #f8f9fa;
+  --white:        #ffffff;
+  --border:       #eaecef;
+  --shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
+  --shadow-md:    0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06);
+  --radius:       14px;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
 .container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background: #f2f4f7;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .main {
   flex: 1;
   display: flex;
-  flex-direction: row;
-  gap: 30px;
-  max-width: 1400px;
+  gap: 22px;
+  max-width: 1360px;
   width: 100%;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 32px 28px 56px;
+  align-items: flex-start;
 }
 
-/* LADO ESQUERDO - ADICIONAR PRODUTOS */
-.containerContador {
+/* ============================================================
+   COLUNAS
+   ============================================================ */
+.colunaEsquerda {
+  width: 420px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.colunaDireita {
   flex: 1;
-  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
 }
 
-.containerContador > h1 {
-  color: #2c3e50;
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 20px;
+/* ============================================================
+   CABEÇALHO
+   ============================================================ */
+.cabecalhoPage {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-.contador {
-  background-color: white;
+.iconeWrapper {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #ff8c00, #ffb347);
   border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(255,140,0,0.35);
+  flex-shrink: 0;
 }
 
-.contador > h1 {
-  font-size: 20px;
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 25px;
-  text-align: center;
+.pageSubtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 2px;
 }
 
+.pageTitulo {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.cardAdicionar,
+.cardCupom,
+.cardResumo {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 22px 24px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid #f1f3f5;
+}
+
+.cardHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardHeaderTitle h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.cardHeaderIcon { color: var(--orange); }
+
+.badge {
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1px solid var(--orange-mid);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ============================================================
+   FORMULÁRIO
+   ============================================================ */
 .formulario {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .campo {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.campo label {
+.label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input {
+  padding: 10px 12px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #495057;
-}
-
-.campo input,
-.campo select {
-  padding: 12px 16px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 15px;
+  background: var(--white);
+  color: var(--gray-700);
   transition: all 0.2s;
-  background-color: white;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.campo input:focus {
+.input:hover { border-color: #adb5bd; }
+.input:focus {
   outline: none;
-  border-color: #ff8c00;
-  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255,140,0,0.12);
 }
 
-.campo input[readonly] {
-  background-color: #f8f9fa;
+.inputReadonly {
+  background: var(--gray-100) !important;
+  color: var(--gray-500) !important;
   cursor: not-allowed;
-  color: #6c757d;
+}
+
+.inputReadonly:hover { border-color: var(--gray-300) !important; }
+.inputReadonly:focus { border-color: var(--gray-300) !important; box-shadow: none !important; }
+
+.inputTotal {
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  color: var(--green) !important;
+  background: var(--green-light) !important;
+  border-color: #8ce99a !important;
 }
 
 .linha {
   display: flex;
-  gap: 15px;
-}
-
-.campoNome {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 18px;
-  padding-bottom: 30px;
-  border-bottom: 2px solid #f1f3f5;
-}
-
-.campoNome label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #495057;
-}
-
-.campoNome input {
-  padding: 12px 16px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 200;
+  gap: 12px;
 }
 
 .campoMetade {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 6px;
+}
+
+/* React Select */
+:global(.custom__control) {
+  border: 1.5px solid var(--gray-300) !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  min-height: 42px !important;
+  box-shadow: none !important;
+  transition: all 0.2s !important;
+}
+
+:global(.custom__control:hover) {
+  border-color: #adb5bd !important;
+}
+
+:global(.custom__control--is-focused) {
+  border-color: var(--orange) !important;
+  box-shadow: 0 0 0 3px rgba(255,140,0,0.12) !important;
+}
+
+:global(.custom__option) {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
+:global(.custom__option--is-focused) {
+  background-color: var(--orange-light) !important;
+  color: var(--gray-900) !important;
+}
+
+:global(.custom__option--is-selected) {
+  background-color: var(--orange) !important;
+  color: white !important;
+}
+
+.carregandoProduto {
+  display: flex;
+  align-items: center;
   gap: 8px;
-}
-
-.campoMetade label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #495057;
-}
-
-.campoMetade input {
-  padding: 12px 16px;
-  border: 1px solid #dee2e6;
+  padding: 10px 12px;
+  background: var(--gray-100);
+  border: 1.5px solid var(--border);
   border-radius: 8px;
-  font-size: 15px;
-  transition: all 0.2s;
+  font-size: 13px;
+  color: var(--gray-500);
 }
 
-.campoMetade input:focus {
-  outline: none;
-  border-color: #ff8c00;
-  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-}
+.spinnerIcon { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.campoMetade input[readonly] {
-  background-color: #f8f9fa;
-  cursor: not-allowed;
-  color: #6c757d;
-}
-
-.inputTotal {
-  font-weight: 600;
-  font-size: 16px !important;
-  color: #28a745 !important;
-}
-
+/* ============================================================
+   BOTÃO ADICIONAR
+   ============================================================ */
 .botaoAdicionar {
-  margin-top: 10px;
-  padding: 14px 24px;
-  background-color: #ff8c00;
-  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--orange);
+  color: var(--white);
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255,140,0,0.25);
 }
 
 .botaoAdicionar:hover:not(:disabled) {
-  background-color: #e07b00;
+  background: #e07b00;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
-}
-
-.botaoAdicionar:active:not(:disabled) {
-  transform: translateY(0);
+  box-shadow: 0 4px 14px rgba(255,140,0,0.35);
 }
 
 .botaoAdicionar:disabled {
-  background-color: #dee2e6;
+  background: var(--gray-300);
+  color: var(--gray-500);
   cursor: not-allowed;
-  color: #6c757d;
+  box-shadow: none;
 }
 
-/* LADO DIREITO - CUPOM E RESUMO */
-.containerTotal {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-width: 650px;
-}
-
-.cupomContainer {
-  background-color: white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  min-height: 400px;
-}
-
-.cupomHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #f1f3f5;
-}
-
-.cupomHeader h2 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-}
-
-.badge {
-  background-color: #ff8c00;
-  color: white;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
+/* ============================================================
+   CUPOM — LISTA
+   ============================================================ */
 .lista {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: 350px;
+  gap: 10px;
+  max-height: 340px;
   overflow-y: auto;
-  padding-right: 8px;
+  padding-right: 4px;
 }
 
-.lista::-webkit-scrollbar {
-  width: 6px;
-}
-
-.lista::-webkit-scrollbar-track {
-  background: #f1f3f5;
-  border-radius: 10px;
-}
-
-.lista::-webkit-scrollbar-thumb {
-  background: #dee2e6;
-  border-radius: 10px;
-}
-
-.lista::-webkit-scrollbar-thumb:hover {
-  background: #adb5bd;
-}
+.lista::-webkit-scrollbar { width: 4px; }
+.lista::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 4px; }
+.lista::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
 
 .listaVazia {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
+  padding: 48px 20px;
   text-align: center;
+  gap: 8px;
 }
 
+.iconeVazio { color: var(--gray-300); }
+
 .listaVazia p {
-  color: #6c757d;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-500);
   margin: 0;
 }
 
-.textoSecundario {
-  font-size: 14px !important;
-  color: #adb5bd !important;
-  margin-top: 8px !important;
+.listaVazia span {
+  font-size: 13px;
+  color: var(--gray-300);
 }
 
-/* RESUMO */
-.resumo {
-  background-color: white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+/* ============================================================
+   RESUMO
+   ============================================================ */
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+
+.campoNome {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid #f1f3f5;
 }
 
 .totais {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #f1f3f5;
+  gap: 10px;
+  padding-bottom: 18px;
+  border-bottom: 1.5px solid #f1f3f5;
+  margin-bottom: 18px;
 }
 
 .linhaTotal {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 15px;
+  font-size: 14px;
 }
 
-.linhaTotal span {
-  color: #6c757d;
-}
-
-.linhaTotal strong {
-  color: #2c3e50;
-  font-weight: 600;
-}
+.linhaTotal span { color: var(--gray-500); }
+.linhaTotal strong { color: var(--gray-900); font-weight: 600; }
 
 .totalFinal {
-  font-size: 20px !important;
   padding-top: 12px;
-  margin-top: 8px;
-  border-top: 2px solid #f1f3f5;
+  margin-top: 4px;
+  border-top: 1.5px solid #f1f3f5;
+  font-size: 16px !important;
 }
 
-.totalFinal span {
-  color: #2c3e50 !important;
-  font-weight: 600;
+.totalFinal span { color: var(--gray-900) !important; font-weight: 700 !important; }
+
+.valorTotal {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: var(--green) !important;
+  letter-spacing: -0.5px;
 }
 
-.totalFinal strong {
-  color: #28a745 !important;
-  font-size: 24px;
-}
-
-.pagamento {
-  margin-bottom: 25px;
-}
-
-.pagamento label {
-  display: block;
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #495057;
-  margin-bottom: 8px;
+  background: var(--white);
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-sizing: border-box;
 }
 
-.selectPagamento {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 15px;
-  background-color: white;
+.select:hover { border-color: #adb5bd; }
+.select:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255,140,0,0.12);
+}
+
+/* ============================================================
+   BOTÕES DE AÇÃO
+   ============================================================ */
+.botoesAcao {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.botaoCancelar,
+.botaoGerar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.selectPagamento:focus {
-  outline: none;
-  border-color: #ff8c00;
-  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-}
-
-.botoesAcao {
-  display: flex;
-  gap: 12px;
-}
-
-.botoesAcao button {
-  flex: 1;
-  padding: 14px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
 .botaoCancelar {
-  background-color: #dc3545;
-  color: white;
+  background: var(--red-light);
+  color: var(--red);
+  border: 1.5px solid var(--red-mid);
 }
 
 .botaoCancelar:hover {
-  background-color: #c82333;
+  background: var(--red);
+  color: var(--white);
+  border-color: var(--red);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  box-shadow: 0 4px 12px rgba(201,42,42,0.25);
 }
 
 .botaoGerar {
-  background-color: #28a745;
-  color: white;
+  background: var(--green);
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(47,158,68,0.25);
 }
 
 .botaoGerar:hover:not(:disabled) {
-  background-color: #218838;
+  background: #258837;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 4px 14px rgba(47,158,68,0.35);
 }
 
 .botaoGerar:disabled {
-  background-color: #dee2e6;
+  background: var(--gray-300);
+  color: var(--gray-500);
   cursor: not-allowed;
-  color: #6c757d;
+  box-shadow: none;
 }
 
-.botoesAcao button:active {
-  transform: translateY(0);
-}
-
-/* MASCOTE */
+/* ============================================================
+   MASCOTE
+   ============================================================ */
 .mascote {
   display: flex;
   justify-content: center;
-  align-items: center;
-
-  margin-top: 60px;
+  padding: 12px 0;
 }
 
 .logo {
-  width: 180px;
-  height: 180px;
+  width: 140px;
+  height: 140px;
   object-fit: contain;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
 }
 
-.checkbox {
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  align-items: center;
-  height: 30px;
-}
-
-.checkbox label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #495057;
-}
-.checkbox input {
-  margin-right: 10px;
-  height: 20px;
-  color: #e07b00;
-}
-
-/* RESPONSIVIDADE */
-@media (max-width: 1200px) {
-  .main {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .containerContador,
-  .containerTotal {
-    max-width: 100%;
-    width: 100%;
-  }
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width: 1100px) {
+  .main { flex-direction: column; align-items: stretch; }
+  .colunaEsquerda { width: 100%; }
 }
 
 @media (max-width: 768px) {
-  .main {
-    padding: 20px 15px;
-  }
-
-  .linha {
-    flex-direction: column;
-  }
-
-  .botoesAcao {
-    flex-direction: column;
-  }
-
-  .totalFinal {
-    font-size: 18px !important;
-  }
-
-  .totalFinal strong {
-    font-size: 20px !important;
-  }
+  .main { padding: 20px 16px 40px; }
+  .linha { flex-direction: column; }
+  .botoesAcao { flex-direction: column; }
+  .pageTitulo { font-size: 20px; }
 }

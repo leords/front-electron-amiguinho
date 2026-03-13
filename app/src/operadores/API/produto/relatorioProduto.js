@@ -6,11 +6,11 @@ const api = axios.create({
     timeout: 5000
     }); 
 
-export const TicketMedio = async (setor, params={}) => {
+export const RelatorioProduto = async (setor, produtoId, params={}) => {
     const token = localStorage.getItem("token")
 
     try {
-        const resposta = await api.get(`/ticket-medio/${setor}`, {
+        const resposta = await api.get(`/relatorio-produto/${setor}/${produtoId}`, {
             params,
             headers: {
                 Authorization: `Bearer ${token}`
@@ -18,8 +18,9 @@ export const TicketMedio = async (setor, params={}) => {
         });
         return resposta.data
     } catch (error) {
+        console.log('error: ', error)
         if(error.response) {
-            throw new Error(error.response.data.mensagem || "Erro ao buscar o ticket medio")
+            throw new Error(error.response.data.mensagem || "Erro ao buscar o relatório do produto")
         }
         if(error.request) {
             throw new Error("Servidor não respondeu, tente novamente")

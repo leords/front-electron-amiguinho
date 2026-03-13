@@ -6,10 +6,14 @@ import styles from "./styles.module.css";
 import CartaoContador from "../../componentes/CartaoContador";
 import logo from "../../assets/logo.jpg";
 import {
-  Calculator,
-  CurrencyDollar,
-  ChartPieSlice,
-  Eraser,
+  CalculatorIcon,
+  CurrencyDollarIcon,
+  ChartPieSliceIcon,
+  EraserIcon,
+  ClockIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  WarningCircleIcon,
 } from "@phosphor-icons/react";
 import { buscarFechamentoBalcao } from "../../operadores/API/fechamento/buscarFechamentoBalcao";
 import { dataFormatadaCalendario } from "../../utils/data";
@@ -24,255 +28,201 @@ export default function Fechamento() {
   const [dez, setDez] = useState(0);
   const [cinco, setCinco] = useState(0);
   const [dois, setDois] = useState(0);
-  // já criei o state desta forma para evitar usar .? nas variaveis.
+
   const [vendaDia, setVendaDia] = useState({
     total: 0,
     interno: 0,
-    resultado: {
-      a_vista: 0,
-      cartao: 0,
-      pix: 0,
-    },
+    resultado: { a_vista: 0, cartao: 0, pix: 0 },
   });
 
+  const [horaAtual, setHoraAtual] = useState(new Date());
 
-  // BUSCA FECHAMENTO DO BALCAO.
+  // Atualiza o relógio a cada segundo
+  useEffect(() => {
+    const timer = setInterval(() => setHoraAtual(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   useEffect(() => {
     const dataFormatada = dataFormatadaCalendario();
-    // vendedor do balcão é fixo no .env
     const nome = import.meta.env.VITE_NOME_MAQUINA;
-  
     const buscarVendasDia = async () => {
-      const dados = await buscarFechamentoBalcao({
-        data: dataFormatada,
-        vendedor: nome, 
-      });
+      const dados = await buscarFechamentoBalcao({ data: dataFormatada, vendedor: nome });
       setVendaDia(dados);
     };
     buscarVendasDia();
   }, []);
 
-  //LIMPAR INPUT DE NOTAS
   const limpar = () => {
-    const confirmar = window.confirm(
-      "Deseja limpar todos os valores do contador?"
-    );
-    if (!confirmar) return;
-
-    setDuzentos(0);
-    setCem(0);
-    setCinquenta(0);
-    setVinte(0);
-    setDez(0);
-    setCinco(0);
-    setDois(0);
+    setDuzentos(0); setCem(0); setCinquenta(0);
+    setVinte(0); setDez(0); setCinco(0); setDois(0);
   };
 
   const totalContado =
-    duzentos * 200 +
-    cem * 100 +
-    cinquenta * 50 +
-    vinte * 20 +
-    dez * 10 +
-    cinco * 5 +
-    dois * 2;
+    duzentos * 200 + cem * 100 + cinquenta * 50 +
+    vinte * 20 + dez * 10 + cinco * 5 + dois * 2;
 
+  const totalNotas = duzentos + cem + cinquenta + vinte + dez + cinco + dois;
   const diferenca = totalContado - vendaDia.resultado.a_vista;
+
+  const diferencaStatus = diferenca === 0 ? "ok" : diferenca > 0 ? "sobra" : "falta";
 
   return (
     <div className={styles.container}>
       <Cabecalho />
 
       <main className={styles.main}>
-        {/* LADO ESQUERDO - CONTADOR DE NOTAS */}
-        <div className={styles.containerContador}>
-          <div className={styles.tituloSection}>
-            <Calculator size={32} weight="duotone" className={styles.icone} />
-            <h1>Fechamento do Caixa</h1>
+
+        {/* ── Cabeçalho da página ── */}
+        <div className={styles.pageHeader}>
+          <div className={styles.pageHeaderLeft}>
+            <div className={styles.iconeWrapper}>
+              <CalculatorIcon size={22} weight="fill" />
+            </div>
+            <div>
+              <p className={styles.pageSubtitulo}>Terminal de caixa</p>
+              <h1 className={styles.pageTitulo}>Fechamento do Caixa</h1>
+            </div>
           </div>
 
-          <div className={styles.contador}>
-            <div className={styles.cabecalhoContador}>
-              <h2>
-                <CurrencyDollar size={24} weight="bold" />
-                Contador de Notas
-              </h2>
-              <span className={styles.badge}>
-                {duzentos + cem + cinquenta + vinte + dez + cinco + dois} notas
-              </span>
+          <div className={styles.relogio}>
+            <div className={styles.relogioItem}>
+              <CalendarIcon size={14} weight="bold" className={styles.relogioIcone} />
+              <span>{horaAtual.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" })}</span>
             </div>
-
-            {/* Cabeçalho da tabela */}
-            <div className={styles.tituloTabela}>
-              <span>Qtd</span>
-              <span>Nota</span>
-              <span>Subtotal</span>
+            <div className={styles.relogioDivider} />
+            <div className={styles.relogioItem}>
+              <ClockIcon size={14} weight="bold" className={styles.relogioIcone} />
+              <span className={styles.relogioHora}>{horaAtual.toLocaleTimeString("pt-BR")}</span>
             </div>
-
-            {/* Lista de notas */}
-            <div className={styles.listaNotas}>
-              <ItemContador
-                quantidade={duzentos}
-                nota={200}
-                alterarQuantidade={setDuzentos}
-                navegavel={true}
-              />
-              <ItemContador
-                quantidade={cem}
-                nota={100}
-                alterarQuantidade={setCem}
-                navegavel={true}
-              />
-              <ItemContador
-                quantidade={cinquenta}
-                nota={50}
-                alterarQuantidade={setCinquenta}
-                navegavel={true}
-              />
-              <ItemContador
-                quantidade={vinte}
-                nota={20}
-                alterarQuantidade={setVinte}
-                navegavel={true}
-              />
-              <ItemContador
-                quantidade={dez}
-                nota={10}
-                alterarQuantidade={setDez}
-                navegavel={true}
-              />
-              <ItemContador
-                quantidade={cinco}
-                nota={5}
-                alterarQuantidade={setCinco}
-                navegavel={true}
-              />
-              <ItemContador
-                quantidade={dois}
-                nota={2}
-                alterarQuantidade={setDois}
-                navegavel={true}
-              />
-            </div>
-
-            {/* Rodapé com total e botão limpar */}
-            <div className={styles.rodapeContador}>
-              <AlertaRadix
-                titulo="Limpar contador"
-                descricao="Você realmente deseja limpar?"
-                tratar={limpar}
-                confirmarTexto="Sim, limpar!"
-                cancelarTexto="Sair"
-                trigger={
-                  <button className={styles.botaoLimpar}>
-                    <Eraser size={18} weight="bold" />
-                    Limpar
-                  </button>
-                }
-              />
-
-              <div className={styles.totalContado}>
-                <span>Total Contado:</span>
-                <strong>
-                  {formatarMoeda(totalContado)}
-                </strong>
-              </div>
-            </div>
-
-            {/* Conferência com valor esperado em dinheiro */}
-            {totalContado > 0 && (
-              <div className={styles.conferencia}>
-                <div className={styles.linhaConferencia}>
-                  <span>Dinheiro esperado:</span>
-                  <span className={styles.valorEsperado}>
-                    {formatarMoeda(vendaDia.resultado?.a_vista)}
-                  </span>
-                </div>
-                <div className={styles.linhaConferencia}>
-                  <span>Diferença:</span>
-                  <span
-                    className={
-                      diferenca === 0
-                        ? styles.valorOk
-                        : diferenca > 0
-                        ? styles.valorPositivo
-                        : styles.valorNegativo
-                    }
-                  >
-                    {formatarMoeda(Math.abs(diferenca))}
-                    {diferenca > 0 && " (sobra)"}
-                    {diferenca < 0 && " (falta)"}
-                  </span>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* LADO DIREITO - TOTAIS E FORMAS DE PAGAMENTO */}
-        <div className={styles.containerTotal}>
-          {/* Total de Vendas do Dia */}
-          <div className={styles.secaoTotal}>
-            <div className={styles.headerSecao}>
-              <ChartPieSlice size={24} weight="duotone" />
-              <h2>Resumo do Dia</h2>
-            </div>
+        <div className={styles.layout}>
 
-            <div className={styles.cardTotalGeral}>
-              <CartaoContador valor={vendaDia.total} metodo="Total" />
+          {/* ══ COLUNA ESQUERDA: Contador ══ */}
+          <div className={styles.colunaContador}>
+            <div className={styles.card}>
+
+              <div className={styles.cardHeader}>
+                <div className={styles.cardHeaderTitle}>
+                  <CurrencyDollarIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                  <h2>Contador de Notas</h2>
+                </div>
+                <span className={styles.badgeNotas}>
+                  {totalNotas} {totalNotas === 1 ? "nota" : "notas"}
+                </span>
+              </div>
+
+              <div className={styles.tituloTabela}>
+                <span>Qtd</span>
+                <span>Nota</span>
+                <span>Subtotal</span>
+              </div>
+
+              <div className={styles.listaNotas}>
+                <ItemContador quantidade={duzentos} nota={200} alterarQuantidade={setDuzentos} navegavel={true} />
+                <ItemContador quantidade={cem}      nota={100} alterarQuantidade={setCem}      navegavel={true} />
+                <ItemContador quantidade={cinquenta} nota={50} alterarQuantidade={setCinquenta} navegavel={true} />
+                <ItemContador quantidade={vinte}    nota={20}  alterarQuantidade={setVinte}    navegavel={true} />
+                <ItemContador quantidade={dez}      nota={10}  alterarQuantidade={setDez}      navegavel={true} />
+                <ItemContador quantidade={cinco}    nota={5}   alterarQuantidade={setCinco}    navegavel={true} />
+                <ItemContador quantidade={dois}     nota={2}   alterarQuantidade={setDois}     navegavel={true} />
+              </div>
+
+              <div className={styles.rodapeContador}>
+                <AlertaRadix
+                  titulo="Limpar contador"
+                  descricao="Você realmente deseja limpar todos os valores?"
+                  tratar={limpar}
+                  confirmarTexto="Sim, limpar!"
+                  cancelarTexto="Cancelar"
+                  trigger={
+                    <button className={styles.botaoLimpar}>
+                      <EraserIcon size={16} weight="bold" />
+                      Limpar
+                    </button>
+                  }
+                />
+                <div className={styles.totalContado}>
+                  <span>Total contado</span>
+                  <strong>{formatarMoeda(totalContado)}</strong>
+                </div>
+              </div>
+
+              {/* ── Conferência ── */}
+              {totalContado > 0 && (
+                <div className={`${styles.conferencia} ${styles[`conferencia_${diferencaStatus}`]}`}>
+                  <div className={styles.conferenciaHeader}>
+                    {diferencaStatus === "ok"
+                      ? <CheckCircleIcon size={16} weight="fill" className={styles.conferenciaIconeOk} />
+                      : <WarningCircleIcon size={16} weight="fill" className={styles.conferenciaIconeAviso} />}
+                    <span className={styles.conferenciaTitulo}>Conferência</span>
+                  </div>
+
+                  <div className={styles.conferenciaLinha}>
+                    <span>Dinheiro esperado</span>
+                    <strong className={styles.valorNeutro}>
+                      {formatarMoeda(vendaDia.resultado?.a_vista)}
+                    </strong>
+                  </div>
+                  <div className={styles.conferenciaDivider} />
+                  <div className={styles.conferenciaLinha}>
+                    <span>Diferença</span>
+                    <strong className={styles[`valor_${diferencaStatus}`]}>
+                      {diferenca > 0 ? "+" : diferenca < 0 ? "−" : ""}
+                      {formatarMoeda(Math.abs(diferenca))}
+                      {diferenca > 0 && <em> sobra</em>}
+                      {diferenca < 0 && <em> falta</em>}
+                    </strong>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Formas de Pagamento */}
-          <div className={styles.secaoFormas}>
-            <h3>Formas de Pagamento</h3>
-            <div className={styles.gridCartoes}>
-              <CartaoContador
-                valor={vendaDia.resultado.a_vista}
-                metodo="Dinheiro"
-                total={vendaDia.total}
-              />
-              <CartaoContador
-                valor={vendaDia.resultado.cartao}
-                metodo="Cartão"
-                total={vendaDia.total}
-              />
-              <CartaoContador
-                valor={vendaDia.resultado.pix}
-                metodo="PIX"
-                total={vendaDia.total}
-              />
-              <CartaoContador
-                valor={vendaDia.interno}
-                metodo="Interno"
-                total={vendaDia.total}
-              />
-            </div>
-          </div>
+          {/* ══ COLUNA DIREITA: Resumo ══ */}
+          <div className={styles.colunaResumo}>
 
-          {/* Informações adicionais */}
-          <div className={styles.infoAdicional}>
-            <p>
-              <strong>Data:</strong> {new Date().toLocaleDateString("pt-BR")}
-            </p>
-            <p>
-              <strong>Horário:</strong> {new Date().toLocaleTimeString("pt-BR")}
-            </p>
+            {/* Card total geral */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div className={styles.cardHeaderTitle}>
+                  <ChartPieSliceIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                  <h2>Resumo do Dia</h2>
+                </div>
+              </div>
+              <div className={styles.totalGeralWrapper}>
+                <CartaoContador valor={vendaDia.total} metodo="Total" />
+              </div>
+            </div>
+
+            {/* Card formas de pagamento */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div className={styles.cardHeaderTitle}>
+                  <span className={styles.formasPagLabel}>Formas de pagamento</span>
+                </div>
+              </div>
+              <div className={styles.gridCartoes}>
+                <CartaoContador valor={vendaDia.resultado.a_vista} metodo="Dinheiro" total={vendaDia.total} />
+                <CartaoContador valor={vendaDia.resultado.cartao}  metodo="Cartão"   total={vendaDia.total} />
+                <CartaoContador valor={vendaDia.resultado.pix}     metodo="PIX"      total={vendaDia.total} />
+                <CartaoContador valor={vendaDia.interno}           metodo="Interno"  total={vendaDia.total} />
+              </div>
+            </div>
+
+            {/* Mascote + mensagem */}
+            <div className={styles.mascoteCard}>
+              <img src={logo} alt="Logo" className={styles.logo} />
+              <p className={styles.textoMascote}>
+                Confira o fechamento do caixa e garanta que tudo está correto!
+              </p>
+            </div>
+
           </div>
         </div>
       </main>
-
-      {/* Mascote */}
-      <div className={styles.mascote}>
-        <img
-          src={logo}
-          alt="Amigão Distribuidora de Bebidas"
-          className={styles.logo}
-        />
-        <p className={styles.textoMascote}>
-          Confira o fechamento do caixa e garanta que tudo está correto!
-        </p>
-      </div>
 
       <Rodape />
     </div>

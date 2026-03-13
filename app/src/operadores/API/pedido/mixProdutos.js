@@ -10,7 +10,7 @@ export const MixProdutos = async (setor, params = {}) => {
     const token = localStorage.getItem("token");
 
     try {
-        const resposta = await api.get(`/mix-produtos/${setor}`, {
+        const resposta = await api.get(`/relatorio-mix-produtos/${setor}`, {
             params,
             headers: {
                 Authorization: `Bearer ${token}`

@@ -2,9 +2,11 @@ import {
   ShoppingCartIcon,
   ClockCounterClockwiseIcon,
   CoinsIcon,
-  ChartLine,
-  CurrencyCircleDollar,
-  HandWithdrawIcon
+  ChartLineIcon,
+  CurrencyCircleDollarIcon,
+  HandWithdrawIcon,
+  ClipboardTextIcon,
+  CloudArrowUpIcon,
 } from "@phosphor-icons/react";
 import MenuButton from "../../componentes/Botao/index";
 import mascote from "../../assets/mascote.png";
@@ -18,21 +20,17 @@ export default function Menu() {
   const [saudacao, setSaudacao] = useState("");
   const [mensagemDoDia, setMensagemDoDia] = useState("");
 
-  // Busca via groq a mensagem do dia.
   useEffect(() => {
     const carregarMensagem = async () => {
       const mensagemSalva = localStorage.getItem("mensagemDoDia");
       const dataSalva = localStorage.getItem("mensagemDoDia_data");
+      const hoje = new Date().toISOString().slice(0, 10);
 
-      const hoje = new Date().toISOString().slice(0, 10); //YYYY-MM-DD
-
-      // Se já tem mensagem salva para hoje, usar ela
       if (mensagemSalva && dataSalva === hoje) {
         setMensagemDoDia(mensagemSalva);
         return;
       }
 
-      //Caso contrário, busca da API
       const novaMensagem = await GerarVersiculo();
       localStorage.setItem("mensagemDoDia", novaMensagem);
       localStorage.setItem("mensagemDoDia_data", hoje);
@@ -42,16 +40,11 @@ export default function Menu() {
     carregarMensagem();
   }, []);
 
-  // Define saudação baseada no horário
   useEffect(() => {
     const hora = new Date().getHours();
-    if (hora < 12) {
-      setSaudacao("Bom dia");
-    } else if (hora < 18) {
-      setSaudacao("Boa tarde");
-    } else {
-      setSaudacao("Boa noite");
-    }
+    if (hora < 12) setSaudacao("Bom dia");
+    else if (hora < 18) setSaudacao("Boa tarde");
+    else setSaudacao("Boa noite");
   }, []);
 
   return (
@@ -59,7 +52,8 @@ export default function Menu() {
       <Cabecalho />
 
       <main className={styles.principal}>
-        {/* Saudação e Estatísticas */}
+
+        {/* Saudação */}
         <div className={styles.cabecalho}>
           <div className={styles.saudacao}>
             <h1>
@@ -67,68 +61,27 @@ export default function Menu() {
             </h1>
             <p>O que você gostaria de fazer hoje?</p>
           </div>
-          {/* aqui colocar o clima atual. */}
         </div>
 
-        {/* Botões do Menu */}
+        {/* Grid de botões */}
         <div className={styles.menuBotoes}>
-          <MenuButton
-            titulo="Vendas"
-            descricao="Registrar novos pedidos"
-            corBG="linear-gradient(135deg, #ff8c00 0%, #ffa726 100%)"
-            destino="/venda"
-            imagem={<ShoppingCartIcon size={70} weight="duotone" />}
-          />
-
-          <MenuButton
-            titulo="Histórico"
-            descricao="Consultar pedidos anteriores"
-            corBG="linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)"
-            destino="/historico"
-            imagem={<ClockCounterClockwiseIcon size={70} weight="duotone" />}
-          />
-
-          <MenuButton
-            titulo="Fechamento"
-            descricao="Conferir caixa do dia"
-            corBG="linear-gradient(135deg, #388e3c 0%, #66bb6a 100%)"
-            destino="/fechamento"
-            imagem={<CoinsIcon size={70} weight="duotone" />}
-          />
-
-          <MenuButton
-            titulo="Dashboard"
-            descricao="Conferir números de venda"
-            corBG="linear-gradient(135deg, #455a64 0%, #78909c 100%)"
-            destino="/dashboard"
-            imagem={<ChartLine size={70} weight="duotone" />}
-          />
-
-          <MenuButton
-            titulo="Fechar balcão"
-            descricao="Finalizar operações do dia"
-            corBG="linear-gradient(135deg, #ff8c00 0%, #ffa726 100%)"
-            destino="/fechar-balcao"
-            imagem={<CurrencyCircleDollar size={70} weight="duotone" />}
-          />
-
-          <MenuButton
-            titulo="Vales internos"
-            descricao="Consultar historico de vales internos"
-            corBG="linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)"
-            destino="/vales-interno"
-            imagem={<HandWithdrawIcon size={70} weight="duotone" />}
-          />
-
+          <MenuButton titulo="Vendas"         descricao="Registrar novos pedidos"           destino="/venda"        icone={ShoppingCartIcon}          cor="orange" />
+          <MenuButton titulo="Histórico"      descricao="Consultar pedidos anteriores"      destino="/historico"    icone={ClockCounterClockwiseIcon} cor="blue"   />
+          <MenuButton titulo="Fechamento"     descricao="Conferir caixa do dia"             destino="/fechamento"   icone={CoinsIcon}                 cor="green"  />
+          <MenuButton titulo="Dashboard"      descricao="Conferir números de venda"         destino="/dashboard"    icone={ChartLineIcon}             cor="gray"   />
+          <MenuButton titulo="Fechar balcão"  descricao="Finalizar operações do dia"        destino="/fechar-balcao" icone={CurrencyCircleDollarIcon} cor="orange" />
+          <MenuButton titulo="Vales internos" descricao="Consultar histórico de vales"      destino="/vales-interno" icone={HandWithdrawIcon}         cor="blue"   />
+          <MenuButton titulo="Pedidos"        descricao="Conferir pedidos realizados"       destino="/pedidos"      icone={ClipboardTextIcon}         cor="green"  />
+          <MenuButton titulo="Transmissão"    descricao="Realizar cargas forçadas"          destino="/transmissao"  icone={CloudArrowUpIcon}          cor="gray"   />
         </div>
 
-        {/* Mascote e mensagem do dia */}
+        {/* Mascote + mensagem do dia */}
         <div className={styles.containerMascote}>
           <div className={styles.dicaDia}>
             <h3>
               <span className={styles.emojiDica}>💡</span> Mensagem do Dia
             </h3>
-            <p>{mensagemDoDia}</p>
+            <p>{mensagemDoDia || "Carregando mensagem..."}</p>
           </div>
           <img
             src={mascote}
@@ -136,6 +89,7 @@ export default function Menu() {
             className={styles.mascote}
           />
         </div>
+
       </main>
 
       <Rodape />

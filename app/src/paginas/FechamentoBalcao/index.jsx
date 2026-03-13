@@ -23,7 +23,9 @@ import {
   ShoppingBagIcon,
   CoinsIcon,
   CalendarCheckIcon,
-  DeviceMobileIcon
+  DeviceMobileIcon,
+  LockKeyIcon,
+  TrendUpIcon,
 } from '@phosphor-icons/react';
 import ItemContador from '../../componentes/ItemContador';
 import { AlertaRadix } from '../../componentes/ui/alerta/alerta';
@@ -35,19 +37,17 @@ import { usarToast } from '../../componentes/Context/toastContext';
 import { editarFechamento } from "../../operadores/API/AjusteFechamento/editarFechamento";
 import { ToastRadix } from '../../componentes/ui/notificacao/notificacao';
 
-// Tipos de movimentação de caixa.
 const tiposMovimentacao = [
-  { value: 'saida', label: '🔻 Saida', tipo: 'saida' },
+  { value: 'saida', label: '🔻 Saída', tipo: 'saida' },
   { value: 'entrada', label: '🔺 Entrada', tipo: 'entrada' },
 ];
-// Descrições de balcões disponiveis.
+
 const balcaoOptions = [
   { value: 'b1', label: 'Balcão 1' },
   { value: 'b2', label: 'Balcão 2' },
 ];
 
 export default function FechamentoBalcao() {
-  // --- Estados do contador de notas ---
   const [duzentos, setDuzentos] = useState(0);
   const [cem, setCem] = useState(0);
   const [cinquenta, setCinquenta] = useState(0);
@@ -56,12 +56,10 @@ export default function FechamentoBalcao() {
   const [cinco, setCinco] = useState(0);
   const [dois, setDois] = useState(0);
 
-  // --- Estados do painel de vendas ---
   const [vendaBalcao, setVendaBalcao] = useState(null);
   const [carregandoVendas, setCarregandoVendas] = useState(true);
   const [fechamentoAtual, setFechamentoAtual] = useState(null);
 
-  // --- Estados do formulário de manutenção ---
   const [balcao, setBalcao] = useState(balcaoOptions[0]);
   const [tipoMovimentacao, setTipoMovimentacao] = useState(tiposMovimentacao[0]);
   const [valorManutencao, setValorManutencao] = useState('');
@@ -69,26 +67,15 @@ export default function FechamentoBalcao() {
   const [erroFormulario, setErroFormulario] = useState('');
 
   const { mensagem, setMensagem } = usarToast();
-
-  // --- Estado para determinar render de fechamento finalizado.
-  const [statusFechamento, setStatusFechamento] = useState(false)
-
-  // --- Estado da lista de manutenções ---
+  const [statusFechamento, setStatusFechamento] = useState(false);
   const [movimentacoes, setMovimentacoes] = useState([]);
 
-  // --- Busca o total do fechamento de vendas conforme o balcão escolhido.
   useEffect(() => {
     const dataFormatada = dataFormatadaCalendario();
-
     setCarregandoVendas(true);
-
     const buscarVendasDia = async () => {
       try {
-        const dados = await buscarFechamentoBalcao({
-          setor: 'balcao',
-          data: dataFormatada,
-          vendedor: balcao.value,
-        });
+        const dados = await buscarFechamentoBalcao({ setor: 'balcao', data: dataFormatada, vendedor: balcao.value });
         setVendaBalcao(dados);
       } catch (err) {
         console.error('Erro ao buscar vendas:', err);
@@ -96,108 +83,64 @@ export default function FechamentoBalcao() {
         setCarregandoVendas(false);
       }
     };
-
     buscarVendasDia();
   }, [balcao]);
 
-
-  // --- Busca o fechamento em aberto referente ao balcao e data.
   useEffect(() => {
     const dataFormatada = dataFormatadaCalendario();
-
     const buscarFechamentoBalcaoDia = async () => {
       try {
-        // buscando fechamento.
-        let fechamentoBalcao = await buscarFechamentos(
-          'balcao',
-          {
-            data: dataFormatada,
-            vendedor: balcao.value,
-          }
-        );        
+        let fechamentoBalcao = await buscarFechamentos('balcao', { data: dataFormatada, vendedor: balcao.value });
         setFechamentoAtual(fechamentoBalcao);
-
-        
-      // Se não encontrar fechamento balcão, crie!
-      if(fechamentoBalcao == null) {
-        await criarFechamento('balcao', { vendedor: balcao.value })
-
-        fechamentoBalcao = await buscarFechamentos(
-          'balcao',
-          {
-            data: dataFormatada,
-            vendedor: balcao.value,
-          }
-        );
-      }
-
-      setFechamentoAtual(fechamentoBalcao);
-
+        if (fechamentoBalcao == null) {
+          await criarFechamento('balcao', { vendedor: balcao.value });
+          fechamentoBalcao = await buscarFechamentos('balcao', { data: dataFormatada, vendedor: balcao.value });
+        }
+        setFechamentoAtual(fechamentoBalcao);
       } catch (error) {
         console.log(error);
-        throw new Error('Erro ao buscar fechamento balcão')
+        throw new Error('Erro ao buscar fechamento balcão');
       }
-    }
-
+    };
     buscarFechamentoBalcaoDia();
-
   }, [balcao, statusFechamento]);
 
-
-  // --- Listar movimentações do dia referente ao balcao e data.
   const buscarMovimentacoes = async () => {
+    try {
+      const listaMovimentacoes = await buscarMovimentacao(fechamentoAtual.id);
+      setMovimentacoes(listaMovimentacoes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-      try {
-        const listaMovimentacoes = await buscarMovimentacao(
-          fechamentoAtual.id
-        );
-
-        setMovimentacoes(listaMovimentacoes); 
-        
-      } catch (error) {
-        console.log(error)
-      }
-  }
   useEffect(() => {
     buscarMovimentacoes();
   }, [fechamentoAtual]);
 
-
-  // --- Cria uma nova movimentação de caixa.
   const novaMovimentacao = async () => {
-
     if (!descricaoManutencao || typeof descricaoManutencao !== 'string') {
-      setErroFormulario('Informa uma descrição para a movimentação.');
+      setErroFormulario('Informe uma descrição para a movimentação.');
       return;
     }
     if (!valorManutencao || typeof valorManutencao !== 'number' || valorManutencao <= 0) {
-      setErroFormulario('Informe um valor válido para valor');
+      setErroFormulario('Informe um valor válido.');
       return;
     }
-
     const novaManutencao = {
       fechamentoId: fechamentoAtual.id,
       tipo: tipoMovimentacao.value,
       descricao: descricaoManutencao.trim(),
-      valor: valorManutencao
+      valor: valorManutencao,
     };
-
     const movimentacao = await criarMovimentacao(novaManutencao);
+    if (movimentacao) setMensagem('Movimentação cadastrada com sucesso!');
+    setValorManutencao('');
+    setDescricaoManutencao('');
+    setTipoMovimentacao(tiposMovimentacao[0]);
+    await buscarMovimentacoes();
+  };
 
-    if(movimentacao) {
-      setMensagem('Movimentação de caixa cadastrada com sucesso!')
-    }
-
-      setValorManutencao('');
-      setDescricaoManutencao('');
-      setTipoMovimentacao(tiposMovimentacao[0])
-
-      // chamando novamente a função de buscar movimentações.
-      await buscarMovimentacoes()
-  }
-
-
-  // --- Cancelar formulário.
   const cancelarFormulario = () => {
     setValorManutencao('');
     setDescricaoManutencao('');
@@ -205,147 +148,144 @@ export default function FechamentoBalcao() {
     setErroFormulario('');
   };
 
-
-  // --- Limpar contador.
   const limparContador = () => {
     setDuzentos(0); setCem(0); setCinquenta(0);
     setVinte(0); setDez(0); setCinco(0); setDois(0);
   };
 
-
-  // --- Remover manutenção.
   const removerManutencao = async (id) => {
     try {
-      await deletarMovimentacao(id)
-      setMensagem('Manutenção de caixa excluída com sucesso!')
-      
-      // chamando novamente a função de buscar movimentações.
-      await buscarMovimentacoes()
+      await deletarMovimentacao(id);
+      setMensagem('Movimentação excluída com sucesso!');
+      await buscarMovimentacoes();
     } catch (error) {
-      const erroApi = error?.response?.data.erro
-      if(erroApi.codigo === "MOVIMENTACAO_NOT_FOUND") {
-        setMensagem(erroApi.mensagem)
-      } else {
-        setMensagem("Erro inesperado. Tente novamente.")
-      }
+      const erroApi = error?.response?.data.erro;
+      setMensagem(erroApi?.codigo === 'MOVIMENTACAO_NOT_FOUND' ? erroApi.mensagem : 'Erro inesperado. Tente novamente.');
     }
   };
 
-
-  // --- Finalizar o fechamento. TESTAR!!!
   const finalizarFechamento = async () => {
-    const dados = {
-      totalSistema: vendaBalcao?.resultado?.a_vista ?? 0,
-      totalInformado: totalContado ?? 0
+    const dados = { totalSistema: vendaBalcao?.resultado?.a_vista ?? 0, totalInformado: totalContado ?? 0 };
+    try {
+      await editarFechamento(fechamentoAtual.id, dados);
+      setMensagem('Fechamento finalizado com sucesso!');
+      setStatusFechamento(prev => !prev);
+    } catch (error) {
+      const erroApi = error?.response?.data.erro;
+      setMensagem(erroApi ? erroApi.mensagem : 'Erro inesperado. Tente novamente.');
     }
+  };
 
-      try {
-        await editarFechamento(fechamentoAtual.id, dados)
-        setMensagem('Fechamento finalizado com sucesso!')
-
-        // alterando o estado de status fechamento para recarregar o fechamento atual.
-        setStatusFechamento(prev => !prev)
-
-      } catch (error) {
-        const erroApi = error?.response?.data.erro
-        if(erroApi) {
-          setMensagem(erroApi.mensagem)
-      } else {
-        setMensagem("Erro inesperado. Tente novamente.")
-      }
-    }
-  }
-
-  
-  // --- Total contado.
-  const totalContado =
-    duzentos * 200 +
-    cem * 100 +
-    cinquenta * 50 +
-    vinte * 20 +
-    dez * 10 +
-    cinco * 5 +
-    dois * 2;
-
+  const totalContado = duzentos * 200 + cem * 100 + cinquenta * 50 + vinte * 20 + dez * 10 + cinco * 5 + dois * 2;
   const totalNotas = duzentos + cem + cinquenta + vinte + dez + cinco + dois;
-
   const valorEsperado = vendaBalcao?.resultado?.a_vista ?? 0;
-
   const valorPix = vendaBalcao?.resultado?.pix ?? 0;
   const valorCartao = vendaBalcao?.resultado?.cartão ?? 0;
   const valorTotalMaquininha = valorPix + valorCartao;
+  const totalEntradas = movimentacoes.filter(m => m.tipo === 'entrada').reduce((acc, m) => acc + m.valor, 0);
+  const totalSaidas = movimentacoes.filter(m => m.tipo === 'saida').reduce((acc, m) => acc + m.valor, 0);
+  const valorFinalFechamentoAvista = valorEsperado + totalEntradas - totalSaidas;
+  const diferenca = totalContado - valorFinalFechamentoAvista;
 
-
-  // --- Totais das manutenções.
-  const totalEntradas = movimentacoes
-    .filter(m => m.tipo === 'entrada')
-    .reduce((acc, m) => acc + m.valor, 0);
-
-  const totalSaidas = movimentacoes
-    .filter(m => m.tipo === 'saida')
-    .reduce((acc, m) => acc + m.valor, 0);
-
-
-  const valorFinalFechamentoAvista = valorEsperado + totalEntradas - totalSaidas
-
-    // calculo final notas contadas VS vendas + entradas e saidas.
-    const diferenca = totalContado - valorFinalFechamentoAvista;
-
-  // -----------------------------
+  const dataHoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
 
   return (
     <div className={styles.container}>
       <ToastRadix mensagem={mensagem} />
       <Cabecalho />
+
       <main className={styles.main}>
 
-        {/* TÍTULO DA PÁGINA */}
-        <div className={styles.tituloSection}>
-            <CalculatorIcon size={32} weight="duotone" className={styles.icone} />
-            <h1>Fechamento de Caixa</h1>
-          <span className={styles.badgeData}>
-            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
-          </span>
-        </div>
-        <div className={styles.campoForm}>
-          <label className={styles.labelForm}>Balcão</label>
-          <Select
-            classNamePrefix="custom"
-            options={balcaoOptions}
-            value={balcao}
-            onChange={setBalcao}
-            isSearchable={false}
-          />
+        {/* ── Cabeçalho ── */}
+        <div className={styles.pageHeader}>
+          <div className={styles.pageHeaderLeft}>
+            <div className={styles.iconeWrapper}>
+              <CalculatorIcon size={22} weight="fill" />
+            </div>
+            <div>
+              <p className={styles.pageSubtitulo}>Gestão financeira</p>
+              <h1 className={styles.pageTitulo}>Fechamento de Caixa</h1>
+            </div>
+          </div>
+          <div className={styles.pageHeaderRight}>
+            <span className={styles.badgeData}>{dataHoje}</span>
+            <div className={styles.balcaoSelector}>
+              <label className={styles.labelForm}>Balcão ativo</label>
+              <Select
+                classNamePrefix="custom"
+                options={balcaoOptions}
+                value={balcao}
+                onChange={setBalcao}
+                isSearchable={false}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className={styles.containerLados}>
-          {fechamentoAtual?.status === "aberto"
-          
-          ? 
-          // CAIXA ABERTO! STATUS = 'ABERTO'
-          <>
-            {/* CONTADOR DE NOTAS */}
+        {/* ── Cards de resumo rápido ── */}
+        <div className={styles.resumoCards}>
+          <div className={styles.resumoCard}>
+            <div className={styles.resumoCardIcon} data-color="orange">
+              <TrendUpIcon size={18} weight="fill" />
+            </div>
+            <div>
+              <p className={styles.resumoCardLabel}>Total de vendas</p>
+              <strong className={styles.resumoCardValor}>{formatarMoeda(vendaBalcao?.total ?? 0)}</strong>
+            </div>
+          </div>
+          <div className={styles.resumoCard}>
+            <div className={styles.resumoCardIcon} data-color="green">
+              <MoneyIcon size={18} weight="fill" />
+            </div>
+            <div>
+              <p className={styles.resumoCardLabel}>Esperado em dinheiro</p>
+              <strong className={styles.resumoCardValor}>{formatarMoeda(valorEsperado)}</strong>
+            </div>
+          </div>
+          <div className={styles.resumoCard}>
+            <div className={styles.resumoCardIcon} data-color="blue">
+              <CreditCardIcon size={18} weight="fill" />
+            </div>
+            <div>
+              <p className={styles.resumoCardLabel}>Cartão + Pix</p>
+              <strong className={styles.resumoCardValor}>{formatarMoeda(valorTotalMaquininha)}</strong>
+            </div>
+          </div>
+          <div className={styles.resumoCard}>
+            <div className={styles.resumoCardIcon} data-color="purple">
+              <ShoppingBagIcon size={18} weight="fill" />
+            </div>
+            <div>
+              <p className={styles.resumoCardLabel}>Pedidos gerados</p>
+              <strong className={styles.resumoCardValor}>{vendaBalcao?.quantidade ?? 0}</strong>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Conteúdo principal ── */}
+        {fechamentoAtual?.status === 'aberto' ? (
+
+          <div className={styles.containerLados}>
+
+            {/* COLUNA ESQUERDA: Contador de notas */}
             <div className={styles.contador}>
-              <h1 className={styles.valoTotal} >Total de vendas: <strong>{formatarMoeda(vendaBalcao?.total ?? 0)}</strong> </h1>          
-              <h1 className={styles.valorEsperado} >Valor esperado em dinheiro: <strong>{formatarMoeda(valorEsperado)}</strong> </h1>
-              <div className={styles.cabecalhoContador}>
-                <h2>
-                  <CurrencyDollarIcon size={24} weight="bold" />
-                  Contador de Notas
-                </h2>
-                <span className={styles.badge}>
+
+              <div className={styles.cardHeader}>
+                <div className={styles.cardHeaderTitle}>
+                  <CurrencyDollarIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                  <h2>Contador de Notas</h2>
+                </div>
+                <span className={styles.badgeNotas}>
                   {totalNotas} {totalNotas === 1 ? 'nota' : 'notas'}
                 </span>
               </div>
 
-              {/* Cabeçalho da tabela */}
               <div className={styles.tituloTabela}>
                 <span>Qtd</span>
                 <span>Nota</span>
                 <span>Subtotal</span>
               </div>
 
-              {/* Lista de notas */}
               <div className={styles.listaNotas}>
                 <ItemContador quantidade={duzentos} nota={200} alterarQuantidade={setDuzentos} navegavel={true} />
                 <ItemContador quantidade={cem} nota={100} alterarQuantidade={setCem} navegavel={true} />
@@ -356,7 +296,6 @@ export default function FechamentoBalcao() {
                 <ItemContador quantidade={dois} nota={2} alterarQuantidade={setDois} navegavel={true} />
               </div>
 
-              {/* Rodapé com total e botão limpar */}
               <div className={styles.rodapeContador}>
                 <AlertaRadix
                   titulo="Limpar contador"
@@ -366,109 +305,117 @@ export default function FechamentoBalcao() {
                   cancelarTexto="Cancelar"
                   trigger={
                     <button className={styles.botaoLimpar}>
-                      <EraserIcon size={18} weight="bold" />
+                      <EraserIcon size={16} weight="bold" />
                       Limpar
                     </button>
                   }
                 />
                 <div className={styles.totalContado}>
-                  <span>Total Contado</span>
+                  <span>Total contado</span>
                   <strong>{formatarMoeda(totalContado)}</strong>
                 </div>
               </div>
 
-              {/* Conferência com valor esperado — aparece apenas quando há notas contadas */}
+              {/* Conferência */}
               {totalContado > 0 && (
                 <div className={styles.conferencia}>
-                  <div className={styles.linhaConferencia}>
-                      <span>Movimentações positivas</span>
-                      <span style={{color: '#2f9e44', fontWeight: 'bold'}}>+{formatarMoeda(totalEntradas)}</span>
+                  <p className={styles.conferenciaTitle}>Conferência de caixa</p>
+
+                  <div className={styles.conferenciaLinha}>
+                    <span>Movimentações positivas</span>
+                    <span className={styles.valorPositivo}>+{formatarMoeda(totalEntradas)}</span>
                   </div>
-                  <div className={styles.linhaConferencia} style={{marginBottom: '20px'}}>
-                      <span>Movimentações negativas</span>
-                      <span style={{color: '#c92a2a', fontWeight: 'bold'}}>-{formatarMoeda(totalSaidas)}</span>
+                  <div className={styles.conferenciaLinha}>
+                    <span>Movimentações negativas</span>
+                    <span className={styles.valorNegativo}>−{formatarMoeda(totalSaidas)}</span>
                   </div>
-                  <div className={styles.linhaConferencia}>
-                    <span>Dinheiro esperado (à vista):</span>
-                    <span className={styles.valorEsperado}>
-                      {carregandoVendas ? '...' : formatarMoeda(valorFinalFechamentoAvista)}
+
+                  <div className={styles.conferenciaDivider} />
+
+                  <div className={styles.conferenciaLinha}>
+                    <span>Dinheiro esperado (à vista)</span>
+                    <span className={styles.valorNeutro}>
+                      {carregandoVendas ? '…' : formatarMoeda(valorFinalFechamentoAvista)}
                     </span>
                   </div>
-                  <div className={styles.linhaConferencia}>
-                    <span>Diferença:</span>
-                    <span
-                      className={
-                        diferenca === 0
-                          ? styles.valorOk
-                          : diferenca > 0
-                          ? styles.valorPositivo
-                          : styles.valorNegativo
-                      }
-                    >
-                      {formatarMoeda(Math.abs(diferenca))}
-                      {diferenca > 0 && ' (sobra)'}
-                      {diferenca < 0 && ' (falta)'}
+                  <div className={styles.conferenciaLinha}>
+                    <span>Diferença</span>
+                    <span className={diferenca === 0 ? styles.valorOk : diferenca > 0 ? styles.valorPositivo : styles.valorNegativo}>
+                      {diferenca > 0 ? '+' : ''}{formatarMoeda(diferenca)}
+                      {diferenca > 0 && <em> sobra</em>}
+                      {diferenca < 0 && <em> falta</em>}
                     </span>
                   </div>
-                  
-                  <div className={styles.botaoFechar}> 
-                    <AlertaRadix
-                      titulo="Finalizar fechamento"
-                      descricao="Você realmente deseja finalizar este fechamento?"
-                      tratar={finalizarFechamento}
-                      confirmarTexto="Sim, finalizar!"
-                      cancelarTexto="Cancelar"
-                      trigger={
-                        <button>
-                          <CheckCircleIcon size={18} weight="bold" />
-                          Finalizar fechamento.
-                        </button> 
-                      }
-                    />
-                  </div>
+
+                  <AlertaRadix
+                    titulo="Finalizar fechamento"
+                    descricao="Você realmente deseja finalizar este fechamento?"
+                    tratar={finalizarFechamento}
+                    confirmarTexto="Sim, finalizar!"
+                    cancelarTexto="Cancelar"
+                    trigger={
+                      <button className={styles.botaoFinalizar}>
+                        <CheckCircleIcon size={18} weight="bold" />
+                        Finalizar fechamento
+                      </button>
+                    }
+                  />
                 </div>
               )}
             </div>
 
-            {/* MOVIMENTAÇÕES DE CAIXA */}
+            {/* COLUNA DIREITA */}
             <div className={styles.colunaManutencao}>
 
-              {/* FORMULÁRIO DE ENTRADA */}
-              <div className={styles.entradaManual}>
-                {/* TOTAL DE VENDAS MAQUININHA */}
-                  <div className={styles.cabecalhoFormulario}>
-                    <ReceiptIcon size={22} weight="duotone" className={styles.icone} />
-                    <h2>Total de vendas no cartão e pix: <strong style={{color: '#e67700', marginLeft:'10px', fontSize:'22px'}}>{formatarMoeda(valorTotalMaquininha)}</strong></h2>
+              {/* Card Maquininha */}
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardHeaderTitle}>
+                    <CreditCardIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                    <h2>Vendas na Maquininha</h2>
+                  </div>
+                  <strong className={styles.valorDestaque}>{formatarMoeda(valorTotalMaquininha)}</strong>
                 </div>
-                <div className={styles.maquininha}>
-                  <CreditCardIcon size={18} weight="duotone" style={{marginRight: '8px', color: '#e67700'}} /> <label style={{color:'#4c5053', fontSize:'15px', fontWeight:'600', marginRight: '20px'}}>Cartão: {formatarMoeda(valorCartao)}</label>
-                  <DeviceMobileIcon size={18} weight="duotone" style={{marginRight: '8px', color: '#e67700'}}/> <label style={{color:'#4c5053', fontSize:'15px', fontWeight:'600', marginRight: '20px'}}>Pix: {formatarMoeda(valorPix)}</label>
+                <div className={styles.maquininhaGrid}>
+                  <div className={styles.maquininhaItem}>
+                    <CreditCardIcon size={20} weight="duotone" className={styles.maquininhaIcone} />
+                    <div>
+                      <p className={styles.maquininhaLabel}>Cartão</p>
+                      <strong className={styles.maquininhaValor}>{formatarMoeda(valorCartao)}</strong>
+                    </div>
+                  </div>
+                  <div className={styles.maquininhaDivider} />
+                  <div className={styles.maquininhaItem}>
+                    <DeviceMobileIcon size={20} weight="duotone" className={styles.maquininhaIcone} />
+                    <div>
+                      <p className={styles.maquininhaLabel}>Pix</p>
+                      <strong className={styles.maquininhaValor}>{formatarMoeda(valorPix)}</strong>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* FORMULÁRIO DE ENTRADA */}
-              <div className={styles.entradaManual}>
-                <div className={styles.cabecalhoFormulario}>
-                  <ReceiptIcon size={22} weight="duotone" className={styles.icone} />
-                  <h2>Movimentação de Caixa</h2>
-                </div>
-
-                <div className={styles.gridFormulario}>
-                  {/* Selecionar o Tipo de manutenção */}
-                  <div className={styles.campoForm}>
-                    <strong style={{color: '#ff8c00', fontSize: '26px', marginBottom:'15px'}}> {balcao.label} </strong>
-                    <label className={styles.labelForm}>Tipo</label>
-                    <Select
-                      classNamePrefix="custom"
-                      options={tiposMovimentacao}
-                      value={tipoMovimentacao}
-                      onChange={setTipoMovimentacao}
-                      isSearchable={false}
-                    />
+              {/* Formulário de movimentação */}
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardHeaderTitle}>
+                    <ReceiptIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                    <h2>Movimentação de Caixa</h2>
                   </div>
+                  <span className={styles.balcaoBadge}>{balcao.label}</span>
                 </div>
 
-                {/* Valor */}
+                <div className={styles.campoForm}>
+                  <label className={styles.labelForm}>Tipo de movimentação</label>
+                  <Select
+                    classNamePrefix="custom"
+                    options={tiposMovimentacao}
+                    value={tipoMovimentacao}
+                    onChange={setTipoMovimentacao}
+                    isSearchable={false}
+                  />
+                </div>
+
                 <div className={styles.campoForm}>
                   <label className={styles.labelForm}>Valor (R$)</label>
                   <input
@@ -482,7 +429,6 @@ export default function FechamentoBalcao() {
                   />
                 </div>
 
-                {/* Descrição */}
                 <div className={styles.campoForm}>
                   <label className={styles.labelForm}>Descrição</label>
                   <textarea
@@ -494,80 +440,75 @@ export default function FechamentoBalcao() {
                   />
                 </div>
 
-                {/* Mensagem de erro - setErroFormulario*/}
                 {erroFormulario && (
                   <div className={styles.msgErro}>{erroFormulario}</div>
                 )}
 
-                {/* Botões */}
                 <div className={styles.containerBotoes}>
                   <button className={styles.botaoCancelar} onClick={cancelarFormulario}>
                     Cancelar
                   </button>
-                      <AlertaRadix
-                        titulo="Salvar movimentação"
-                        descricao={`Deseja adicionar nova movimentação no caixa do ${balcao.label}?`}
-                        tratar={novaMovimentacao}
-                        confirmarTexto="Adicionar"
-                        cancelarTexto="Cancelar"
-                        trigger={
-                          <button className={styles.botaoSalvar} title="Adicionar">
-                            <PlusCircleIcon size={18} weight="bold"  />
-                            Salvar movimentação.
-                          </button>
-                        }
-                      />
+                  <AlertaRadix
+                    titulo="Salvar movimentação"
+                    descricao={`Deseja adicionar nova movimentação no caixa do ${balcao.label}?`}
+                    tratar={novaMovimentacao}
+                    confirmarTexto="Adicionar"
+                    cancelarTexto="Cancelar"
+                    trigger={
+                      <button className={styles.botaoSalvar}>
+                        <PlusCircleIcon size={18} weight="bold" />
+                        Salvar movimentação
+                      </button>
+                    }
+                  />
                 </div>
-
               </div>
 
-              {/* LISTA DE MANUTENÇÕES */}
-              <div className={styles.listaManutencoes}>
-                <div className={styles.cabecalhoLista}>
-                  <h3>Movimentações do dia</h3>
+              {/* Lista de movimentações */}
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardHeaderTitle}>
+                    <ClockIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                    <h2>Movimentações do dia</h2>
+                  </div>
                   {movimentacoes.length > 0 && (
-                    // Totais de manutenções positivas e negativas cadastradas.
                     <div className={styles.resumoMovimentacoes}>
                       <span className={styles.resumoEntrada}>
-                        <ArrowUpIcon size={14} weight="bold" />
+                        <ArrowUpIcon size={12} weight="bold" />
                         {formatarMoeda(totalEntradas)}
                       </span>
                       <span className={styles.resumoSaida}>
-                        <ArrowDownIcon size={14} weight="bold" />
+                        <ArrowDownIcon size={12} weight="bold" />
                         {formatarMoeda(totalSaidas)}
                       </span>
                     </div>
                   )}
                 </div>
+
                 {movimentacoes.length === 0 ? (
                   <div className={styles.listaVazia}>
-                    <ReceiptIcon size={40} weight="duotone" className={styles.iconeVazio} />
-                    <p>Nenhuma movimentação registrada ainda.</p>
+                    <ReceiptIcon size={36} weight="duotone" className={styles.iconeVazio} />
+                    <p>Nenhuma movimentação registrada</p>
                   </div>
                 ) : (
-                  <div className={styles.itensManutencao}>
+                  <div className={styles.itensMovimentacao}>
                     {movimentacoes.map((m) => (
-                      <div key={m.id} className={`${styles.itemManutencao} ${styles[`item_${m.tipo}`]}`}>
-                        <div className={styles.itemIconeTipo}>
+                      <div key={m.id} className={`${styles.itemMovimentacao} ${styles[`item_${m.tipo}`]}`}>
+                        <div className={`${styles.itemIconeTipo} ${styles[`icone_${m.tipo}`]}`}>
                           {m.tipo === 'entrada'
-                            ? <ArrowUpIcon size={16} weight="bold" />
-                            : m.tipo === 'saida'
-                            ? <ArrowDownIcon size={16} weight="bold" />
-                            : <ReceiptIcon size={16} weight="bold" />}
+                            ? <ArrowUpIcon size={14} weight="bold" />
+                            : <ArrowDownIcon size={14} weight="bold" />}
                         </div>
                         <div className={styles.itemInfo}>
                           <p className={styles.itemDescricao}>{m.descricao}</p>
-                          <div className={styles.itemRodape}>
-                            <span className={styles.itemHora}>
-                              <ClockIcon size={12} />
-                              {dataHoraFormatada(m.data)}
-                            </span>
-                            <strong className={`${styles.itemValor} ${styles[`valor_${m.tipo}`]}`}>
-                              {m.tipo === 'saida' ? '- ' : '+ '}
-                              {formatarMoeda(m.valor)}
-                            </strong>
-                          </div>
+                          <span className={styles.itemHora}>
+                            <ClockIcon size={11} />
+                            {dataHoraFormatada(m.data)}
+                          </span>
                         </div>
+                        <strong className={`${styles.itemValor} ${styles[`valor_${m.tipo}`]}`}>
+                          {m.tipo === 'saida' ? '−' : '+'} {formatarMoeda(m.valor)}
+                        </strong>
                         <AlertaRadix
                           titulo="Remover movimentação"
                           descricao={`Deseja remover "${m.descricao}"?`}
@@ -575,8 +516,8 @@ export default function FechamentoBalcao() {
                           confirmarTexto="Remover"
                           cancelarTexto="Cancelar"
                           trigger={
-                            <button className={styles.botaoRemover} title="Remover">
-                              <TrashIcon size={16} weight="bold" />
+                            <button className={styles.botaoRemover}>
+                              <TrashIcon size={14} weight="bold" />
                             </button>
                           }
                         />
@@ -587,69 +528,57 @@ export default function FechamentoBalcao() {
               </div>
 
             </div>
-          </>
-          :
-          // CAIXA FINALIZADO! STATUS = 'FECHADO'
-          <>
-            <div className={styles.entradaManual}>
+          </div>
 
-              {/* TOTAL DE VENDAS A VISTA */}
-                <div className={styles.cabecalhoFormulario}>
-                  <CalendarCheckIcon size={26} weight="duotone" className={styles.iconeFinalizado} />
-                  <h2 style={{color: '#4c5053', fontWeight: '600'}}>Selecinado: 
-                      <strong style={{color: '#e67700', marginLeft:'10px', fontSize:'18px'}}>{balcao.label}
-                      </strong>
-                  </h2> - 
-                  <h2 style={{color: '#4c5053', fontWeight: '600', fontSize: '16px'}}>
-                    Status: <strong style={{color: '#2f9e44', marginLeft:'10px', fontSize:'18px'}}>{fechamentoAtual?.status}</strong>
-                  </h2>
+        ) : (
+
+          /* ── CAIXA FECHADO ── */
+          <div className={styles.fechadoWrapper}>
+            <div className={styles.fechadoBanner}>
+              <LockKeyIcon size={32} weight="fill" className={styles.fechadoIcone} />
+              <div>
+                <h2 className={styles.fechadoTitulo}>Caixa encerrado</h2>
+                <p className={styles.fechadoSubtitulo}>{balcao.label} · Status: <strong className={styles.statusBadge}>{fechamentoAtual?.status}</strong></p>
               </div>
-
-              {/* TOTAL DE VENDAS A VISTA */}
-                <div className={styles.cabecalhoFormulario}>
-                  <CoinsIcon size={22} weight="duotone" className={styles.iconeFinalizado} />
-                  <h2 style={{color: '#4c5053', fontWeight: '600'}}>Total de vendas: <strong style={{color: '#2f9e44', marginLeft:'10px', fontSize:'16px'}}>{formatarMoeda(vendaBalcao?.total ?? 0)}</strong></h2>
-              </div>
-
-
-              {/* QUANTIDADE DE PEDIDOS */}
-                <div className={styles.cabecalhoFormulario}>
-                  <ShoppingBagIcon size={22} weight="duotone" className={styles.iconeFinalizado} />
-                  <h2 style={{color: '#4c5053', fontWeight: '600'}}>Quantidade de pedidos gerados: <strong style={{color: '#2f9e44', marginLeft:'10px', fontSize:'16px'}}>{vendaBalcao?.quantidade ?? 0}</strong></h2>
-              </div>
-
-
-              {/* TOTAL DE VENDAS A VISTA */}
-                <div className={styles.cabecalhoFormulario}>
-                  <MoneyIcon size={22} weight="duotone" className={styles.iconeFinalizado} />
-                  <h2 style={{color: '#4c5053', fontWeight: '600'}}>Total de vendas a vista: <strong style={{color: '#2f9e44', marginLeft:'10px', fontSize:'16px'}}>{formatarMoeda(vendaBalcao?.resultado?.a_vista ?? 0)}</strong></h2>
-              </div>
-
-              {/* TOTAL DE VENDAS MAQUININHA */}
-
-                <div className={styles.cabecalhoFormulario}>
-                  <CreditCardIcon size={22} weight="duotone" className={styles.iconeFinalizado} />
-                  <h2 style={{color: '#4c5053', fontWeight: '600'}}>Total de vendas no cartão e pix: <strong style={{color: '#2f9e44', marginLeft:'10px', fontSize:'16px'}}>{formatarMoeda(valorTotalMaquininha)}</strong></h2>
-                </div>
-              <div className={styles.maquininha} style={{marginBottom: '30px', borderBottom: '2px solid #f1f3f5', paddingBottom: '20px'}}>
-                <CreditCardIcon size={18} weight="duotone" style={{marginRight: '8px', color: '#e67700'}} /> <label style={{color:'#4c5053', fontSize:'15px', fontWeight:'600', marginRight: '20px'}}>Cartão: {formatarMoeda(valorCartao)}</label>
-                <DeviceMobileIcon size={18} weight="duotone" style={{marginRight: '8px', color: '#e67700'}}/> <label style={{color:'#4c5053', fontSize:'15px', fontWeight:'600', marginRight: '20px'}}>Pix: {formatarMoeda(valorPix)}</label>
-              </div>
-
-
-              {/* TOTAL DE VENDAS A VISTA */}
-                <div className={styles.cabecalhoFormulario}>
-                  <CalculatorIcon size={22} weight="duotone" className={styles.iconeFinalizado} />
-                  <h2 style={{color: '#4c5053', fontWeight: '600'}}>Total de diferença de caixa: <strong style={{color: '#2f9e44', marginLeft:'10px', fontSize:'16px'}}>{formatarMoeda(fechamentoAtual?.diferenca ?? 0)}</strong></h2>
-              </div>
-
-
             </div>
-          </>
-        
-          }
-        </div>
+
+            <div className={styles.fechadoGrid}>
+              <div className={styles.fechadoCard}>
+                <CoinsIcon size={22} weight="duotone" className={styles.fechadoCardIcone} />
+                <p className={styles.fechadoCardLabel}>Total de vendas</p>
+                <strong className={styles.fechadoCardValor}>{formatarMoeda(vendaBalcao?.total ?? 0)}</strong>
+              </div>
+              <div className={styles.fechadoCard}>
+                <ShoppingBagIcon size={22} weight="duotone" className={styles.fechadoCardIcone} />
+                <p className={styles.fechadoCardLabel}>Pedidos gerados</p>
+                <strong className={styles.fechadoCardValor}>{vendaBalcao?.quantidade ?? 0}</strong>
+              </div>
+              <div className={styles.fechadoCard}>
+                <MoneyIcon size={22} weight="duotone" className={styles.fechadoCardIcone} />
+                <p className={styles.fechadoCardLabel}>Vendas à vista</p>
+                <strong className={styles.fechadoCardValor}>{formatarMoeda(vendaBalcao?.resultado?.a_vista ?? 0)}</strong>
+              </div>
+              <div className={styles.fechadoCard}>
+                <CreditCardIcon size={22} weight="duotone" className={styles.fechadoCardIcone} />
+                <p className={styles.fechadoCardLabel}>Cartão + Pix</p>
+                <strong className={styles.fechadoCardValor}>{formatarMoeda(valorTotalMaquininha)}</strong>
+              </div>
+              <div className={styles.fechadoCard}>
+                <DeviceMobileIcon size={22} weight="duotone" className={styles.fechadoCardIcone} />
+                <p className={styles.fechadoCardLabel}>Pix</p>
+                <strong className={styles.fechadoCardValor}>{formatarMoeda(valorPix)}</strong>
+              </div>
+              <div className={`${styles.fechadoCard} ${styles.fechadoCardDestaque}`}>
+                <CalculatorIcon size={22} weight="duotone" className={styles.fechadoCardIcone} />
+                <p className={styles.fechadoCardLabel}>Diferença de caixa</p>
+                <strong className={styles.fechadoCardValor}>{formatarMoeda(fechamentoAtual?.diferenca ?? 0)}</strong>
+              </div>
+            </div>
+          </div>
+
+        )}
       </main>
+
       <Rodape />
     </div>
   );

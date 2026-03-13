@@ -4,14 +4,14 @@ import Cabecalho from "../../componentes/Cabecalho/index.jsx";
 import Rodape from "../../componentes/Rodape/index.jsx";
 import logo from "../../assets/logo.jpg";
 import ItemListaHistorico from "../../componentes/ItemListaHistorico/index.jsx";
-import {
-  dataFormatadaCalendario,
-} from "../../utils/data.js";
+import { dataFormatadaCalendario } from "../../utils/data.js";
 import {
   CalendarBlankIcon,
   MagnifyingGlassIcon,
   FileTextIcon,
-  NotepadIcon
+  CurrencyDollarIcon,
+  IdentificationCardIcon,
+  UserIcon,
 } from "@phosphor-icons/react";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { useFormaPagamento } from "../../hooks/useFormaPagamento";
@@ -24,50 +24,37 @@ export default function HistoricoValesInterno() {
   const [carregando, setCarregando] = useState(false);
   const [totalVendas, setTotalVendas] = useState(0);
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
-  const [formaPagamento, setFormaPagamento] = useState();
+  const [formaPagamento, setFormaPagamento] = useState("");
   const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
 
-  const {
-    listaFormaPagamento
-  } = useFormaPagamento();
+  const { listaFormaPagamento } = useFormaPagamento();
 
-    // filtrando apenas nomes para listar vales internos.
-    const ignorarItensLista = ['A VISTA', 'PIX', 'CARTÃO'];
-    const listaFormasPagamentoFiltrada = listaFormaPagamento?.filter(forma => !ignorarItensLista.includes(forma.nome));
+  const ignorarItensLista = ["A VISTA", "PIX", "CARTÃO", "CHEQUE"];
+  const listaFormasPagamentoFiltrada = listaFormaPagamento?.filter(
+    (forma) => !ignorarItensLista.includes(forma.nome)
+  );
 
-
-  // Inicializa a data final com a data atual.
   useEffect(() => {
-    const inicializarData = async () => {
-      const hoje = dataFormatadaCalendario();
-      setDataInicio(hoje);
-      setDataFim(hoje);
-    };
-    inicializarData();
+    const hoje = dataFormatadaCalendario();
+    setDataInicio(hoje);
+    setDataFim(hoje);
   }, []);
 
-  // Filtra pedidos conforme a data selecionada.
   useEffect(() => {
-
-    if (!dataInicio || !dataFim ) return;
-
+    if (!dataInicio || !dataFim) return;
     const filtrarPedidos = async () => {
       setCarregando(true);
-
       try {
-        // valido formaPagamento para não fazer chamada na API undefined
-        if(formaPagamento) {
+        if (formaPagamento) {
           const resultado = await buscarPedido({
             setor: "balcao",
             vendedor: nomeMaquina,
-            dataInicio: dataInicio,
-            dataFim: dataFim,
+            dataInicio,
+            dataFim,
             formaPagamentoId: formaPagamento,
-        });
-
-        setPedidosFiltrados(resultado);
+          });
+          setPedidosFiltrados(resultado);
         }
-
       } catch (error) {
         console.error("Erro ao filtrar pedidos:", error);
         alert("Erro ao buscar pedidos. Tente novamente.");
@@ -75,187 +62,186 @@ export default function HistoricoValesInterno() {
         setCarregando(false);
       }
     };
-
     filtrarPedidos();
   }, [dataInicio, dataFim, formaPagamento]);
 
-  // Calcular total do cupom.
   useEffect(() => {
-    // Calcula totais
-    const total = pedidosFiltrados.reduce((acc, pedido) => {
-      // array de pedidos
-      return (
-        acc + // acumulador geral
-        pedido.itens.reduce((soma, item) => soma + item.valorTotal || 0, 0) //array de itens do pedido
-      ); // soma = total do pedido atual.
-      // o ultimo zero indica que a soma começa em zero.
-    }, 0);
-
+    const total = pedidosFiltrados.reduce(
+      (acc, pedido) =>
+        acc + pedido.itens.reduce((soma, item) => soma + item.valorTotal || 0, 0),
+      0
+    );
     setTotalVendas(total);
   }, [pedidosFiltrados]);
-
-  // Trata a alteração da data inicial.
-  const tratarAlteracaoDataInicio = (e) => {
-    const novaData = e.target.value;
-    setDataInicio(novaData);
-  };
-
-  // Trata a alteração da data final.
-  const tratarAlteracaoDataFim = (e) => {
-    const novaData = e.target.value;
-    setDataFim(novaData);
-  };
-
-  // Botão que seta a data atual como dataFim no filtro.
-  const setarHojeDataFimAutomatico = () => {
-    const hoje = dataFormatadaCalendario();
-    setDataFim(hoje);
-  };
 
   return (
     <div className={styles.container}>
       <Cabecalho />
 
       <main className={styles.principal}>
-        {/* Cabeçalho com título e filtros */}
+
+        {/* ── Cabeçalho ── */}
         <div className={styles.cabecalhoPage}>
-        
           <div className={styles.tituloSection}>
-            <NotepadIcon  size={40} weight="duotone" className={styles.icone} />
-            <h1 className={styles.menuTitulo}>Histórico de vales interno</h1>
+            <div className={styles.iconeWrapper}>
+              <IdentificationCardIcon size={22} weight="fill" />
+            </div>
+            <div>
+              <p className={styles.pageSubtitulo}>Terminal de caixa</p>
+              <h1 className={styles.menuTitulo}>Vales Internos</h1>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Painel de filtros ── */}
+        <div className={styles.painelFiltros}>
+          <div className={styles.filtrosHeader}>
+            <UserIcon size={14} weight="bold" className={styles.filtroIcone} />
+            <span>Filtros</span>
           </div>
 
-          {/* Filtro de data */}
-          <div className={styles.filtros}>
-            <div className={styles.campoData}>
+          <div className={styles.filtrosGrid}>
 
-              {/* SELECIONAR FORMA DE PAGAMENTO. */}
+            {/* Colaborador */}
+            <div className={styles.filtroGrupo}>
+              <label className={styles.filtroLabel}>Colaborador</label>
               <select
                 value={formaPagamento}
-                
                 onChange={(e) => {
                   const id = e.target.value;
-
                   setFormaPagamento(id);
-
-                  const nome =
-                    listaFormasPagamentoFiltrada.find((forma) => forma.id === Number(id))
-                      ?.nome || "";
-
-                  setNomeFormaPagamento(nome);
+                  setNomeFormaPagamento(
+                    listaFormasPagamentoFiltrada.find((f) => f.id === Number(id))?.nome || ""
+                  );
                 }}
-                className={styles.selectPagamento}
+                className={styles.selectInput}
               >
+                <option value="">Selecione o colaborador</option>
                 {listaFormasPagamentoFiltrada?.map((forma) => (
                   <option key={forma.id} value={forma.id}>
                     {forma.nome}
                   </option>
                 ))}
               </select>
+            </div>
 
-              {/* SELECIONAR DATAS. */}
-              <label>
-                <CalendarBlankIcon size={18} weight="bold" />
-                Selecionar data:
+            {/* Data inicial */}
+            <div className={styles.filtroGrupo}>
+              <label className={styles.filtroLabel}>
+                <CalendarBlankIcon size={13} weight="bold" />
+                Data inicial
               </label>
-              <div className={styles.inputGroup}>
-                {/* SELECT DE DATA INICIAL */}
-                <input
-                  className={styles.calendario}
-                  type="date"
-                  value={dataInicio}
-                  onChange={tratarAlteracaoDataInicio}
-                />
-                {/* SELECT DE DATA FINAL */}
+              <input
+                className={styles.calendario}
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+              />
+            </div>
+
+            {/* Data final */}
+            <div className={styles.filtroGrupo}>
+              <label className={styles.filtroLabel}>
+                <CalendarBlankIcon size={13} weight="bold" />
+                Data final
+              </label>
+              <div className={styles.dataFimGroup}>
                 <input
                   className={styles.calendario}
                   type="date"
                   value={dataFim}
-                  onChange={tratarAlteracaoDataFim}
+                  onChange={(e) => setDataFim(e.target.value)}
                 />
-                {/* BOTÃO DE SETAR DIA ATUAL PARA DATA FINAL */}
                 <button
-                  className={styles.botaoLimpar}
-                  onClick={setarHojeDataFimAutomatico}
-                  title="Voltar para hoje"
+                  className={styles.botaoHoje}
+                  onClick={() => setDataFim(dataFormatadaCalendario())}
                 >
                   Hoje
                 </button>
               </div>
-
             </div>
+
           </div>
-          
         </div>
 
-        {/* Cards de resumo */}
+        {/* ── Cards de resumo ── */}
         <div className={styles.resumoCards}>
-          {/* Total pedidos */}
           <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardTitulo}>Total de Pedidos</span>
-              <div className={styles.cardIcone}>
-                <FileTextIcon size={24} weight="duotone" />
-              </div>
+            <div className={styles.cardIcone} data-color="orange">
+              <FileTextIcon size={20} weight="fill" />
             </div>
-            <p className={styles.cardValor}>{pedidosFiltrados.length}</p>
-            <span className={styles.cardSubtitulo}>
-              {pedidosFiltrados.length === 1 ? "pedido" : "pedidos"} no decorrer do período
-            </span>
+            <div>
+              <p className={styles.cardLabel}>Total de pedidos</p>
+              <strong className={styles.cardValor}>{pedidosFiltrados.length}</strong>
+              <p className={styles.cardSub}>
+                {pedidosFiltrados.length === 1 ? "pedido no período" : "pedidos no período"}
+              </p>
+            </div>
           </div>
-          {/* Total em vendas */}
+
           <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardTitulo}>Total em Vendas</span>
-              <div className={styles.cardIcone}>
-                <span style={{ fontSize: "24px" }}>💰</span>
-              </div>
+            <div className={styles.cardIcone} data-color="green">
+              <CurrencyDollarIcon size={20} weight="fill" />
             </div>
-            <p className={styles.cardValor}>
-              {formatarMoeda(totalVendas)}
-            </p>
-            <span className={styles.cardSubtitulo}>Valor total em vales internos.</span>
+            <div>
+              <p className={styles.cardLabel}>Total em vales</p>
+              <strong className={styles.cardValor}>{formatarMoeda(totalVendas)}</strong>
+              <p className={styles.cardSub}>valor total no período</p>
+            </div>
           </div>
         </div>
 
-        {/* Conteúdo principal */}
+        {/* ── Conteúdo principal ── */}
         <div className={styles.main}>
-          {/* Lista de pedidos */}
+
           <section className={styles.containerLista}>
             <div className={styles.cabecalhoLista}>
-              <h2>
-                <MagnifyingGlassIcon size={20} weight="bold" />
-                Pedidos Encontrados: {nomeFormaPagamento}
-              </h2>
+              <div className={styles.cabecalhoListaEsq}>
+                <MagnifyingGlassIcon size={18} weight="bold" className={styles.cabecalhoIcone} />
+                <h2>Pedidos encontrados</h2>
+                {nomeFormaPagamento && (
+                  <span className={styles.badgeColaborador}>{nomeFormaPagamento}</span>
+                )}
+                {!carregando && pedidosFiltrados.length > 0 && (
+                  <span className={styles.contador}>
+                    {pedidosFiltrados.length} {pedidosFiltrados.length === 1 ? "resultado" : "resultados"}
+                  </span>
+                )}
+              </div>
               {carregando && (
-                <span className={styles.loading}>Carregando...</span>
+                <span className={styles.loading}>
+                  <span className={styles.dot} />
+                  Carregando...
+                </span>
               )}
             </div>
-            {/* Titulos da tabela */}
+
             <div className={styles.tabelaWrapper}>
               <div className={styles.tituloLista}>
                 <h3 className={styles.itemLista1}>ID</h3>
-                <h3 className={styles.itemLista2}>Data-Horário</h3>
-                <h3 className={styles.itemLista3}>Balcão-Vendedor</h3>
-                <h3 className={styles.itemLista4}>TOTAL</h3>
-                <h3 className={styles.itemLista5}>PAGAMENTO</h3>
+                <h3 className={styles.itemLista2}>Data / Hora</h3>
+                <h3 className={styles.itemLista3}>Balcão · Vendedor</h3>
+                <h3 className={styles.itemLista4}>Total</h3>
+                <h3 className={styles.itemLista5}>Pagamento</h3>
               </div>
 
-              {/* Itens da tabela */}
               <div className={styles.lista}>
                 {carregando ? (
                   <div className={styles.estadoVazio}>
-                    <p>Carregando pedidos...</p>
+                    <div className={styles.spinner} />
+                    <p>Buscando pedidos...</p>
+                  </div>
+                ) : !formaPagamento ? (
+                  <div className={styles.estadoVazio}>
+                    <UserIcon size={44} weight="duotone" className={styles.iconeVazio} />
+                    <p>Selecione um colaborador</p>
+                    <span>Escolha o colaborador para visualizar os vales</span>
                   </div>
                 ) : pedidosFiltrados.length === 0 ? (
                   <div className={styles.estadoVazio}>
-                    <FileTextIcon
-                      size={48}
-                      weight="duotone"
-                      className={styles.iconeVazio}
-                    />
-                    <p>Nenhum pedido encontrado</p>
-                    <span>Não há vendas registradas para esta data</span>
+                    <FileTextIcon size={44} weight="duotone" className={styles.iconeVazio} />
+                    <p>Nenhum vale encontrado</p>
+                    <span>Não há vales registrados para este período</span>
                   </div>
                 ) : (
                   <ItemListaHistorico pedidos={pedidosFiltrados} />
@@ -267,17 +253,13 @@ export default function HistoricoValesInterno() {
           {/* Mascote */}
           <aside className={styles.containerMascote}>
             <div className={styles.mascoteCard}>
-              <img
-                src={logo}
-                alt="Amigão Distribuidora de Bebidas"
-                className={styles.logo}
-              />
+              <img src={logo} alt="Logo" className={styles.logo} />
               <p className={styles.mascoteTexto}>
                 Consulte o histórico de pedidos como vale interno.
               </p>
             </div>
           </aside>
-          
+
         </div>
       </main>
 

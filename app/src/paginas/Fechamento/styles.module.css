@@ -1,397 +1,437 @@
+/* ============================================================
+   VARIÁVEIS GLOBAIS
+   ============================================================ */
+:root {
+  --orange:        #ff8c00;
+  --orange-light:  #fff3e0;
+  --orange-mid:    #ffd699;
+  --green:         #2f9e44;
+  --green-light:   #ebfbee;
+  --red:           #c92a2a;
+  --red-light:     #fff5f5;
+  --amber:         #e67700;
+  --amber-light:   #fff9db;
+  --gray-900:      #1a1f2e;
+  --gray-700:      #495057;
+  --gray-500:      #868e96;
+  --gray-300:      #dee2e6;
+  --gray-100:      #f8f9fa;
+  --white:         #ffffff;
+  --border:        #eaecef;
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
+  --shadow-md:     0 2px 10px rgba(0,0,0,0.07), 0 6px 24px rgba(0,0,0,0.05);
+  --radius:        14px;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
 .container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #f2f4f7;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .main {
   flex: 1;
-  display: flex;
-  flex-direction: row;
-  gap: 30px;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 32px 28px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-/* LADO ESQUERDO - CONTADOR */
-.containerContador {
-  flex: 1;
-  max-width: 600px;
-}
-
-.tituloSection {
+/* ============================================================
+   CABEÇALHO
+   ============================================================ */
+.pageHeader {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 25px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.tituloSection h1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
+.pageHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-.icone {
-  color: #ff8c00;
-}
-
-.contador {
-  background-color: white;
+.iconeWrapper {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #ff8c00, #ffb347);
   border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(255, 140, 0, 0.35);
+  flex-shrink: 0;
 }
 
-.cabecalhoContador {
+.pageSubtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 2px;
+}
+
+.pageTitulo {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+/* Relógio ao vivo */
+.relogio {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.relogioItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+  white-space: nowrap;
+}
+
+.relogioIcone {
+  color: var(--orange);
+}
+
+.relogioHora {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.relogioDivider {
+  width: 1px;
+  height: 20px;
+  background: var(--gray-300);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   LAYOUT DUAS COLUNAS
+   ============================================================ */
+.layout {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+/* ============================================================
+   CARD GENÉRICO
+   ============================================================ */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #f1f3f5;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid #f1f3f5;
 }
 
-.cabecalhoContador h2 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
+.cardHeaderTitle {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 }
 
-.badge {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  padding: 6px 14px;
+.cardHeaderTitle h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.cardHeaderIcon {
+  color: var(--orange);
+}
+
+/* ============================================================
+   CONTADOR DE NOTAS
+   ============================================================ */
+.colunaContador {
+  position: sticky;
+  top: 20px;
+}
+
+.badgeNotas {
+  background: #e7f5ff;
+  color: #1971c2;
+  padding: 4px 12px;
   border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .tituloTabela {
   display: grid;
-  grid-template-columns: 80px 1fr 140px;
-  gap: 15px;
-  padding: 12px 15px;
-  background-color: #f8f9fa;
+  grid-template-columns: 80px 1fr 130px;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--gray-100);
   border-radius: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
 }
 
 .tituloTabela span {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
-  color: #6c757d;
+  color: var(--gray-500);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   text-align: center;
 }
 
 .listaNotas {
   max-height: 340px;
   overflow-y: auto;
-  margin-bottom: 20px;
-  padding-right: 8px;
+  margin-bottom: 16px;
+  padding-right: 4px;
 }
 
-.listaNotas::-webkit-scrollbar {
-  width: 6px;
-}
-
-.listaNotas::-webkit-scrollbar-track {
-  background: #f1f3f5;
-  border-radius: 10px;
-}
-
-.listaNotas::-webkit-scrollbar-thumb {
-  background: #dee2e6;
-  border-radius: 10px;
-}
-
-.listaNotas::-webkit-scrollbar-thumb:hover {
-  background: #adb5bd;
-}
+.listaNotas::-webkit-scrollbar { width: 4px; }
+.listaNotas::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 4px; }
+.listaNotas::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+.listaNotas::-webkit-scrollbar-thumb:hover { background: var(--gray-500); }
 
 .rodapeContador {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 20px;
-  border-top: 2px solid #f1f3f5;
-  margin-top: 15px;
+  padding-top: 16px;
+  border-top: 1.5px solid #f1f3f5;
 }
 
 .botaoLimpar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
+  gap: 7px;
+  padding: 9px 18px;
+  background: var(--red-light);
+  color: var(--red);
+  border: 1.5px solid #ffc9c9;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .botaoLimpar:hover {
-  background-color: #c82333;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-}
-
-.botaoLimpar:active {
-  transform: translateY(0);
+  background: #ffe3e3;
+  border-color: #f03e3e;
+  transform: translateY(-1px);
 }
 
 .totalContado {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
+  text-align: right;
 }
 
 .totalContado span {
-  font-size: 14px;
-  color: #6c757d;
-  font-weight: 500;
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
 }
 
 .totalContado strong {
-  font-size: 24px;
-  color: #28a745;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: -0.5px;
 }
 
-/* CONFERÊNCIA */
+/* ── Conferência ── */
 .conferencia {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #ff8c00;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--gray-100);
+  transition: all 0.3s;
 }
 
-.linhaConferencia {
+.conferencia_ok    { background: var(--green-light); border-color: #8ce99a; }
+.conferencia_sobra { background: var(--amber-light); border-color: #ffd43b; }
+.conferencia_falta { background: var(--red-light);   border-color: #ffc9c9; }
+
+.conferenciaHeader {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.conferenciaTitulo {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--gray-700);
+}
+
+.conferenciaIconeOk    { color: var(--green); }
+.conferenciaIconeAviso { color: var(--amber); }
+
+.conferenciaLinha {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 4px 0;
+  font-size: 13px;
+  color: var(--gray-700);
 }
 
-.linhaConferencia span {
+.conferenciaDivider {
+  height: 1px;
+  background: var(--gray-300);
+  margin: 6px 0;
+  opacity: 0.6;
+}
+
+.valorNeutro {
   font-size: 14px;
-  color: #495057;
+  font-weight: 700;
+  color: var(--gray-900);
 }
 
-.valorEsperado {
+.valor_ok    { font-size: 16px; font-weight: 800; color: var(--green); }
+.valor_sobra { font-size: 16px; font-weight: 800; color: var(--amber); }
+.valor_falta { font-size: 16px; font-weight: 800; color: var(--red);   }
+
+.valor_ok em,
+.valor_sobra em,
+.valor_falta em {
+  font-style: normal;
+  font-size: 11px;
   font-weight: 600;
-  color: #2c3e50 !important;
+  margin-left: 5px;
+  opacity: 0.75;
 }
 
-.valorOk {
-  font-weight: 700;
-  color: #28a745 !important;
-}
-
-.valorPositivo {
-  font-weight: 700;
-  color: #ffc107 !important;
-}
-
-.valorNegativo {
-  font-weight: 700;
-  color: #dc3545 !important;
-}
-
-/* LADO DIREITO - RESUMO */
-.containerTotal {
-  flex: 1;
-  max-width: 650px;
+/* ============================================================
+   COLUNA DIREITA
+   ============================================================ */
+.colunaResumo {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 18px;
 }
 
-.secaoTotal,
-.secaoFormas {
-  background-color: white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.totalGeralWrapper {
+  margin-top: 4px;
 }
 
-.headerSecao {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.headerSecao h2 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-}
-
-.headerSecao svg {
-  color: #ff8c00;
-}
-
-.cardTotalGeral {
-  margin-top: 10px;
-}
-
-.secaoFormas h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #495057;
-  margin: 0 0 20px 0;
+.formasPagLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-500);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
 }
 
 .gridCartoes {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 
-.infoAdicional {
-  background-color: white;
-  border-radius: 12px;
-  padding: 20px 25px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+/* ── Mascote ── */
+.mascoteCard {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.infoAdicional p {
-  font-size: 14px;
-  color: #6c757d;
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-}
-
-.infoAdicional strong {
-  color: #2c3e50;
-  font-weight: 600;
-  margin-right: 10px;
-}
-
-/* MASCOTE */
-.mascote {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
-  background-color: white;
-  border-top: 2px solid #f1f3f5;
+  gap: 20px;
 }
 
 .logo {
-  width: 180px;
-  height: 180px;
+  width: 72px;
+  height: 72px;
   object-fit: contain;
-  margin-bottom: 15px;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  border-radius: 12px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12));
 }
 
 .textoMascote {
   font-size: 14px;
-  color: #6c757d;
-  text-align: center;
-  max-width: 400px;
+  color: var(--gray-500);
   line-height: 1.6;
   margin: 0;
 }
 
-/* RESPONSIVIDADE */
-@media (max-width: 1200px) {
-  .main {
-    flex-direction: column;
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
   }
-
-  .containerContador,
-  .containerTotal {
-    max-width: 100%;
-  }
-
-  .gridCartoes {
-    grid-template-columns: repeat(2, 1fr);
+  .colunaContador {
+    position: static;
   }
 }
 
 @media (max-width: 768px) {
-  .main {
-    padding: 20px 15px;
-  }
-
-  .tituloSection h1 {
-    font-size: 22px;
-  }
-
-  .contador {
-    padding: 20px 15px;
-  }
-
-  .tituloTabela {
-    grid-template-columns: 60px 1fr 120px;
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .rodapeContador {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
-  }
-
-  .totalContado {
-    align-items: center;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-  }
-
-  .gridCartoes {
-    grid-template-columns: 1fr;
-  }
-
-  .botaoLimpar {
-    width: 100%;
-    justify-content: center;
-  }
+  .main { padding: 20px 16px 40px; }
+  .pageTitulo { font-size: 20px; }
+  .pageHeader { flex-direction: column; align-items: flex-start; }
+  .relogio { align-self: flex-start; }
+  .gridCartoes { grid-template-columns: 1fr; }
+  .rodapeContador { flex-direction: column; gap: 12px; align-items: stretch; }
+  .totalContado { text-align: center; background: var(--gray-100); padding: 12px; border-radius: 8px; }
+  .botaoLimpar { width: 100%; justify-content: center; }
+  .mascoteCard { flex-direction: column; text-align: center; }
 }
 
 @media (max-width: 480px) {
-  .tituloSection {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .cabecalhoContador {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .badge {
-    align-self: flex-start;
-  }
+  .tituloTabela { grid-template-columns: 60px 1fr 110px; }
+  .gridCartoes { grid-template-columns: 1fr; }
 }
