@@ -7,6 +7,7 @@ import Cabecalho from "../../componentes/Cabecalho/index.jsx";
 import Rodape from "../../componentes/Rodape/index.jsx";
 import logo from "../../assets/logo.jpg";
 import styles from "./styles.module.css";
+import { TrashIcon, PencilIcon } from "@phosphor-icons/react";
 import {
   ArrowCircleLeftIcon,
   PrinterIcon,
@@ -15,11 +16,13 @@ import {
   PackageIcon,
   CreditCardIcon,
 } from "@phosphor-icons/react";
+import { usarAuth } from "../../componentes/Context/authContext";
 
 export default function Reimprimir() {
   const { state } = useLocation();
   const navegar = useNavigate();
   const { produtos } = useProdutos();
+  const { usuario } = usarAuth();
 
   const cupom = state;
 
@@ -27,6 +30,8 @@ export default function Reimprimir() {
     navegar("/historico");
     return null;
   }
+
+  console.log('Cupom: ', cupom)
 
   const handleVoltar = () => navegar(-1);
 
@@ -59,7 +64,7 @@ export default function Reimprimir() {
 
       <main className={styles.principal}>
 
-        {/* ── Cabeçalho ── */}
+        {/* CABEÇALHO */}
         <div className={styles.cabecalhoPage}>
           <div className={styles.tituloSection}>
             <div className={styles.iconeWrapper}>
@@ -72,14 +77,13 @@ export default function Reimprimir() {
           </div>
         </div>
 
-        {/* ── Conteúdo ── */}
         <div className={styles.conteudo}>
 
-          {/* Coluna principal */}
           <div className={styles.colunaLista}>
 
-            {/* Cards de resumo */}
+            {/* CARDS DE RESUMO */}
             <div className={styles.resumoCards}>
+              {/* QUANTIDADE DE ITENS */}
               <div className={styles.card}>
                 <div className={styles.cardIcone} data-color="orange">
                   <PackageIcon size={20} weight="fill" />
@@ -90,7 +94,7 @@ export default function Reimprimir() {
                   <p className={styles.cardSub}>{totalItens} unidades no total</p>
                 </div>
               </div>
-
+              {/* TOTAL DO PEDIDO */}
               <div className={styles.card}>
                 <div className={styles.cardIcone} data-color="green">
                   <CurrencyDollarIcon size={20} weight="fill" />
@@ -101,7 +105,7 @@ export default function Reimprimir() {
                   <p className={styles.cardSub}>valor final</p>
                 </div>
               </div>
-
+              {/* FORMA DE PAGAMENTO */}
               <div className={styles.card}>
                 <div className={styles.cardIcone} data-color="blue">
                   <CreditCardIcon size={20} weight="fill" />
@@ -114,7 +118,7 @@ export default function Reimprimir() {
               </div>
             </div>
 
-            {/* Cupom */}
+            {/* CUPOM */}
             <div className={styles.cupomFiscal}>
 
               <div className={styles.cupomHeader}>
@@ -166,6 +170,7 @@ export default function Reimprimir() {
                   <span>Total</span>
                   <span className={styles.valorTotal}>{formatarMoeda(cupom.total)}</span>
                 </div>
+
               </div>
 
               {/* Botão imprimir */}
@@ -188,7 +193,7 @@ export default function Reimprimir() {
             </div>
           </div>
 
-          {/* Mascote */}
+          {/* MASCOTE */}
           <aside className={styles.containerMascote}>
             <div className={styles.mascoteCard}>
               <img src={logo} alt="Logo" className={styles.logo} />
@@ -196,6 +201,18 @@ export default function Reimprimir() {
                 Reimpressão da segunda via do pedido selecionado.
               </p>
             </div>
+            {usuario.nivelAcesso === "ADMIN" && 
+              <div className={styles.botoesFinais}>
+                <button className={styles.botaoEditar}>
+                  <PencilIcon size={20}/>
+                  Editar
+                </button>
+                <button className={styles.botaoApagar}>
+                  <TrashIcon size={20} onClick={() => console.log('DELETAR')}/> 
+                  Excluir
+                </button>
+              </div>
+            }
           </aside>
 
         </div>

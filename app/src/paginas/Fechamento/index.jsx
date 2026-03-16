@@ -206,7 +206,7 @@ export default function Fechamento() {
               </div>
               <div className={styles.gridCartoes}>
                 <CartaoContador valor={vendaDia.resultado.a_vista} metodo="Dinheiro" total={vendaDia.total} />
-                <CartaoContador valor={vendaDia.resultado.cartao}  metodo="Cartão"   total={vendaDia.total} />
+                <CartaoContador valor={vendaDia.resultado.cartão}  metodo="Cartão"   total={vendaDia.total} />
                 <CartaoContador valor={vendaDia.resultado.pix}     metodo="PIX"      total={vendaDia.total} />
                 <CartaoContador valor={vendaDia.interno}           metodo="Interno"  total={vendaDia.total} />
               </div>

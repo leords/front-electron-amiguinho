@@ -3,10 +3,10 @@ import { formatarMoeda } from "../../utils/formartarMoeda";
 import styles from "./styles.module.css";
 import { useNavigate } from "react-router-dom";
 
+
+
 export default function PedidoHistorico({ pedidos }) {
   const navegar = useNavigate();
-
-  console.log("pedidos: ", pedidos);
 
   return (
     <div className={styles.container}>

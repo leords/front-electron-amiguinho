@@ -1,7 +1,10 @@
 import { useState } from "react";
+
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
 import styles from "./styles.module.css";
+import Spinner from "../../componentes/Spinner";
+// Ícones
 import {
   UsersIcon,
   MotorcycleIcon,
@@ -12,73 +15,87 @@ import {
   WarningCircleIcon,
 } from "@phosphor-icons/react";
 
-const STATUS = { idle: "idle", carregando: "carregando", ok: "ok", erro: "erro" };
+// Chamadas de API externas
+import { BuscarClienteDelivery } from "../../operadores/API/cliente/buscarClienteDelivery";
+import { BuscarClienteExterno } from "../../operadores/API/cliente/buscarClienteExterno";
+import { BuscarProduto } from "../../operadores/API/produto/buscarProduto";
+import { buscarFormaPagamento } from "../../operadores/API/formaPagamento/buscarFormaPagamento";
+
+
 
 function BotaoCarga({ icone: Icone, cor, titulo, descricao, status, onClick }) {
   return (
     <button
-      className={`${styles.botaoCarga} ${styles[`botao_${status}`]}`}
+      className={styles.botaoCarga}
       data-cor={cor}
       onClick={onClick}
-      disabled={status === STATUS.carregando}
+    
     >
       <div className={styles.botaoIcone} data-cor={cor}>
-        {status === STATUS.carregando ? (
-          <CloudArrowUpIcon size={28} weight="fill" className={styles.spinnerIcon} />
-        ) : status === STATUS.ok ? (
-          <CheckCircleIcon size={28} weight="fill" className={styles.statusIcone} data-status="ok" />
-        ) : status === STATUS.erro ? (
-          <WarningCircleIcon size={28} weight="fill" className={styles.statusIcone} data-status="erro" />
-        ) : (
           <Icone size={28} weight="fill" />
-        )}
       </div>
 
       <div className={styles.botaoTexto}>
         <strong className={styles.botaoTitulo}>{titulo}</strong>
         <p className={styles.botaoDescricao}>
-          {status === STATUS.carregando
-            ? "Carregando dados..."
-            : status === STATUS.ok
-            ? "Carga realizada com sucesso!"
-            : status === STATUS.erro
-            ? "Erro ao carregar. Tente novamente."
-            : descricao}
+          {descricao}
         </p>
+        {status && ( <p className={styles.historicoCarga}>última carga: {status}</p> )}
       </div>
 
       <div className={styles.botaoArrow}>
-        {status === STATUS.idle && <CloudArrowUpIcon size={18} weight="bold" />}
+        <CloudArrowUpIcon size={18} weight="bold" />
       </div>
     </button>
   );
 }
 
 export default function Transmissao() {
-  const [status, setStatus] = useState({
-    clientesDelivery:   STATUS.idle,
-    clientesExterno:    STATUS.idle,
-    produtos:           STATUS.idle,
-    formasPagamento:    STATUS.idle,
-  });
 
-  const executarCarga = async (chave, fn) => {
-    setStatus((s) => ({ ...s, [chave]: STATUS.carregando }));
+  const [carregando, setCarregando] = useState(false)
+
+  // controladores de ultima carga
+  const [statusDelivery, setStatusDelivery] = useState(localStorage.getItem('clientesDeliveryForce'))
+  const [statusExterno, setStatusExterno] = useState(localStorage.getItem('clientesExternoForce'))
+  const [statusProdutos, setStatusProdutos] = useState(localStorage.getItem('produtosForce'))
+  const [statusFormas, setStatusFormas] = useState(localStorage.getItem('clientesForce'))
+
+  const agora = new Date().toLocaleString('pt-BR')
+
+  const acoes = {
+    clientesDeliveryForce: async () => {
+      await BuscarClienteDelivery();
+      setStatusDelivery(agora);
+    },
+    clientesExternoForce: async () => {
+      await BuscarClienteExterno();
+      setStatusExterno(agora);
+    },
+    produtosForce: async () => {
+      await BuscarProduto();
+      setStatusProdutos(agora);
+    },
+    clientesForce: async () => {
+      await buscarFormaPagamento();
+      setStatusFormas(agora);
+    },
+  }
+
+  const carregar = async (opcao) => { 
     try {
-      await fn();
-      setStatus((s) => ({ ...s, [chave]: STATUS.ok }));
-    } catch (err) {
-      console.error(`Erro na carga de ${chave}:`, err);
-      setStatus((s) => ({ ...s, [chave]: STATUS.erro }));
+      setCarregando(true)
+
+      if(acoes[opcao]){
+        await acoes[opcao]();
+        localStorage.setItem(opcao, agora)
+      }
+
+    } catch (error) {
+      console.log('Erro ao carregar dados', error)
+    } finally {
+      setCarregando(false)
     }
-  };
-
-  const carregarClientesDelivery  = () => executarCarga("clientesDelivery",  () => { /* sua função aqui */ });
-  const carregarClientesExterno   = () => executarCarga("clientesExterno",   () => { /* sua função aqui */ });
-  const carregarProdutos          = () => executarCarga("produtos",          () => { /* sua função aqui */ });
-  const carregarFormasPagamento   = () => executarCarga("formasPagamento",   () => { /* sua função aqui */ });
-
-  const todosOk = Object.values(status).every((s) => s === STATUS.ok);
+   };
 
   return (
     <div className={styles.container}>
@@ -97,54 +114,56 @@ export default function Transmissao() {
               <h1 className={styles.pageTitulo}>Transmissão de dados</h1>
             </div>
           </div>
-
-          {todosOk && (
-            <div className={styles.badgeTodos}>
-              <CheckCircleIcon size={15} weight="fill" />
-              Todas as cargas concluídas
-            </div>
-          )}
         </div>
 
         <p className={styles.instrucao}>
           Clique em cada botão para carregar a lista correspondente no sistema.
         </p>
 
-        {/* Grid de botões */}
-        <div className={styles.grid}>
-          <BotaoCarga
-            icone={MotorcycleIcon}
-            cor="orange"
-            titulo="Clientes Delivery"
-            descricao="Carregar lista de clientes do setor delivery"
-            status={status.clientesDelivery}
-            onClick={carregarClientesDelivery}
-          />
-          <BotaoCarga
-            icone={UsersIcon}
-            cor="blue"
-            titulo="Clientes Externo"
-            descricao="Carregar lista de clientes do setor externo"
-            status={status.clientesExterno}
-            onClick={carregarClientesExterno}
-          />
-          <BotaoCarga
-            icone={PackageIcon}
-            cor="purple"
-            titulo="Produtos"
-            descricao="Carregar catálogo de produtos disponíveis"
-            status={status.produtos}
-            onClick={carregarProdutos}
-          />
-          <BotaoCarga
-            icone={CreditCardIcon}
-            cor="green"
-            titulo="Formas de pagamento"
-            descricao="Carregar métodos de pagamento aceitos"
-            status={status.formasPagamento}
-            onClick={carregarFormasPagamento}
-          />
-        </div>
+        {/* Div de carregamento */}
+        
+        {carregando 
+        ? <div className={styles.carregamento}>
+            <Spinner />
+            <p>Carregando dados, aguarde!</p>
+          </div> 
+        : //* Grid de botões */}
+          <div className={styles.grid}>
+            <BotaoCarga
+              icone={MotorcycleIcon}
+              cor="orange"
+              titulo="Clientes Delivery"
+              descricao="Carregar lista de clientes do setor delivery"
+              status={statusDelivery}
+              onClick={() => carregar('clientesDeliveryForce')}
+            />
+            <BotaoCarga
+              icone={UsersIcon}
+              cor="blue"
+              titulo="Clientes Externo"
+              descricao="Carregar lista de clientes do setor externo"
+              status={statusExterno}
+              onClick={() => carregar('clientesExternoForce')}
+            />
+            <BotaoCarga
+              icone={PackageIcon}
+              cor="purple"
+              titulo="Produtos"
+              descricao="Carregar catálogo de produtos disponíveis"
+              status={statusProdutos}
+              onClick={() => carregar('produtosForce')}
+            />
+            <BotaoCarga
+              icone={CreditCardIcon}
+              cor="green"
+              titulo="Formas de pagamento"
+              descricao="Carregar métodos de pagamento aceitos"
+              status={statusFormas}
+              onClick={() => carregar('clientesForce')}
+            />
+          </div>
+        }
+       
 
       </main>
 

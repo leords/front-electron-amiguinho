@@ -409,6 +409,68 @@
   margin: 0;
 }
 
+.botoesFinais {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid var(--border);
+}
+
+.botaoApagar {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 120px;
+  gap: 6px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff5f5;
+  color: #c92a2a;
+  border: 1.5px solid #ffc9c9;
+  transition: all 0.2s;
+}
+
+.botaoApagar:hover {
+  background: #c92a2a;
+  color: var(--white);
+  border-color: #c92a2a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201,42,42,0.25);
+}
+
+.botaoEditar {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  width: 120px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff5f5;
+  color: #fa9a09;
+  border: 1.5px solid #ffd341;
+  transition: all 0.2s;
+}
+
+.botaoEditar:hover {
+  background: #fa9a09;
+  color: var(--white);
+  border-color: #fa9a09;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201,42,42,0.25);
+}
+
 /* ============================================================
    RESPONSIVIDADE
    ============================================================ */

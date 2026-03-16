@@ -120,7 +120,7 @@ export default function Pedidos() {
       <Cabecalho />
 
       <main className={styles.principal}>
-        {/* ── Cabeçalho da página ── */}
+        {/* Cabeçalho da página */}
         <div className={styles.cabecalhoPage}>
           <div className={styles.tituloSection}>
             <div className={styles.iconeWrapper}>
@@ -138,7 +138,7 @@ export default function Pedidos() {
           </button>
         </div>
 
-        {/* ── Filtros ── */}
+        {/* Filtros */}
         <div className={styles.painelFiltros}>
           <div className={styles.filtrosHeader}>
             <FunnelIcon size={16} weight="bold" className={styles.filtroIcone} />
@@ -247,7 +247,7 @@ export default function Pedidos() {
           </div>
         </div>
 
-        {/* ── Tabela ── */}
+        {/* Tabela */}
         <section className={styles.containerLista}>
           <div className={styles.cabecalhoLista}>
             <div className={styles.cabecalhoInfo}>
@@ -281,8 +281,6 @@ export default function Pedidos() {
               <h3 className={styles.itemLista3}>Vendedor</h3>
               <h3 className={styles.itemLista4}>Total</h3>
               <h3 className={styles.itemLista5}>Pagamento</h3>
-              <h3 className={styles.itemLista6}>Editar</h3>
-              <h3 className={styles.itemLista7}>Excluir</h3>
             </div>
 
             <div className={styles.lista}>

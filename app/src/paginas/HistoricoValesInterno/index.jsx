@@ -40,6 +40,7 @@ export default function HistoricoValesInterno() {
     setDataFim(hoje);
   }, []);
 
+  // Buscando pedidos
   useEffect(() => {
     if (!dataInicio || !dataFim) return;
     const filtrarPedidos = async () => {
@@ -65,6 +66,7 @@ export default function HistoricoValesInterno() {
     filtrarPedidos();
   }, [dataInicio, dataFim, formaPagamento]);
 
+  // Realizando a soma do retorno dos pedidos buscados
   useEffect(() => {
     const total = pedidosFiltrados.reduce(
       (acc, pedido) =>
