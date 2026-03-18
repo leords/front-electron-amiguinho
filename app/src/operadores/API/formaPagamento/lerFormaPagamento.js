@@ -1,12 +1,4 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000,
-});
-// parametros da rota:
-// StatusPossiveis = ['ATIVO', 'INATIVO']
-// possivelSolicitante = ['BALCAO', 'GERAL']
+import { api } from "../../../utils/conexaoAxios";
 
 export const LerFormaPagamento = async (params = {}) => {
   const token = localStorage.getItem("token");

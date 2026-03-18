@@ -1,9 +1,4 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000,
-});
+import { api } from "../../../utils/conexaoAxios";
 
 export const deletarMovimentacao = async (id) => {
   const token = localStorage.getItem("token");

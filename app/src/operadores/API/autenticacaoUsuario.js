@@ -1,9 +1,5 @@
-import axios from "axios";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000, // se a resposta demorar mais que 5 segundos, dá erro
-});
+import { api } from "../../utils/conexaoAxios";
 
 export const authAPI = async (credenciais) => {
   try {

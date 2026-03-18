@@ -1,0 +1,224 @@
+/* ── OVERLAY ────────────────────────────────────────────── */
+.containerADM {
+  z-index: 999;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 31, 46, 0.45);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── MODAL ──────────────────────────────────────────────── */
+.modal {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px 32px 28px;
+  width: 90%;
+  max-width: 420px;
+  border: 1px solid #eaecef;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18), 0 2px 10px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: slideUp 0.25s ease both;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CABEÇALHO ──────────────────────────────────────────── */
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconeWrapper {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #ff8c00, #ffb347);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(255, 140, 0, 0.35);
+  flex-shrink: 0;
+}
+
+.modalSub {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ff8c00;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 2px;
+}
+
+.modalTitulo {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 0;
+  letter-spacing: -0.4px;
+}
+
+/* ── DESCRIÇÃO ──────────────────────────────────────────── */
+.descricao {
+  font-size: 13px;
+  color: #868e96;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── CAMPO ──────────────────────────────────────────────── */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input {
+  padding: 11px 14px;
+  border: 1.5px solid #dee2e6;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #ffffff;
+  color: #495057;
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input::placeholder { color: #868e96; }
+.input:hover        { border-color: #adb5bd; }
+.input:focus {
+  outline: none;
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
+}
+
+/* ── BOTÕES ─────────────────────────────────────────────── */
+.botoes {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.botaoCancelar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 16px;
+  background: #fff5f5;
+  color: #c92a2a;
+  border: 1.5px solid #ffc9c9;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.botaoCancelar:hover {
+  background: #c92a2a;
+  color: #ffffff;
+  border-color: #c92a2a;
+  transform: translateY(-1px);
+}
+
+.botaoEntrar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 16px;
+  background: #ff8c00;
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.28);
+}
+
+.botaoEntrar:hover {
+  background: #e07b00;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(255, 140, 0, 0.38);
+}
+
+.botaoConectar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 16px;
+  background: #1fa81a;
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.28);
+}
+
+.botaoConectar:hover {
+  background: #1ec019;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(48, 131, 0, 0.38);
+}
+
+.retorno {
+    font-size: 13px;
+    color: #e23535;
+    line-height: 1.55;
+    margin: 0;
+    margin-left: 10px;
+}
+
+.retornoOk {
+    font-size: 15px;
+    color: #349e03;
+    line-height: 1.55;
+    margin: 0;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}

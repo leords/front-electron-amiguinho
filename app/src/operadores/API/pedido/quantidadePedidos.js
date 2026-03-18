@@ -1,9 +1,4 @@
-import axios from "axios";
-
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    timeout: 5000
-})
+import { api } from "../../../utils/conexaoAxios";
 
 //:setor, dataInicio(2025-12-26), dataFim
 export const QuantidadePedidos = async (setor, params = {}) => {

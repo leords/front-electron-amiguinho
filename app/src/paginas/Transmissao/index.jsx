@@ -13,6 +13,8 @@ import {
   CloudArrowUpIcon,
   CheckCircleIcon,
   WarningCircleIcon,
+  HardDrivesIcon,
+  PowerIcon
 } from "@phosphor-icons/react";
 
 // Chamadas de API externas
@@ -22,7 +24,7 @@ import { BuscarProduto } from "../../operadores/API/produto/buscarProduto";
 import { buscarFormaPagamento } from "../../operadores/API/formaPagamento/buscarFormaPagamento";
 
 
-
+// Componente botão.
 function BotaoCarga({ icone: Icone, cor, titulo, descricao, status, onClick }) {
   return (
     <button
@@ -54,14 +56,16 @@ export default function Transmissao() {
 
   const [carregando, setCarregando] = useState(false)
 
-  // controladores de ultima carga
+  // Controladores de ultima carga
   const [statusDelivery, setStatusDelivery] = useState(localStorage.getItem('clientesDeliveryForce'))
   const [statusExterno, setStatusExterno] = useState(localStorage.getItem('clientesExternoForce'))
   const [statusProdutos, setStatusProdutos] = useState(localStorage.getItem('produtosForce'))
   const [statusFormas, setStatusFormas] = useState(localStorage.getItem('clientesForce'))
 
+  // Data atual
   const agora = new Date().toLocaleString('pt-BR')
 
+  // Array de funções
   const acoes = {
     clientesDeliveryForce: async () => {
       await BuscarClienteDelivery();
@@ -81,6 +85,7 @@ export default function Transmissao() {
     },
   }
 
+  // Função que chama a função conforme o parametro
   const carregar = async (opcao) => { 
     try {
       setCarregando(true)
@@ -115,19 +120,17 @@ export default function Transmissao() {
             </div>
           </div>
         </div>
-
         <p className={styles.instrucao}>
-          Clique em cada botão para carregar a lista correspondente no sistema.
+          Clique em cada botão para carregar listas no servidor.
         </p>
 
-        {/* Div de carregamento */}
-        
         {carregando 
+           // Div de carregamento 
         ? <div className={styles.carregamento}>
             <Spinner />
             <p>Carregando dados, aguarde!</p>
           </div> 
-        : //* Grid de botões */}
+        : // Grid de botões */}
           <div className={styles.grid}>
             <BotaoCarga
               icone={MotorcycleIcon}

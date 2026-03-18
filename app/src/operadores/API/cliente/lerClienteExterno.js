@@ -1,14 +1,10 @@
-import axios from "axios";
+import { apiLong } from "../../../utils/conexaoAxios";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 30000,
-});
 
 export const LerClienteExterno = async (params = {}) => {
   const token = localStorage.getItem("token");
   try {
-    const resposta = await api.get("/ler-clientes-externo", {
+    const resposta = await apiLong.get("/ler-clientes-externo", {
       params,
       headers: {
         Authorization: `Bearer ${token}`,

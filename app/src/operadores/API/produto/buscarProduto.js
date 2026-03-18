@@ -1,15 +1,10 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 30000,
-});
+import { apiLong } from "../../../utils/conexaoAxios";
 
 export const BuscarProduto = async () => {
   const token = localStorage.getItem("token");
 
   try {
-    const resposta = await api.get("/buscar-produtos", {
+    const resposta = await apiLong.get("/buscar-produtos", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

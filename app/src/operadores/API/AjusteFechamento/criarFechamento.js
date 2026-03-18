@@ -1,10 +1,5 @@
+import { api } from "../../../utils/conexaoAxios";
 
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000,
-});
 
 export const criarFechamento = async (setor, dados) => {
   const token = localStorage.getItem("token");
