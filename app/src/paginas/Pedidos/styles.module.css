@@ -324,18 +324,18 @@
 }
 
 .tituloLista {
-  display: grid;
-  grid-template-columns: 60px 160px 160px 140px 120px 150px 80px 80px;
-  gap: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
   padding: 10px 12px;
-  background-color: #f8f9fa;
   border-radius: 8px;
   margin: 16px 0 8px;
   border: 1px solid #e9ecef;
 }
 
 .tituloLista h3 {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: #868e96;
   text-transform: uppercase;
@@ -346,13 +346,12 @@
   justify-content: center;
 }
 
-.itemLista1 { justify-content: flex-start !important; }
-.itemLista2 { justify-content: flex-start !important; }
-.itemLista3 { justify-content: flex-start !important; }
-.itemLista4 { justify-content: center; }
-.itemLista5 { justify-content: center; }
-.itemLista6 { justify-content: center; }
-.itemLista7 { justify-content: center; }
+.itemLista1 { justify-content: center !important;}
+.itemLista2 { justify-content: center !important;}
+.itemLista3 { justify-content: center !important;}
+.itemLista4 { justify-content: center;}
+.itemLista5 { justify-content: center;}
+.itemLista6 { justify-content: end;}
 
 .lista {
   max-height: 520px;

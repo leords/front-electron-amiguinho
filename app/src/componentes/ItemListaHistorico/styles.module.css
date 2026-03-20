@@ -25,24 +25,30 @@
 }
 
 .tabela td {
-  padding: 10px;
+  padding: 5px;
   font-size: 14px;
   border-top: 1px solid #f3f3f3;
 }
 .tabela td:nth-child(1) {
-  width: 100px;
+  width: 60px;
 }
 .tabela td:nth-child(2) {
-  width: 150px;
+  width: 80px;
 }
 .tabela td:nth-child(3) {
-  width: 180px;
+  width: 100px;
 }
 .tabela td:nth-child(4) {
-  width: 125px;
+  width: 100px;
 }
 .tabela td:nth-child(5) {
-  width: 120px;
+  width: 100px;
+}
+.tabela td:nth-child(6) {
+  width: 80px;
+}
+.tabela td:nth-child(6) {
+  width: 80px;
 }
 
 .tabela tr:nth-child(even) {

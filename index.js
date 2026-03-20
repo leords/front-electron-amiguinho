@@ -28,6 +28,12 @@ app.on("ready", () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: path.join(__dirname, 'public', 'mascote.png'),
+
+    //show: false, // opcional (evita "piscar" ao abrir)
+
+    //autoHideMenuBar: true, // esconde o menu (Alt ainda mostra)
+
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -35,6 +41,18 @@ app.on("ready", () => {
     },
   });
 
+  // // abre maximizado (tipo clicar no botão maximizar)
+  // mainWindow.maximize();
+
+  // // remove completamente o menu
+  // mainWindow.setMenu(null);
+
+  // // mostra a janela depois de pronta (opcional)
+  // mainWindow.once("ready-to-show", () => {
+  // mainWindow.show();
+  //});
+
+  
   if (!process.env.GROQ_API_KEY) {
     dialog.showErrorBox(
       "Erro de Configuração",

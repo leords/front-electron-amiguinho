@@ -18,6 +18,8 @@ export default function PedidoHistorico({ pedidos }) {
               onClick={() => navegar("/reimprimir", { state: pedido })}
             >
               <td>{pedido.id}</td>
+              <td>{pedido.tipo}</td>
+              
               <td>{dataHoraFormatada(pedido.data)}</td>
               <td>{`${pedido.vendedor} - ${pedido.nomeUsuario}`}</td>
               <td>

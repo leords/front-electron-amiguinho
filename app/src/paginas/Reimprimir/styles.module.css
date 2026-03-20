@@ -239,6 +239,7 @@
   box-shadow: 0 4px 12px rgba(201,42,42,0.25);
 }
 
+
 .badge {
   background: var(--orange-light);
   color: var(--orange);
@@ -248,6 +249,8 @@
   font-size: 12px;
   font-weight: 700;
 }
+
+
 
 /* ============================================================
    TABELA
@@ -411,64 +414,86 @@
 
 .botoesFinais {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  flex-direction: column;
   gap: 16px;
   margin-top: 20px;
-  padding-top: 20px;
-  border-top: 2px solid var(--border);
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius);
+  background-color: #ffffff;
 }
 
+.botoesFinaisHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.botoesFinaisHeader p {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #868e96;
+}
+
+.botoesFinaisHeader svg {
+  color: #868e96;
+}
+
+.botoesFinaisAcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.botaoEditar,
 .botaoApagar {
   all: unset;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   height: 40px;
-  width: 120px;
-  gap: 6px;
-  border-radius: 10px;
+  width: 100%;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
-  background: #fff5f5;
-  color: #c92a2a;
-  border: 1.5px solid #ffc9c9;
-  transition: all 0.2s;
-}
-
-.botaoApagar:hover {
-  background: #c92a2a;
-  color: var(--white);
-  border-color: #c92a2a;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(201,42,42,0.25);
+  transition: all 0.18s ease;
+  box-sizing: border-box;
 }
 
 .botaoEditar {
-  all: unset;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 40px;
-  width: 120px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  background: #fff5f5;
-  color: #fa9a09;
-  border: 1.5px solid #ffd341;
-  transition: all 0.2s;
+  background: #fff8ec;
+  color: #e08800;
+  border: 1.5px solid #ffd080;
 }
 
 .botaoEditar:hover {
   background: #fa9a09;
-  color: var(--white);
+  color: #ffffff;
   border-color: #fa9a09;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(201,42,42,0.25);
+  box-shadow: 0 4px 12px rgba(250, 154, 9, 0.28);
+}
+
+.botaoApagar {
+  background: #fff5f5;
+  color: #c92a2a;
+  border: 1.5px solid #ffc9c9;
+}
+
+.botaoApagar:hover {
+  background: #c92a2a;
+  color: #ffffff;
+  border-color: #c92a2a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201, 42, 42, 0.25);
 }
 
 /* ============================================================

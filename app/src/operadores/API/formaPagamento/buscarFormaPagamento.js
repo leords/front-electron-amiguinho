@@ -1,10 +1,10 @@
-import { api } from "../../../utils/conexaoAxios";
+import { apiLong } from "../../../utils/conexaoAxios";
 
 export const buscarFormaPagamento = async () => {
   const token = localStorage.getItem("token");
 
   try {
-    const resposta = await api.get("/buscar-formas-pagamento", {
+    const resposta = await apiLong.get("/buscar-formas-pagamento", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -7,7 +7,6 @@ import Cabecalho from "../../componentes/Cabecalho/index.jsx";
 import Rodape from "../../componentes/Rodape/index.jsx";
 import logo from "../../assets/logo.jpg";
 import styles from "./styles.module.css";
-import { TrashIcon, PencilIcon } from "@phosphor-icons/react";
 import {
   ArrowCircleLeftIcon,
   PrinterIcon,
@@ -15,17 +14,22 @@ import {
   CurrencyDollarIcon,
   PackageIcon,
   CreditCardIcon,
+  TrashIcon,
+  PencilIcon,
+  ShieldIcon
 } from "@phosphor-icons/react";
 import { usarAuth } from "../../componentes/Context/authContext";
+import { CancelarPedido } from "../../operadores/API/pedido/cancelarPedido";
 
 export default function Reimprimir() {
-  const { state } = useLocation();
   const navegar = useNavigate();
+  const { state } = useLocation();
   const { produtos } = useProdutos();
   const { usuario } = usarAuth();
 
   const cupom = state;
 
+  // se não houver cupom, retornar à historico.
   if (!cupom) {
     navegar("/historico");
     return null;
@@ -33,8 +37,25 @@ export default function Reimprimir() {
 
   console.log('Cupom: ', cupom)
 
-  const handleVoltar = () => navegar(-1);
+  // função para retornar 1 pagina a menos.
+  const handleVoltar = () => navegar("/pedidos", {
+    state: "Pedido cancelado com sucesso!"
+    
+  });
 
+  // função para cancelar pedido.
+  const handleCancelarPedido = async () => {
+    try {
+      const resposta = await CancelarPedido(cupom.tipo, cupom.uuid);
+      if (resposta.mensagem === "Pedido cancelado com sucesso") {
+        handleVoltar()
+      } 
+    } catch (error) {
+      console.log('erro: ', error)
+    } 
+  }
+
+  // função para imprimir segunda via.
   const handleImprimirSegundaVia = async () => {
     const cupomFormatado = {
       tipo: "segundaVia",
@@ -130,7 +151,7 @@ export default function Reimprimir() {
                   <ReceiptIcon size={18} weight="bold" className={styles.cupomHeaderIcon} />
                   <h2>Segunda via da nota</h2>
                 </div>
-                <span className={styles.badge}>{cupom.itens.length} {cupom.itens.length === 1 ? "item" : "itens"}</span>
+                  <span className={styles.badge}>{cupom.itens.length} {cupom.itens.length === 1 ? "item" : "itens"}</span>
               </div>
 
               {/* Tabela */}
@@ -203,14 +224,42 @@ export default function Reimprimir() {
             </div>
             {usuario.nivelAcesso === "ADMIN" && 
               <div className={styles.botoesFinais}>
-                <button className={styles.botaoEditar}>
-                  <PencilIcon size={20}/>
-                  Editar
-                </button>
-                <button className={styles.botaoApagar}>
-                  <TrashIcon size={20} onClick={() => console.log('DELETAR')}/> 
-                  Excluir
-                </button>
+                <div className={styles.botoesFinaisHeader}>
+                  <ShieldIcon size={14} />
+                  <p>Funções de administrador</p>
+                </div>
+
+                <div className={styles.botoesFinaisAcoes}>
+                  <AlertaRadix
+                    titulo="Editar este pedido"
+                    descricao="Você realmente deseja editar este pedido?"
+                    tratar={''}
+                    confirmarTexto="Sim, quero editar!"
+                    cancelarTexto="Cancelar"
+                  
+                  trigger={
+                    <button className={styles.botaoEditar}>
+                      <PencilIcon size={15} />
+                      Editar este pedido
+                    </button>
+                  }
+                  />
+                  <AlertaRadix
+                    titulo="Cancelar este pedido"
+                    descricao="Você realmente deseja cancelar este pedido?"
+                    tratar={handleCancelarPedido}
+                    confirmarTexto="Sim, quero cancelar!"
+                    cancelarTexto="Cancelar"
+                    
+                    trigger={
+                      <button className={styles.botaoApagar}>
+                        <TrashIcon size={15} />
+                        Cancelar este pedido
+                      </button>
+                    }
+                  />
+
+                </div>
               </div>
             }
           </aside>

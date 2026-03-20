@@ -17,6 +17,9 @@ import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { useFormaPagamento } from "../../hooks/useFormaPagamento";
 import { LerClienteDelivery } from "../../operadores/API/cliente/lerClienteDelivery.js";
 import { LerClienteExterno } from "../../operadores/API/cliente/lerClienteExterno.js";
+import { useLocation } from "react-router-dom";
+import { usarToast } from "../../componentes/Context/toastContext";
+import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 
 export default function Pedidos() {
   const [carregando, setCarregando] = useState(false);
@@ -33,12 +36,25 @@ export default function Pedidos() {
 
   const { listaFormaPagamento } = useFormaPagamento();
 
+    const { mensagem, setMensagem } = usarToast();
+
   const opcaoSetor = [
     { id: 1, nome: "balcao", label: "Balcão" },
     { id: 2, nome: "delivery", label: "Delivery" },
     { id: 3, nome: "externo", label: "Externo" },
   ];
 
+  const {state} = useLocation()
+
+
+  // fica ouvindo o state que vem de reimprimir para soltar o alerta
+  useEffect(() => {
+    if(state) {
+      setMensagem(state)
+    }
+  })
+
+  // seta a data final do filtro no dia atual e inicio no primeiro dia do mes atual
   useEffect(() => {
     const inicializarData = async () => {
       const mesInicio = new Date();
@@ -53,6 +69,7 @@ export default function Pedidos() {
     inicializarData();
   }, []);
 
+  // filtra pedidos conforme o filtro
   useEffect(() => {
     if (!dataInicio || !dataFim) return;
 
@@ -79,6 +96,7 @@ export default function Pedidos() {
     filtrarPedidos();
   }, [dataInicio, dataFim, formaPagamento, setor, cliente]);
 
+  // filtra clientes se não for balcao
   useEffect(() => {
     const filtrarClientes = async () => {
       if (setor === "balcao" || setor === "") {
@@ -105,6 +123,7 @@ export default function Pedidos() {
     filtrarClientes();
   }, [setor]);
 
+  //Limpa os filtros
   const limparFiltros = () => {
     setSetor("");
     setCliente(null);
@@ -117,6 +136,7 @@ export default function Pedidos() {
 
   return (
     <div className={styles.container}>
+      <ToastRadix mensagem={mensagem} />
       <Cabecalho />
 
       <main className={styles.principal}>
@@ -276,11 +296,15 @@ export default function Pedidos() {
           <div className={styles.tabelaWrapper}>
             <div className={styles.tituloLista}>
               <h3 className={styles.itemLista1}>ID</h3>
-              <h3 className={styles.itemLista2}>Data / Hora</h3>
-              <h3 className={styles.itemLista2}>Cliente</h3>
-              <h3 className={styles.itemLista3}>Vendedor</h3>
-              <h3 className={styles.itemLista4}>Total</h3>
-              <h3 className={styles.itemLista5}>Pagamento</h3>
+              <h3 className={styles.itemLista2}>Setor</h3>
+              <h3 className={styles.itemLista3}>Data / Hora</h3>
+              {setor === 'balcao' 
+                ? <></> 
+                : <h3 className={styles.itemLista4}>Cliente</h3>
+              }
+              <h3 className={styles.itemLista5}>Vendedor</h3>
+              <h3 className={styles.itemLista6}>Total</h3>
+              <h3 className={styles.itemLista7}>Pagamento</h3>
             </div>
 
             <div className={styles.lista}>
