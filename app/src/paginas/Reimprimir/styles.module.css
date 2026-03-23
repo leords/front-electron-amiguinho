@@ -200,9 +200,86 @@
 
 .cupomHeaderCenter {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 8px;
 }
+
+.cupomHeaderIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ConteinerStatusPedido {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 10px;
+}
+
+.status {
+  display: flex;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  padding: 5px 0px;
+  
+}
+
+/* status de pedido */
+.pendente {
+  display: flex;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 6px;
+  color: #ffffff;
+
+  
+  background-color: #2769f7;
+  opacity: 0.7;
+}
+
+.cancelado {
+  display: flex;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 6px;
+
+  color: #faf61d;
+  background-color: #eb0f0f;
+  opacity: 0.7;
+}
+
+.entregue {
+  display: flex;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 6px;
+
+  color: #dee2e6;
+  background-color: #128321;
+  opacity: 0.7;
+}
+
+
 
 .cupomHeaderCenter h2 {
   font-size: 16px;

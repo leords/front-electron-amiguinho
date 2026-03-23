@@ -13,6 +13,7 @@ import Sincronizar from "../paginas/Sincronizar/index.jsx";
 import HistoricoValesInterno from "../paginas/HistoricoValesInterno/index.jsx";
 import Pedidos from "../paginas/Pedidos/index.jsx";
 import Transmissao from "../paginas/Transmissao/index.jsx";
+import EditarPedido from "../paginas/EditarPedido/index.jsx";
 
 export function Navegador() {
   return (
@@ -32,6 +33,8 @@ export function Navegador() {
             <Route path="/vales-interno" element={<HistoricoValesInterno />} />
             <Route path="/pedidos" element={<Pedidos />} />
             <Route path="/transmissao" element={<Transmissao />} />
+            <Route path="/editar" element={<EditarPedido />} />
+
           </Routes>
         </ToastProvedor>
       </AuthProvedor>

@@ -20,12 +20,15 @@ import {
 } from "@phosphor-icons/react";
 import { usarAuth } from "../../componentes/Context/authContext";
 import { CancelarPedido } from "../../operadores/API/pedido/cancelarPedido";
+import { usarToast } from "../../componentes/Context/toastContext";
+import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 
 export default function Reimprimir() {
   const navegar = useNavigate();
   const { state } = useLocation();
   const { produtos } = useProdutos();
   const { usuario } = usarAuth();
+  const { mensagem, setMensagem } = usarToast();
 
   const cupom = state;
 
@@ -35,17 +38,36 @@ export default function Reimprimir() {
     return null;
   }
 
-  console.log('Cupom: ', cupom)
-
   // função para retornar 1 pagina a menos.
   const handleVoltar = () => navegar("/pedidos", {
     state: "Pedido cancelado com sucesso!"
     
   });
 
+  const handleEditarPedido = async () => {
+    try {
+      if(cupom.status !== 'cancelado' || cupom.status !== 'pendente') {
+        setMensagem('Este pedido não deve ser alterado devido ao seu status atual')
+      }
+
+      navegar('/editar', {
+        state: cupom
+      });
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   // função para cancelar pedido.
   const handleCancelarPedido = async () => {
     try {
+      if(cupom.status === 'cancelado') {
+        setMensagem('Este pedido já está cancelado!')
+      }
+
+      console.log('status do cupom:',cupom)
       const resposta = await CancelarPedido(cupom.tipo, cupom.uuid);
       if (resposta.mensagem === "Pedido cancelado com sucesso") {
         handleVoltar()
@@ -81,6 +103,7 @@ export default function Reimprimir() {
 
   return (
     <div className={styles.container}>
+      <ToastRadix mensagem={mensagem} />
       <Cabecalho />
 
       <main className={styles.principal}>
@@ -148,8 +171,21 @@ export default function Reimprimir() {
                   Voltar
                 </button>
                 <div className={styles.cupomHeaderCenter}>
-                  <ReceiptIcon size={18} weight="bold" className={styles.cupomHeaderIcon} />
-                  <h2>Segunda via da nota</h2>
+                  <div className={styles.cupomHeaderIcon}>
+                    <ReceiptIcon size={18} weight="bold" className={styles.cupomHeaderIcon} />
+                    <h2>Segunda via da nota</h2>
+                  </div>
+                  <div className={styles.ConteinerStatusPedido}>
+                    <strong className={styles.status}>Status:</strong>
+                     <p className={`
+                      ${styles.pendente}
+                      ${cupom.status === 'cancelado' ? styles.cancelado : ''}
+                      ${cupom.status === 'carregado' ? styles.carregado : ''}
+                      ${cupom.status === 'pendente' ? styles.carregado : ''}
+                      ${cupom.status === 'entregue' ? styles.entregue : ''}
+                      ${cupom.status === 'devolvido' ? styles.devolvido : ''}
+                      `}>{cupom.status}</p>
+                  </div>
                 </div>
                   <span className={styles.badge}>{cupom.itens.length} {cupom.itens.length === 1 ? "item" : "itens"}</span>
               </div>
@@ -233,7 +269,7 @@ export default function Reimprimir() {
                   <AlertaRadix
                     titulo="Editar este pedido"
                     descricao="Você realmente deseja editar este pedido?"
-                    tratar={''}
+                    tratar={handleEditarPedido}
                     confirmarTexto="Sim, quero editar!"
                     cancelarTexto="Cancelar"
                   

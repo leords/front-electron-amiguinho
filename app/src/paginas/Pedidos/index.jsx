@@ -33,6 +33,9 @@ export default function Pedidos() {
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
   const [cliente, setCliente] = useState(null);
   const [setor, setSetor] = useState("");
+  const [status, setStatus] = useState([]);
+  const [statusSelecionado, setStatusSelecionado] = useState("")
+
 
   const { listaFormaPagamento } = useFormaPagamento();
 
@@ -43,18 +46,34 @@ export default function Pedidos() {
     { id: 2, nome: "delivery", label: "Delivery" },
     { id: 3, nome: "externo", label: "Externo" },
   ];
-
+ 
   const {state} = useLocation()
 
-
-  // fica ouvindo o state que vem de reimprimir para soltar o alerta
+  // Setando o status de pedido disponiveis conforme o setor
   useEffect(() => {
+    if(setor === 'balcao') {
+      setStatus(['carregado', 'cancelado'])
+    }
+    else if(setor === 'delivery') {
+      setStatus(['pentende', 'entregue', 'devolvido', 'cancelado'])
+    }
+    else if(setor === 'externo') {
+      setStatus(['pendente','carregado', 'entregue', 'devolvido', 'cancelado'])
+    }
+    else { 
+      setStatus(['carregado', 'cancelado', 'pendente', 'entregue', 'devolvido',])
+    }
+  }, [setor])
+
+
+  // Fica ouvindo o state que vem de reimprimir para soltar o alerta.
+  useEffect(() => { 
     if(state) {
       setMensagem(state)
     }
-  })
+  },[])
 
-  // seta a data final do filtro no dia atual e inicio no primeiro dia do mes atual
+  // Seta a data final do filtro no dia atual e inicio no primeiro dia do mes atual.
   useEffect(() => {
     const inicializarData = async () => {
       const mesInicio = new Date();
@@ -69,7 +88,8 @@ export default function Pedidos() {
     inicializarData();
   }, []);
 
-  // filtra pedidos conforme o filtro
+
+  // Filtra pedidos conforme o filtro.
   useEffect(() => {
     if (!dataInicio || !dataFim) return;
 
@@ -83,6 +103,7 @@ export default function Pedidos() {
           dataInicio,
           dataFim,
           formaPagamentoId: formaPagamento,
+          status: statusSelecionado
         });
         setPedidosFiltrados(resultado);
       } catch (error) {
@@ -94,9 +115,10 @@ export default function Pedidos() {
     };
 
     filtrarPedidos();
-  }, [dataInicio, dataFim, formaPagamento, setor, cliente]);
+  }, [dataInicio, dataFim, formaPagamento, setor, cliente, statusSelecionado]);
 
-  // filtra clientes se não for balcao
+
+  // Filtra clientes se não for balcao.
   useEffect(() => {
     const filtrarClientes = async () => {
       if (setor === "balcao" || setor === "") {
@@ -123,7 +145,8 @@ export default function Pedidos() {
     filtrarClientes();
   }, [setor]);
 
-  //Limpa os filtros
+
+  //Limpa os filtros.
   const limparFiltros = () => {
     setSetor("");
     setCliente(null);
@@ -264,6 +287,24 @@ export default function Pedidos() {
                 ))}
               </select>
             </div>
+
+            {/* Status */}
+            <div className={styles.filtroGrupo}>
+              <label className={styles.filtroLabel}>Status</label>
+              <select
+                value={statusSelecionado}
+                onChange={(e) => setStatusSelecionado(e.target.value)}
+                className={styles.selectInput}
+              >
+                {status.map((s) => (
+                  <option value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            
           </div>
         </div>
 
