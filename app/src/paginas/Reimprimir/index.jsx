@@ -50,6 +50,8 @@ export default function Reimprimir() {
         setMensagem('Este pedido não deve ser alterado devido ao seu status atual')
       }
 
+      console.log('status do cupom:',cupom)
+
       navegar('/editar', {
         state: cupom
       });

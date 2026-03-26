@@ -47,7 +47,7 @@ export default function Pedidos() {
     { id: 3, nome: "externo", label: "Externo" },
   ];
  
-  const {state} = useLocation()
+  const { state } = useLocation()
 
   // Setando o status de pedido disponiveis conforme o setor
   useEffect(() => {
