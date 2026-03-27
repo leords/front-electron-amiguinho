@@ -7,8 +7,10 @@ import { BuscarProduto } from "../../operadores/API/produto/buscarProduto.js";
 
 export default function Sincronizar() {
 
+    // estados
     const [carregando, setCarregando] = useState(true)
 
+    // sincroniza produtos e formas de pagamento
     useEffect(() => {
         async function sincronizar() {
             const tempoMinimo = 10000;
@@ -40,7 +42,7 @@ export default function Sincronizar() {
     }, []);
 
 
-
+    // Loading
     if(carregando) {
         return <Loading />
     }

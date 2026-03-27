@@ -48,6 +48,11 @@ const balcaoOptions = [
 ];
 
 export default function FechamentoBalcao() {
+  // opções
+  const [balcao, setBalcao] = useState(balcaoOptions[0]);
+  const [tipoMovimentacao, setTipoMovimentacao] = useState(tiposMovimentacao[0]);
+
+  // notas
   const [duzentos, setDuzentos] = useState(0);
   const [cem, setCem] = useState(0);
   const [cinquenta, setCinquenta] = useState(0);
@@ -56,20 +61,20 @@ export default function FechamentoBalcao() {
   const [cinco, setCinco] = useState(0);
   const [dois, setDois] = useState(0);
 
+  // hooks
+    const { mensagem, setMensagem } = usarToast();
+
+  // estados
   const [vendaBalcao, setVendaBalcao] = useState(null);
   const [carregandoVendas, setCarregandoVendas] = useState(true);
   const [fechamentoAtual, setFechamentoAtual] = useState(null);
-
-  const [balcao, setBalcao] = useState(balcaoOptions[0]);
-  const [tipoMovimentacao, setTipoMovimentacao] = useState(tiposMovimentacao[0]);
   const [valorManutencao, setValorManutencao] = useState('');
   const [descricaoManutencao, setDescricaoManutencao] = useState('');
   const [erroFormulario, setErroFormulario] = useState('');
-
-  const { mensagem, setMensagem } = usarToast();
   const [statusFechamento, setStatusFechamento] = useState(false);
   const [movimentacoes, setMovimentacoes] = useState([]);
 
+  // busca fechamento do balcao
   useEffect(() => {
     const dataFormatada = dataFormatadaCalendario();
     setCarregandoVendas(true);
@@ -86,6 +91,7 @@ export default function FechamentoBalcao() {
     buscarVendasDia();
   }, [balcao]);
 
+  // busca fechamento de caixa
   useEffect(() => {
     const dataFormatada = dataFormatadaCalendario();
     const buscarFechamentoBalcaoDia = async () => {
@@ -105,6 +111,7 @@ export default function FechamentoBalcao() {
     buscarFechamentoBalcaoDia();
   }, [balcao, statusFechamento]);
 
+  // busca as movimentações de caixa(entrada e saidas manuais)
   const buscarMovimentacoes = async () => {
     try {
       const listaMovimentacoes = await buscarMovimentacao(fechamentoAtual.id);
@@ -114,10 +121,12 @@ export default function FechamentoBalcao() {
     }
   };
 
+  // atualiza movimentações
   useEffect(() => {
     buscarMovimentacoes();
   }, [fechamentoAtual]);
 
+  // criar movimentação
   const novaMovimentacao = async () => {
     if (!descricaoManutencao || typeof descricaoManutencao !== 'string') {
       setErroFormulario('Informe uma descrição para a movimentação.');
@@ -141,6 +150,7 @@ export default function FechamentoBalcao() {
     await buscarMovimentacoes();
   };
 
+  // cancela 
   const cancelarFormulario = () => {
     setValorManutencao('');
     setDescricaoManutencao('');
@@ -148,15 +158,17 @@ export default function FechamentoBalcao() {
     setErroFormulario('');
   };
 
+  // limpar contador de notas
   const limparContador = () => {
     setDuzentos(0); setCem(0); setCinquenta(0);
     setVinte(0); setDez(0); setCinco(0); setDois(0);
   };
 
+  // remover manutenção
   const removerManutencao = async (id) => {
     try {
       await deletarMovimentacao(id);
-      setMensagem('Movimentação excluída com sucesso!');
+      setMensagem('Movimentação excluída com sucesso!')
       await buscarMovimentacoes();
     } catch (error) {
       const erroApi = error?.response?.data.erro;
@@ -164,6 +176,7 @@ export default function FechamentoBalcao() {
     }
   };
 
+  //finaliza fechamento
   const finalizarFechamento = async () => {
     const dados = { totalSistema: vendaBalcao?.resultado?.a_vista ?? 0, totalInformado: totalContado ?? 0 };
     try {
@@ -187,6 +200,7 @@ export default function FechamentoBalcao() {
   const valorFinalFechamentoAvista = valorEsperado + totalEntradas - totalSaidas;
   const diferenca = totalContado - valorFinalFechamentoAvista;
 
+  // formantando data
   const dataHoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
 
   return (
@@ -196,7 +210,7 @@ export default function FechamentoBalcao() {
 
       <main className={styles.main}>
 
-        {/* ── Cabeçalho ── */}
+        {/* Cabeçalho */}
         <div className={styles.pageHeader}>
           <div className={styles.pageHeaderLeft}>
             <div className={styles.iconeWrapper}>
@@ -222,7 +236,7 @@ export default function FechamentoBalcao() {
           </div>
         </div>
 
-        {/* ── Cards de resumo rápido ── */}
+        {/* Cards de resumo rápido */}
         <div className={styles.resumoCards}>
           <div className={styles.resumoCard}>
             <div className={styles.resumoCardIcon} data-color="orange">
@@ -262,7 +276,7 @@ export default function FechamentoBalcao() {
           </div>
         </div>
 
-        {/* ── Conteúdo principal ── */}
+        {/* Conteúdo principal */}
         {fechamentoAtual?.status === 'aberto' ? (
 
           <div className={styles.containerLados}>
@@ -532,7 +546,7 @@ export default function FechamentoBalcao() {
 
         ) : (
 
-          /* ── CAIXA FECHADO ── */
+          /* CAIXA FECHADO */
           <div className={styles.fechadoWrapper}>
             <div className={styles.fechadoBanner}>
               <LockKeyIcon size={32} weight="fill" className={styles.fechadoIcone} />

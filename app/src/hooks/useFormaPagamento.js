@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { LerFormaPagamento } from "../operadores/API/formaPagamento/lerFormaPagamento";
 
 export function useFormaPagamento() {
+    //estados
   const [listaFormaPagamento, setListaFormasPagamento] = useState();
   const [carregandoFormasPagamento, setCarregandoFormasPagamento] =
     useState(true);

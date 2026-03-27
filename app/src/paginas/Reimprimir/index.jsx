@@ -44,6 +44,7 @@ export default function Reimprimir() {
     
   });
 
+  // chama a tela editar conforme status do pedido
   const handleEditarPedido = async () => {
     try {
       if(cupom.status !== 'cancelado' || cupom.status !== 'pendente') {
@@ -60,7 +61,6 @@ export default function Reimprimir() {
       console.log(error)
     }
   }
-
 
   // função para cancelar pedido.
   const handleCancelarPedido = async () => {
@@ -101,6 +101,7 @@ export default function Reimprimir() {
     window.IMPRESSORA.imprimir(html);
   };
 
+  // faz a soma dos pedidos
   const totalItens = cupom.itens.reduce((acc, item) => acc + item.quantidade, 0);
 
   return (

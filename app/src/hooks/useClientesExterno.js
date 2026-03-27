@@ -4,6 +4,7 @@ import { LerClienteDelivery } from "../operadores/API/cliente/lerClienteDelivery
 import { LerClienteExterno } from "../operadores/API/cliente/lerClienteExterno.js";
 
 export function useClientesExterno() {
+    //estados
   const [clientes, setClientes] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);

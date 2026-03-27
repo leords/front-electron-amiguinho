@@ -1,6 +1,5 @@
 import { api } from "../../../utils/conexaoAxios";
 
-//dataInicio(2025-12-12), dataFim, vendedor(string)
 export const buscarPedido = async (params = {}) => {
   const token = localStorage.getItem("token");
 

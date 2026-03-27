@@ -28,6 +28,19 @@ import {
 } from "@phosphor-icons/react";
 
 export default function Vendas() {
+  // variável .env
+  const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
+
+  // referencia para acessar componente
+  const inputProduto = useRef(null);
+
+  // hooks
+  const { usuario } = usarAuth();
+  const { mensagem, setMensagem } = usarToast();
+  const { produtos, carregando } = useProdutos();
+  const { listaFormaPagamento } = useFormaPagamento();
+
+  // novos estados
   const [nome, setNome] = useState("");
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [quantidade, setQuantidade] = useState(1);
@@ -35,18 +48,14 @@ export default function Vendas() {
   const [formaPagamento, setFormaPagamento] = useState(1);
   const [abrirOpcaoNome, setAbrirOpcaoNome] = useState(false);
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
-  const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
-  const inputProduto = useRef(null);
 
-  const { usuario } = usarAuth();
-  const { mensagem, setMensagem } = usarToast();
-  const { produtos, carregando } = useProdutos();
-  const { listaFormaPagamento } = useFormaPagamento();
 
+  // valida existencia de usuário.
   if (!usuario) {
     window.location.href = "/";
   }
 
+  // UX - tecla entrar chama o proximo componente disponivel
   const handleEnter = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -56,10 +65,13 @@ export default function Vendas() {
     }
   };
 
+  // Mapeando produtos para ser utilizado no componentes <Select />
   const options = produtos.map((p) => ({ value: p.id, label: p.nome }));
 
+  // Remove produto
   const handleRemoveProduto = (id) => setCupom(cupom.filter((item) => item.id !== id));
 
+  // Adiciona produto
   const handleAddProduto = () => {
     if (!produtoSelecionado || quantidade <= 0) {
       alert("Selecione um produto e quantidade válida!");
@@ -76,10 +88,12 @@ export default function Vendas() {
     inputProduto.current.focus();
   };
 
+  // Realiza as somas dos produtos
   const totalProduto = (preco, qtd) => (preco * qtd).toFixed(2);
   const totalPedido = cupom.reduce((acc, item) => acc + item.precoUndVenda * item.quantidade, 0).toFixed(2);
   const quantidadeTotal = cupom.reduce((acc, item) => acc + item.quantidade, 0);
 
+  // Cancela o pedido 
   const handleCancelarPedido = () => {
     if (cupom.length > 0) {
       const confirmar = window.confirm("Deseja realmente cancelar o pedido? Todos os itens serão removidos.");
@@ -91,6 +105,7 @@ export default function Vendas() {
     setFormaPagamento("");
   };
 
+  // finaliza o pedido imprimindo e enviando para o backend
   const handleGerarPedido = async () => {
     if (cupom.length === 0) { alert("Adicione produtos ao cupom antes de gerar o pedido!"); return; }
     if (!formaPagamento) { alert("Selecione a forma de pagamento!"); return; }
@@ -135,7 +150,7 @@ export default function Vendas() {
 
       <main className={styles.main}>
 
-        {/* ── Lado esquerdo ── */}
+        {/* Lado esquerdo */}
         <div className={styles.colunaEsquerda}>
 
           {/* Cabeçalho da página */}

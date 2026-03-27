@@ -9,6 +9,8 @@ import { ArrowLeft, SignIn, Key, EnvelopeSimple, LockKey, User, ArrowClockwise }
 import ConectarServidor from "../ConectarServidor";
 
 export default function Login() {
+
+  // estados
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [email, setEmail] = useState("");
@@ -18,8 +20,11 @@ export default function Login() {
   const [carregamento, setCarregamento] = useState(false);
   const [acessoMultiClick, setAcessoMultiClick] = useState(false);
 
+  // hooks
   const { login } = usarAuth();
 
+
+  // função de autenticar
   async function iniciarLogin(event) {
     event.preventDefault();
     setCarregamento(true);
@@ -58,6 +63,7 @@ export default function Login() {
   return (
     <div className={styles.container}>
       {acessoMultiClick && (
+        // função por parametro para controlar este componente
         <ConectarServidor funcaoParametro={() => setAcessoMultiClick(false)} />
       )}
 

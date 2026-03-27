@@ -16,16 +16,22 @@ import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { formatarMoeda } from "../../utils/formartarMoeda";
 
 export default function Historico() {
+
+  // variável .env
+  const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
+
+  // estados
   const [dataAtual, setDataAtual] = useState("");
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [totalVendas, setTotalVendas] = useState(0);
-  const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
 
+  // atualizando data
   useEffect(() => {
     setDataAtual(dataFormatadaCalendario());
   }, []);
 
+  // filtrando pedidos
   useEffect(() => {
     if (!dataAtual || !nomeMaquina) return;
     const filtrarPedidos = async () => {
@@ -48,6 +54,7 @@ export default function Historico() {
     filtrarPedidos();
   }, [dataAtual, nomeMaquina]);
 
+  // soma o total de pedidos filtrados
   useEffect(() => {
     const total = pedidosFiltrados.reduce(
       (acc, pedido) =>
@@ -57,9 +64,13 @@ export default function Historico() {
     setTotalVendas(total);
   }, [pedidosFiltrados]);
 
+  // pega o valor de data selecionado no input
   const tratarAlteracao = (e) => setDataAtual(e.target.value);
+
+  // função que seta o dia atual
   const setarHoje = () => setDataAtual(dataFormatadaCalendario());
 
+  // formatação de data
   const dataSelecionada = dataAtual
     ? new Date(dataAtual + "T00:00:00").toLocaleDateString("pt-BR", {
         weekday: "long",
@@ -75,7 +86,7 @@ export default function Historico() {
 
       <main className={styles.principal}>
 
-        {/* ── Cabeçalho ── */}
+        {/* Cabeçalho */}
         <div className={styles.cabecalhoPage}>
           <div className={styles.tituloSection}>
             <div className={styles.iconeWrapper}>
@@ -110,7 +121,7 @@ export default function Historico() {
           </div>
         </div>
 
-        {/* ── Cards de resumo ── */}
+        {/* Cards de resumo */}
         <div className={styles.resumoCards}>
           <div className={styles.card}>
             <div className={styles.cardIcone} data-color="orange">
@@ -137,7 +148,7 @@ export default function Historico() {
           </div>
         </div>
 
-        {/* ── Conteúdo principal ── */}
+        {/* Conteúdo principal */}
         <div className={styles.main}>
 
           {/* Tabela */}

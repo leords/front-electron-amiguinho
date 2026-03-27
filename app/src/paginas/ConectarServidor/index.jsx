@@ -1,24 +1,27 @@
 import { useState } from "react";
 import styles from "./styles.module.css";
-import { LockKey, X, ArrowRight, NetworkIcon, CheckFatIcon  } from "@phosphor-icons/react";
+import { LockKey, X, ArrowRight, NetworkIcon, CheckFatIcon, DesktopTowerIcon  } from "@phosphor-icons/react";
 import { testeServidor } from "../../operadores/API/testeServidor/testeServidor.js";
 import Spinner from "../../componentes/Spinner";
 
 export default function ConectarServidor({ funcaoParametro }) {
 
+    // variável .env
+    const senhaServidor = import.meta.env.VITE_SENHA_CONFIG_SERVIDOR;
+
+    // estados
     const [senha, setSenha] = useState("");
     const [dominio, setDominio] = useState("");
     const [carregamento, setCarregamento] = useState(false);
     const [acesso, setAcesso] = useState(false);
     const [informativo, setInformativo] = useState("")
     const [statusCode, setStatusCode] = useState(0)
-
-    const senhaServidor = import.meta.env.VITE_SENHA_CONFIG_SERVIDOR;
+    const [balcao, setBalcao] = useState("")
 
 
     // Validando acesso de ADM
     async function iniciarAcessoADM() {
-        
+
         setCarregamento(true);
         
         const tempoMinimo = 2000;
@@ -38,6 +41,7 @@ export default function ConectarServidor({ funcaoParametro }) {
             }
               
             setAcesso(true);
+            setInformativo('')
               
         } catch (error) {
             alert(error.message);
@@ -61,6 +65,11 @@ export default function ConectarServidor({ funcaoParametro }) {
                 return
             }
 
+            else if(!balcao) {
+                setInformativo('Informe um balcão válido')
+                return
+            }
+
             // Garante tempo mínimo de loading
             const tempoPassado = Date.now() - inicio;
             const restante = tempoMinimo - tempoPassado;
@@ -78,15 +87,19 @@ export default function ConectarServidor({ funcaoParametro }) {
             setInformativo(`${retorno.mensagem} ✔`)
             setStatusCode(retorno.status)
 
+            // setando o dominio e qual balcao no storaged
             localStorage.setItem('dominio', dominio);
+            localStorage.setItem('balcao', balcao);
             
         } catch (error) {
             alert(error.message);
         } finally {
             setCarregamento(false);
+            setInformativo('')
         }
     }
 
+    // Função que vem do elemento pai, controla a renderização desta tela
     function finalizar() {
         funcaoParametro();
     }
@@ -182,6 +195,17 @@ export default function ConectarServidor({ funcaoParametro }) {
                     type="text"
                 />
                 {informativo && <p className={statusCode === "ok" ? styles.retornoOk  : styles.retorno}>{informativo}</p>}
+                <label className={styles.labelBalcao}>
+                    <DesktopTowerIcon size={12} weight="bold" /> Balcão
+                </label>
+                <select
+                    className={styles.input}
+                    onChange={(e) => setBalcao(e.target.value)}
+                >
+                    <option value="">Selecione</option>
+                    <option value="b1">Balcão 01</option>
+                    <option value="b2">Balcão 02</option>
+                </select>
                 </div>
 
                 {/* Loading */}

@@ -1,6 +1,6 @@
 import { api } from "../../../utils/conexaoAxios";
 
-//:setor, dataInicio(2025-12-26), dataFim
+
 export const QuantidadePedidos = async (setor, params = {}) => {
     const token = localStorage.getItem("token");
 

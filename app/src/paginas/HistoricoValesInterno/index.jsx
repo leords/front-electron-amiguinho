@@ -18,6 +18,14 @@ import { useFormaPagamento } from "../../hooks/useFormaPagamento";
 import { formatarMoeda } from "../../utils/formartarMoeda";
 
 export default function HistoricoValesInterno() {
+
+  // variável .env
+    const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
+
+  // hook
+  const { listaFormaPagamento } = useFormaPagamento();
+
+  // estados
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
@@ -25,15 +33,16 @@ export default function HistoricoValesInterno() {
   const [totalVendas, setTotalVendas] = useState(0);
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
   const [formaPagamento, setFormaPagamento] = useState("");
-  const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
-
-  const { listaFormaPagamento } = useFormaPagamento();
-
+  
+  // lista à ser ignoradas
   const ignorarItensLista = ["A VISTA", "PIX", "CARTÃO", "CHEQUE"];
+
+  // filtrando formas de pagamento, ignorando a lista ácima
   const listaFormasPagamentoFiltrada = listaFormaPagamento?.filter(
     (forma) => !ignorarItensLista.includes(forma.nome)
   );
 
+  // setando datas de inicio e fim com a data atual
   useEffect(() => {
     const hoje = dataFormatadaCalendario();
     setDataInicio(hoje);
@@ -82,7 +91,7 @@ export default function HistoricoValesInterno() {
 
       <main className={styles.principal}>
 
-        {/* ── Cabeçalho ── */}
+        {/* Cabeçalho */}
         <div className={styles.cabecalhoPage}>
           <div className={styles.tituloSection}>
             <div className={styles.iconeWrapper}>
@@ -95,7 +104,7 @@ export default function HistoricoValesInterno() {
           </div>
         </div>
 
-        {/* ── Painel de filtros ── */}
+        {/* Painel de filtros */}
         <div className={styles.painelFiltros}>
           <div className={styles.filtrosHeader}>
             <UserIcon size={14} weight="bold" className={styles.filtroIcone} />
@@ -166,7 +175,7 @@ export default function HistoricoValesInterno() {
           </div>
         </div>
 
-        {/* ── Cards de resumo ── */}
+        {/* Cards de resumo */}
         <div className={styles.resumoCards}>
           <div className={styles.card}>
             <div className={styles.cardIcone} data-color="orange">
@@ -193,7 +202,7 @@ export default function HistoricoValesInterno() {
           </div>
         </div>
 
-        {/* ── Conteúdo principal ── */}
+        {/* Conteúdo principal */}
         <div className={styles.main}>
 
           <section className={styles.containerLista}>

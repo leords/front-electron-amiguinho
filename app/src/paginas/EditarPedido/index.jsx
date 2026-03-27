@@ -29,10 +29,10 @@ import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 
 
-export default function EditarPedido() {
+export default function EditarPedido() {  
 
 const { state } = useLocation()
-const navegar = useNavigate()
+const navegar = useNavigate() 
 
   // Alerta
   const { mensagem, setMensagem } = usarToast();

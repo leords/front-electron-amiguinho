@@ -2,17 +2,19 @@ import { useEffect, useState } from "react";
 import { LerProduto } from "../operadores/API/produto/lerProduto.js";
 
 export function useProdutos() {
+  // estados
   const [produtos, setProduto] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
+
   const buscarProduto = async () => {
     const produtoStorage = localStorage.getItem("produtos");
 
+    // valido se existe produto no storage
     if (produtoStorage) {
       try {
         const json = JSON.parse(produtoStorage);
-
         if (Array.isArray(json) && json.length > 0) {
           return json;
         }
@@ -22,10 +24,9 @@ export function useProdutos() {
       }
     }
 
+    // caso não, busco via API e salvo no storage
     const retornoProdutoAPI = await LerProduto();
-
     localStorage.setItem("produtos", JSON.stringify(retornoProdutoAPI));
-
     return retornoProdutoAPI;
   };
 

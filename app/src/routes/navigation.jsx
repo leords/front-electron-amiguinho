@@ -34,7 +34,6 @@ export function Navegador() {
             <Route path="/pedidos" element={<Pedidos />} />
             <Route path="/transmissao" element={<Transmissao />} />
             <Route path="/editar" element={<EditarPedido />} />
-
           </Routes>
         </ToastProvedor>
       </AuthProvedor>

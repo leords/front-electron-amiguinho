@@ -1,7 +1,5 @@
 import { api } from "../../../utils/conexaoAxios";
 
-
-// vendedor(b1 ou b2), data(2025-12-12)
 export const BuscarFechamentoBalcaoDia = async (params = {}) => {
     const token = localStorage.getItem("token")
 

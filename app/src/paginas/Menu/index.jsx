@@ -20,6 +20,7 @@ export default function Menu() {
   const [saudacao, setSaudacao] = useState("");
   const [mensagemDoDia, setMensagemDoDia] = useState("");
 
+  // carregando msg de IA
   useEffect(() => {
     const carregarMensagem = async () => {
       const mensagemSalva = localStorage.getItem("mensagemDoDia");
@@ -40,6 +41,7 @@ export default function Menu() {
     carregarMensagem();
   }, []);
 
+  // saudações
   useEffect(() => {
     const hora = new Date().getHours();
     if (hora < 12) setSaudacao("Bom dia");
