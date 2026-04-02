@@ -89,7 +89,11 @@ export default function ConectarServidor({ funcaoParametro }) {
 
             // setando o dominio e qual balcao no storaged
             localStorage.setItem('dominio', dominio);
-            localStorage.setItem('balcao', balcao);
+
+            // só salva se for um dos balcão
+            if(balcao !== 'delivery') {
+                localStorage.setItem('balcao', balcao);
+            }
             
         } catch (error) {
             alert(error.message);
@@ -205,6 +209,7 @@ export default function ConectarServidor({ funcaoParametro }) {
                     <option value="">Selecione</option>
                     <option value="b1">Balcão 01</option>
                     <option value="b2">Balcão 02</option>
+                    <option value="delivery">Delivery 01</option>
                 </select>
                 </div>
 

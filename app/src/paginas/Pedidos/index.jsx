@@ -52,7 +52,7 @@ export default function Pedidos() {
   // Setando o status de pedido disponiveis conforme o setor
   useEffect(() => {
     if(setor === 'balcao') {
-      setStatus(['carregado', 'cancelado'])
+      setStatus(['finalizado', 'cancelado'])
     }
     else if(setor === 'delivery') {
       setStatus(['pentende', 'entregue', 'devolvido', 'cancelado'])
