@@ -39,7 +39,7 @@ export default function Pedidos() {
 
   const { listaFormaPagamento } = useFormaPagamento();
 
-    const { mensagem, setMensagem } = usarToast();
+  const { mensagem, setMensagem } = usarToast();
 
   const opcaoSetor = [
     { id: 1, nome: "balcao", label: "Balcão" },
