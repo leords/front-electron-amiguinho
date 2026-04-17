@@ -1,0 +1,336 @@
+:root {
+  --orange: #ff8c00;
+  --orange-light: #fff3e0;
+  --orange-mid: #ffd699;
+  --green: #2f9e44;
+  --green-light: #ebfbee;
+  --red: #c92a2a;
+  --red-light: #fff5f5;
+  --red-mid: #ffc9c9;
+  --gray-900: #1a1f2e;
+  --gray-700: #495057;
+  --gray-500: #868e96;
+  --gray-300: #dee2e6;
+  --white: #ffffff;
+  --border: #eaecef;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
+  --radius: 14px;
+}
+
+/* Card */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid #f1f3f5;
+}
+
+.cardHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.cardHeaderTitle h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.cardHeaderIcon {
+  color: var(--orange);
+}
+
+/* Botão voltar */
+.botaoVoltar {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--red-light);
+  color: var(--red);
+  border: 1.5px solid var(--red-mid);
+}
+
+/* div de inputs */
+.itemFormProduto {
+  width: 400px;
+}
+
+
+.itemFormTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Form */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.formGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+}
+
+/* Inputs */
+.input {
+  padding: 9px 12px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--white);
+  color: var(--gray-700);
+  width: 100%;
+}
+
+/* React Select */
+:global(.custom__control) {
+  border: 1.5px solid var(--gray-300) !important;
+  border-radius: 8px !important;
+  min-height: 42px !important;
+}
+
+:global(.custom__control--is-focused) {
+  border-color: var(--orange) !important;
+}
+
+/* Itens */
+.itensSection {
+  margin-top: 1px;
+  display: flex;
+  flex-direction: column;
+}
+
+.itensTitulo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-500);
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+
+.itemFormRow {
+  display: grid;
+  grid-template-columns: 1fr 100px 100px 100px 100px;
+  gap: 10px;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.itemTotalCalc {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.btnRemoverItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  border: 1.5px solid var(--red-mid);
+  background: var(--red-light);
+  color: var(--red);
+  cursor: pointer;
+}
+
+/* Botão adicionar */
+.botaoAdicionarItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1.5px dashed var(--orange-mid);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Rodapé */
+.formRodape {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1.5px solid #f1f3f5;
+}
+
+.totalOrdem {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.totalOrdem strong {
+  color: var(--green);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.formAcoes {
+  display: flex;
+  gap: 10px;
+}
+
+/* Botões */
+.botaoPrincipal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.botaoCancelar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--red-light);
+  color: var(--red);
+  border: 1.5px solid var(--red-mid);
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* CUPOM — LISTA */
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.lista::-webkit-scrollbar { width: 4px; }
+.lista::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 4px; }
+.lista::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+
+.listaVazia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  text-align: center;
+  gap: 8px;
+}
+
+.iconeVazio { color: var(--gray-300); }
+
+.listaVazia p {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin: 0;
+}
+
+.listaVazia span {
+  font-size: 13px;
+  color: var(--gray-300);
+}
+
+/* 
+   BOTÃO ADICIONAR
+*/
+.botaoAdicionar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255,140,0,0.25);
+}
+
+.botaoAdicionar:hover:not(:disabled) {
+  background: #e07b00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(255,140,0,0.35);
+}
+
+.botaoAdicionar:disabled {
+  background: var(--gray-300);
+  color: var(--gray-500);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+/* Spinner */
+.spinnerIcon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Animação */
+.fadeUp {
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

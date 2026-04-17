@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
-import { dataFormatada } from "../../utils/data";
+import { dataHoraFormatada } from "../../utils/data";
 import { formatarMoeda } from "../../utils/formartarMoeda";
 import { CheckCircleIcon, ClockCountdown, NotepadIcon, ListChecksIcon, User, ListBullets, CurrencyCircleDollar, PencilSimple, ClockCountdownIcon, XCircleIcon, CalendarBlankIcon, ArrowsClockwise, MagnifyingGlass, Package, CalendarBlank, Building } from "@phosphor-icons/react";
 import { Funnel } from "recharts";
@@ -297,7 +297,7 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada, setEdit
                         <span className={styles.ordemId}>#{ordem.id}</span>
                         <span className={styles.cellData}>
                           <CalendarBlank size={13} />
-                          {dataFormatada(ordem.data)}
+                          {dataHoraFormatada(ordem.data)}
                         </span>
                         <span className={styles.cellFornecedor}>
                           <Building size={13} />

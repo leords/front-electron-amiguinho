@@ -1,10 +1,10 @@
 import { api } from "../../../utils/conexaoAxios";
 
-export const editarOrdem = async (status, usuarioId, id) => {
+export const editarOrdem = async (id, status, usuarioId) => {
   const token = localStorage.getItem("token");
 
   try {
-    const resposta = await api.put(`/editar-ordem/${id}`,
+    const resposta = await api.patch(`/editar-ordem/${id}`,
     { usuarioId, status },
     { headers: {Authorization: `Bearer ${token}`} }
     );
