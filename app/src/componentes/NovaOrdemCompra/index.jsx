@@ -314,7 +314,6 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
                   trigger={
                     <button
                       className={styles.botaoPrincipal}
-                      onClick={handleCriarOrdem}
                       disabled={salvando || !fornecedor}
                     >
                       {salvando ? <CircleNotch size={15} className={styles.spinnerIcon} /> : <FloppyDisk size={15} weight="bold" />}

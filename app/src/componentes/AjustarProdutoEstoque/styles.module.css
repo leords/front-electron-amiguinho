@@ -1,0 +1,224 @@
+/* ─── Variáveis essenciais ───────────────────────────── */
+:root {
+  --orange: #ff8c00;
+  --orange-light: #fff3e0;
+  --orange-mid: #ffd699;
+  --green: #2f9e44;
+  --green-light: #ebfbee;
+  --green-mid: #8ce99a;
+  --red: #c92a2a;
+  --red-light: #fff5f5;
+  --red-mid: #ffc9c9;
+  --gray-900: #1a1f2e;
+  --gray-700: #495057;
+  --gray-500: #868e96;
+  --gray-300: #dee2e6;
+  --gray-100: #f8f9fa;
+  --white: #ffffff;
+  --border: #eaecef;
+  --shadow-md: 0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06);
+  --radius: 14px;
+}
+
+/* ─── Modal ───────────────────────────── */
+.modal {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  animation: slideUp 0.22s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Header ───────────────────────────── */
+.modalHeader {
+  display: flex;
+  align-items: center;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  background: var(--gray-100);
+  margin-bottom: 20px;
+}
+
+.modalTitulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+/* ─── Select wrapper ───────────────────── */
+.select {
+  padding: 0 20px;
+}
+
+/* ─── Body ───────────────────────────── */
+.modalBody {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ─── Produto info ───────────────────── */
+.modalProduto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: var(--orange-light);
+  border: 1px solid var(--orange-mid);
+  border-radius: 10px;
+}
+
+.modalProdutoNome {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.modalProdutoEstoque {
+  font-size: 12px;
+  color: var(--gray-700);
+}
+
+.modalProdutoEstoque strong {
+  color: var(--orange);
+}
+
+/* ─── Tipo (entrada/saída) ───────────── */
+.tipoGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.tipoBotao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 16px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  background: var(--gray-100);
+  color: var(--gray-500);
+}
+
+.tipoAtivo_entrada {
+  background: var(--green-light);
+  color: var(--green);
+  border-color: var(--green-mid);
+}
+
+.tipoAtivo_saida {
+  background: var(--red-light);
+  color: var(--red);
+  border-color: var(--red-mid);
+}
+
+/* ─── Input ─────────────────────────── */
+.filtroGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filtroLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+}
+
+.input {
+  padding: 9px 12px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--white);
+  color: var(--gray-700);
+}
+
+/* ─── Preview ───────────────────────── */
+.preview {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.previewEntrada {
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green-mid);
+}
+
+.previewSaida {
+  background: var(--red-light);
+  color: var(--red);
+  border: 1px solid var(--red-mid);
+}
+
+.previewAviso {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ─── Footer ───────────────────────── */
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 22px;
+  border-top: 1px solid var(--border);
+  background: var(--gray-100);
+}
+
+/* ─── Botões ───────────────────────── */
+.botaoPrincipal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.botaoCancelar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: var(--red-light);
+  color: var(--red);
+  border: 1.5px solid var(--red-mid);
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ─── Spinner ───────────────────────── */
+.spinnerIcon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

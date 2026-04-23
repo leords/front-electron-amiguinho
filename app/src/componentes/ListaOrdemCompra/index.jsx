@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import { dataHoraFormatada } from "../../utils/data";
 import { formatarMoeda } from "../../utils/formartarMoeda";
-import { CheckCircleIcon, ClockCountdown, NotepadIcon, ListChecksIcon, User, ListBullets, CurrencyCircleDollar, PencilSimple, ClockCountdownIcon, XCircleIcon, CalendarBlankIcon, ArrowsClockwise, MagnifyingGlass, Package, CalendarBlank, Building } from "@phosphor-icons/react";
+import { CheckCircleIcon, ClockCountdown, WarningOctagonIcon,  PlusCircleIcon, TruckIcon , NotepadIcon, ListChecksIcon, User, ListBullets, CurrencyCircleDollar, EyeIcon, ClockCountdownIcon, XCircleIcon, CalendarBlankIcon, ArrowsClockwise, MagnifyingGlass, Package, CalendarBlank, Building } from "@phosphor-icons/react";
 import { Funnel } from "recharts";
 import Select from "react-select";
 
@@ -11,7 +11,7 @@ import { buscarOrdem } from "../../operadores/API/ordemCompra/buscarOrdem.js";
 
 
 // precisa passar por parametro setView, setOrdemSelecionada(), setEditStatus
-export default function ListaOrdemCompra({ setView, setOrdemSelecionada, setEditStatus }) {
+export default function ListaOrdemCompra({ setView, setOrdemSelecionada }) {
 
     // Estados
     const [carregando, setCarregando] = useState(false)
@@ -27,38 +27,43 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada, setEdit
     // Listas
     const [listaOrdem, setListaOrdem] = useState([])
     const [listaFornecedores, setListaFornecedores] = useState([])
-    const listaStatus = ["Realizada", "Finalizada", "Cancelada"].map((s) => ({ value: s, label: s }));
+    
+    // Lista de status
+    const listaStatus = [
+      {id: 1, value: "Realizada", label: "Realizada"},
+      {id: 2, value: "Finalizada", label: "Finalizada"},
+      {id: 3, value: "Cancelada", label: "Cancelada"},
+      {id: 4, value: "Pendente", label: "Pendente"},
+      {id: 5, value: "", label: "Todos"},
+    ]
 
     // Utilitários
     const STATUS_META = {
       Finalizada:    { cor: styles.badgeGreen,  icone: CheckCircleIcon },
       Pendente:      { cor: styles.badgeOrange, icone: ClockCountdownIcon },
-      Cancelada:     { cor: styles.badgeRed,    icone: XCircleIcon },
+      Cancelada:     { cor: styles.badgeRed,    icone: XCircleIcon }, 
+      Realizada:     { cor: styles.badgeBlue,    icone: PlusCircleIcon },
     };
 
     // Totais de resumo
     const totalGeral = listaOrdem.reduce((s, o) => s + Number(o.total), 0);
     const qtdPendentes = listaOrdem.filter((o) => o.status === "Finalizada").length;
     const qtdRealizadas = listaOrdem.filter((o) => o.status === "Realizadas").length;
+    const qtdAndamento = listaOrdem.filter((o) => o.status === "Pendente").length;
+    const qtdCancelada = listaOrdem.filter((o) => o.status === "Cancelada").length;
 
-    // filtrando apenas usuários das ordens.(Select usuários)
-    const listaUsuarios = Array.from( 
-      new Map( 
+    // Lista de usuários tratada para o Select
+    const listaUsuarios = [ ...Array.from(  //  Array.from = converte para array
+      new Map( //New map = estrutura com chave única → resolve duplicidade.
         listaOrdem.map((o) => [
           o.usuarioId,
           {
             value: o.usuarioId,
             label: o.usuario.nome
           },
-        ])
-      ).values()
+        ]) //.values = é um método do map que retorna apenas os valores.
+      ).values()), /*Spread operator = */ {value: "", label: "geral"} ]
 
-    // ****************
-    //  New map = estrutura com chave única → resolve duplicidade.
-    //  Array.from = converte para array.
-    // .values = é um método do map que retorna apenas os valores.
-    // ***************
-    )
 
     // Busca ordens de compra.
     useEffect(() => {
@@ -66,11 +71,12 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada, setEdit
             setCarregando(true);
             try {
                 const resultado = await buscarOrdem({
-                    dataInicio,
-                    dataFim,
+
                     usuarioId: usuarioId?.value,
                     fornecedorId: fornecedorId?.value,
-                    status: status?.value
+                    status: status?.value,
+                    dataInicio,
+                    dataFim,
                 })
                 setListaOrdem(resultado)
             } catch (error) {
@@ -91,7 +97,7 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada, setEdit
             status: "ATIVO"
           });
 
-          setListaFornecedores(resultado.map((f) => ({ value: f.id, label: f.nome })))
+          setListaFornecedores([...resultado.map((f) => ({ value: f.id, label: f.nome })), {value: "", label: "Todos"}])
           
         } catch (error) {
           console.log(error)
@@ -109,7 +115,7 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada, setEdit
             <div className={styles.resumoGrid}>
               {/* TOTAL DE ORDENS */}
               <div className={`${styles.resumoCard} ${styles.fadeUp}`}>
-                <div className={styles.resumoIcone} style={{ background: "linear-gradient(135deg,#ff8c00,#ffb347)" }}>
+                <div className={styles.resumoIcone} style={{ background: "linear-gradient(135deg,#969696,#6B6B6B)" }}>
                   <ListBullets size={20} weight="fill" />
                 </div>
                 <div>
@@ -120,7 +126,7 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada, setEdit
 
               {/* TOTAL DE REALIZADAS */}
               <div className={`${styles.resumoCard} ${styles.fadeUp}`} style={{ animationDelay: "0.05s" }}>
-                <div className={styles.resumoIcone} style={{ background: "linear-gradient(135deg,#f59f00,#ffd43b)" }}>
+                <div className={styles.resumoIcone} style={{ background: "linear-gradient(135deg,#2B87FF,#499CF5)" }}>
                   <NotepadIcon size={20} weight="fill" />
                 </div>
                 <div>
@@ -137,6 +143,28 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada, setEdit
                 <div>
                   <span className={styles.resumoValor}>{qtdPendentes}</span>
                   <span className={styles.resumoLabel}>Finalizadas</span>
+                </div>
+              </div>
+            
+              {/* TOTAL DE PENDENTES */}
+              <div className={`${styles.resumoCard} ${styles.fadeUp}`} style={{ animationDelay: "0.05s" }}>
+                <div className={styles.resumoIcone} style={{ background: "linear-gradient(135deg,#ff8c00,#ffb347)" }}>
+                  <WarningOctagonIcon size={20} weight="fill" />
+                </div>
+                <div>
+                  <span className={styles.resumoValor}>{qtdAndamento}</span>
+                  <span className={styles.resumoLabel}>Pendentes</span>
+                </div>
+              </div>
+
+              {/* TOTAL DE CANCELADA */}
+              <div className={`${styles.resumoCard} ${styles.fadeUp}`} style={{ animationDelay: "0.05s" }}>
+                <div className={styles.resumoIcone} style={{ background: "linear-gradient(135deg,#FF0000, #FF5959)" }}>
+                  <XCircleIcon size={20} weight="fill" />
+                </div>
+                <div>
+                  <span className={styles.resumoValor}>{qtdCancelada}</span>
+                  <span className={styles.resumoLabel}>Canceladas</span>
                 </div>
               </div>
 
@@ -321,11 +349,10 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada, setEdit
                             title="Editar status"
                             onClick={() => {
                               setOrdemSelecionada(ordem);
-                              setEditStatus(listaStatus.find((o) => o.value === ordem.status) || null);
                               setView("editarOrdem");
                             }}
                           >
-                            <PencilSimple size={15} weight="bold" />
+                            <EyeIcon size={15} weight="bold" />
                           </button>
                         </div>
                       </div>

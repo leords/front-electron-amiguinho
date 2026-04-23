@@ -1,4 +1,4 @@
-/* ── Base ── */
+/* Base */
 .container {
   display: flex;
   flex-direction: column;
@@ -18,7 +18,7 @@
   gap: 24px;
 }
 
-/* ── Cabeçalho da página ── */
+/* Cabeçalho da página */
 .cabecalhoPage {
   display: flex;
   justify-content: space-between;
@@ -63,7 +63,7 @@
   line-height: 1.2;
 }
 
-/* ── Botão limpar filtros ── */
+/* Botão limpar filtros */
 .botaoLimpar {
   display: flex;
   align-items: center;
@@ -85,7 +85,7 @@
   color: #f03e3e;
 }
 
-/* ── Painel de filtros ── */
+/* Painel de filtros */
 .painelFiltros {
   background-color: #fff;
   border-radius: 14px;
@@ -137,7 +137,7 @@
   letter-spacing: 0.5px;
 }
 
-/* ── Inputs de data ── */
+/* Inputs de data */
 .calendario {
   font-size: 14px;
   font-weight: 500;
@@ -190,7 +190,7 @@
   border-color: #ff8c00;
 }
 
-/* ── Selects ── */
+/* Selects */
 .selectInput {
   width: 100%;
   padding: 9px 12px;
@@ -226,7 +226,7 @@
   box-sizing: border-box;
 }
 
-/* ── Seção da tabela ── */
+/* Seção da tabela */
 .containerLista {
   background-color: #fff;
   border-radius: 14px;
@@ -279,7 +279,7 @@
   font-weight: 500;
 }
 
-/* ── Loading ── */
+/* Loading */
 .loading {
   display: flex;
   align-items: center;

@@ -6,9 +6,17 @@ import { ArrowLeft, CheckCircle, CircleNotch, FloppyDisk, ListBullets, PencilSim
 import Select from 'react-select';
 import { editarOrdem } from '../../operadores/API/ordemCompra/editarOrdem';
 import { AlertaRadix } from '../ui/alerta/alerta';
+import { usarToast } from '../Context/toastContext';
+import { useProdutos } from '../../hooks/useProdutos';
 
 
-export function EditarStatusOrdem ({ ordemSelecionada, setView, setMensagem }) {
+
+export function EditarStatusOrdem ({ ordemSelecionada, setView }) {
+
+    // Hooks
+    const { setMensagem } = usarToast();
+    const { produtos } = useProdutos();
+    
 
     //Storaged
     const usuarioId = localStorage.getItem('idUsuario')
@@ -18,7 +26,7 @@ export function EditarStatusOrdem ({ ordemSelecionada, setView, setMensagem }) {
     const [salvando, setSalvando] = useState(false)
 
     // Opções de status já no formatado para o Select
-    const opStatus = ["Pendente", "Em andamento", "Finalizada", "Cancelada"].map((s) => ({ value: s, label: s }));
+    const opStatus = ["Pendente", "Realizada", "Finalizada", "Cancelada"].map((s) => ({ value: s, label: s }));
     
     // Função para editar a ordem
     const handleEditarOrdem = async () => {
@@ -89,7 +97,7 @@ export function EditarStatusOrdem ({ ordemSelecionada, setView, setMensagem }) {
                 </div>
                 {ordemSelecionada.itens.map((it) => (
                   <div key={it.id} className={`${styles.itemRow} ${styles.gridItens}`}>
-                    <span>Produto #{it.produtoId}</span>
+                    <span>{produtos.find( produto => Number(produto.id) === Number(it.produtoId))?.nome}</span>
                     <span>{it.quantidade}</span>
                     <span>{formatarMoeda(it.valorUnit)}</span>
                     <span>{formatarMoeda(it.valorTotal)}</span>

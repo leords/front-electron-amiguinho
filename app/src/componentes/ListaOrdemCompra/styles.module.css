@@ -348,6 +348,7 @@
   white-space: nowrap;
 }
 
+.badgeBlue   { background: var(--blue-light); color: var(--blue);  border: 1px solid var(--blue-mid); }
 .badgeOrange { background: var(--orange-light); color: var(--orange);  border: 1px solid var(--orange-mid); }
 .badgeGreen  { background: var(--green-light);  color: var(--green);   border: 1px solid var(--green-mid);  }
 .badgeRed    { background: var(--red-light);    color: var(--red);     border: 1px solid var(--red-mid);    }

@@ -1,42 +1,137 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './styles.module.css'
-import { Building, FloppyDisk, PencilSimple, X } from '@phosphor-icons/react'
-import { Console } from 'node:console'
+import { ArrowLeftIcon, Building, BuildingIcon, FloppyDisk, ArrowCircleUpIcon, FloppyDiskIcon, PencilSimple, TrashIcon, X } from '@phosphor-icons/react'
+import { buscarFornecedores } from '../../operadores/API/fornecedores/buscarFornecedores.js'
+import { AlertaRadix } from '../ui/alerta/alerta'
+import { editarStatusFornecedor } from '../../operadores/API/fornecedores/editarStatusFornecedor'
+import { usarToast } from '../Context/toastContext'
+import { ToastRadix } from '../ui/notificacao/notificacao'
+import { criarFornecedor } from '../../operadores/API/fornecedores/criarFornecedor'
+import { alterarDadosFornecedor } from '../../operadores/API/fornecedores/alterarDadosFornecedor'
+import { BotaoWhatsApp } from '../BotaoWpp'
 
 
 export function Fornecedor ({ setView }) {
 
-    const [novoFornecedor, setNovoFornecedor] = useState({ nome: "", cnpj: "", telefone: "", email: "" })
+  const opcaoStatus = [
+    { id: 1, value: "ATIVO", label: "ATIVO" },
+    { id: 2, value: "INATIVO", label: "INATIVO" }
+  ];
+
+    // Estados
+    const [novoFornecedor, setNovoFornecedor] = useState({ nome: "", cnpj: "", telefone: "", vendedor: ""})
     const [editarFornecedor, setEditarFornecedor] = useState(null)
+    const [listaFornecedores, setListaFornecedores] = useState([])
+    const [controladorLista, setControladorLista] = useState(false)
+    const [status, setStatus] = useState("ATIVO")
+
+    // Hooks
+    const { setMensagem } = usarToast();
+
+    
+    // Função salvar novo fornecedor | salvar alteração fornecedor
+    const handleSalvarFornecedor = async () => {
+
+          // Edição de fornecedor
+          if(editarFornecedor) {
+            try {
+
+              if(!novoFornecedor.telefone && !novoFornecedor.vendedor) {
+                alert("É obrigatório Telefone ou cnpj e telefone para alterar fornecedor!")
+                return
+              }
+
+              const fornecedorAlterado = await alterarDadosFornecedor(editarFornecedor.id, novoFornecedor.telefone, novoFornecedor.vendedor)
+              
+              if(fornecedorAlterado) {
+                setMensagem(`Fornecedor ${novoFornecedor.nome} alterado com sucesso!`)
+                
+                // atualizando a lista do effect
+                setControladorLista(prev => !prev)
+
+                return fornecedorAlterado
+              }
+
+            } catch (error) {
+              console.log(error)
+              setMensagem(`Erro ao editar o fornecedor ${editarFornecedor.nome}`)
+            }
+          }
 
 
-    // Função salvar novo fornecedor
-    const handleSalvarFornecedor = () => {
-        console.log('Salvar fornecedor')
+          // Criar fornecedor
+          if(!novoFornecedor.nome || !novoFornecedor.cnpj || !novoFornecedor.telefone || !novoFornecedor.vendedor) {
+            alert("É obrigatório nome, cnpj e telefone para cadastrar novo fornecedor!")
+            return
+          }
+          try {
+            const fornecedorCriado = await criarFornecedor(novoFornecedor.nome, novoFornecedor.cnpj, novoFornecedor.telefone, novoFornecedor.vendedor)
+            if(fornecedorCriado) {
+              setMensagem(`Fornecedor ${novoFornecedor.nome} criado com sucesso!`)
+
+              // atualizando a lista do effect
+              setControladorLista(prev => !prev)
+
+              return fornecedorCriado
+            }
+
+          } catch (error) {
+            console.log(error)
+            setMensagem("Erro ao criar novo fornecedor")
+          }
     }
 
-    // Função editar fornecedor
+    // Função para editar fornecedor
     const handleEditarFornecedor = (f) => {
         setEditarFornecedor(f);
-        setNovoFornecedor({ nome: f.nome, cnpj: f.cnpj, telefone: f.telefone, email: f.email });
+        setNovoFornecedor({ nome: f.nome, cnpj: f.cnpj, telefone: f.telefone, vendedor: f.vendedor});
     };
 
     // Função invativar fornecedor
-    const handleInativarFornecedor = () => {
-        console.log('Inativar fornecedor?')
+    const handleInativarFornecedor = async (f) => {
+      try {
+        const alterarStatusFornecedor = await editarStatusFornecedor(f.id)
+        if(alterarStatusFornecedor) {
+          setMensagem(`Status do fornecedor ${f.nome} alterado com sucesso!`)
+
+          // atualizando a lista do effect
+          setControladorLista(prev => !prev)
+
+          return
+        }
+      } catch (error) {
+        console.log(error)
+        setMensagem(`Erro ao alterar status do fornecedor ${f.nome}`)
+      }
     }
+
+    // Buscando fornecedores.
+    useEffect(() => {
+      const filtrarFornecedores = async () => {
+        try {
+          const resultado = await buscarFornecedores({
+            status: status
+          });
+        
+          setListaFornecedores(resultado)
+                  
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    filtrarFornecedores();
+    }, [controladorLista, status])
 
     return (
           <div className={`${styles.card} ${styles.fadeUp}`}>
-            
             {/* CABEÇALHO */}
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
-                <Buildings size={18} className={styles.cardHeaderIcon} />
+                <BuildingIcon size={18} className={styles.cardHeaderIcon} />
                 <h2>Fornecedores</h2>
               </div>
               <button className={styles.botaoVoltar} onClick={() => setView("lista")}>
-                <ArrowLeft size={14} weight="bold" />
+                <ArrowLeftIcon size={14} weight="bold" />
                 Voltar
               </button>
             </div>
@@ -46,7 +141,7 @@ export function Fornecedor ({ setView }) {
 
                 {/* TITÚLO */}
                 <div className={styles.filtrosHeader}>
-                <Buildings size={13} className={styles.filtroIcone} weight="bold" />
+                <BuildingIcon size={13} className={styles.filtroIcone} weight="bold" />
                 {editarFornecedor ? `Editando: ${editarFornecedor.nome}` : "Cadastrar Fornecedor"}
                 </div>
 
@@ -55,9 +150,10 @@ export function Fornecedor ({ setView }) {
                     {/* Array de configuração */}
                     {[
                     { field: "nome",     placeholder: "Descrição *", label: "Nome" },
-                    { field: "cnpj",     placeholder: "00.000.000/0000-00", label: "CNPJ" },
-                    { field: "telefone", placeholder: "(47) 0000-0000", label: "Telefone" },
-                    { field: "email",    placeholder: "email@empresa.com", label: "E-mail" },
+                    { field: "cnpj",     placeholder: "14 dígitos sem pontuação *", label: "CNPJ" },
+                    { field: "telefone", placeholder: "47984126073 *", label: "Telefone" },
+                    { field: "vendedor", placeholder: "Leonardo Rodrigues *", label: "Vendedor" },
+
                     ].map(({ field, placeholder, label }) => ( //Desestruturando
                     <div key={field} className={styles.filtroGrupo}>
                         <label className={styles.filtroLabel}>{label}</label>
@@ -67,7 +163,9 @@ export function Fornecedor ({ setView }) {
                         value={novoFornecedor[field]} // vale o valor de field
                         onChange={(e) => setNovoFornecedor((p) => ({ ...p, [field]: e.target.value }))} // pega o estado atual, mantém tudo e altera só o campo atual com o e.target. 
                         
-                        /> {/* Isso é repetido para todos os itens de map. */}
+                        //Permite alteração só nos campos telefone e vendedor quando for editar
+                        readOnly={editarFornecedor && (field === "nome" || field === "cnpj")}
+                        /> 
                     </div>
                     ))}
                 </div>
@@ -78,30 +176,68 @@ export function Fornecedor ({ setView }) {
                     {/* BOTÃO CANCELAR CONDICIONAL */}
                     {editarFornecedor && (
 
-                    <button
-                        className={styles.botaoCancelar}
-                        onClick={() => {
-                        setEditarFornecedor(null);
-                        setNovoFornecedor({ nome: "", cnpj: "", telefone: "", email: "" });
-                        }}
-                    >
-                        <X size={14} weight="bold" /> Cancelar edição
-                    </button>
+                    <AlertaRadix
+                        titulo="Cancelar edição"
+                        descricao="Você realmente deseja cancelar está edição?"
+                        tratar={
+                          () => {
+                              setEditarFornecedor(null);
+                              setNovoFornecedor({ nome: "", cnpj: "", telefone: "", vendedor: "" });
+                              }
+                        }
+                        confirmarTexto="Confirmar cancelamento!"
+                        cancelarTexto="Sair"
+                        trigger={
+                          <button
+                              className={styles.botaoCancelar}
+                          >
+                              <X size={14} weight="bold" /> Cancelar edição
+                          </button>
+                        }
+                    />
+
                     
                     )}
 
                     {/* BOTÃO CADASTRAR/SALVAR CONDICIONAL */}
-                    <button
-                        className={styles.botaoPrincipal}
-                        onClick={handleSalvarFornecedor}
-                        disabled={!novoFornecedor.nome}
-                        >
-                        <FloppyDisk size={14} weight="bold" />
-                        {editarFornecedor ? "Salvar alterações" : "Cadastrar"}
-                    </button>
+
+                    <AlertaRadix
+                        titulo="Salvar"
+                        descricao={editarFornecedor ? "Você realmente deseja salvar estas alterações?" : "Você realmente deseja salvar este novo cadastro?"}
+                        tratar={handleSalvarFornecedor}
+                        confirmarTexto="Confirmar!"
+                        cancelarTexto="Sair"
+                        trigger={
+                          <button
+                              className={styles.botaoPrincipal}
+                              disabled={!novoFornecedor.nome}
+                              >
+                              <FloppyDiskIcon size={14} weight="bold" />
+                              {editarFornecedor ? "Salvar alterações" : "Cadastrar"}
+                          </button>
+                        }
+                    />
 
                 </div>
 
+            </div>
+
+            {/* STATUS */}
+            <div className={styles.filtroGrupo}>
+            <label className={styles.filtroLabel}>Setor</label>
+
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className={styles.selectInput}
+            >
+              <option value="">TODOS</option>
+                {opcaoStatus.map((s) => (
+                <option key={s.id} value={s.value}>
+                {s.value}
+              </option>
+              ))}
+            </select>
             </div>
 
             {/* DIV LISTA */}
@@ -112,14 +248,14 @@ export function Fornecedor ({ setView }) {
                 <span>Nome</span>
                 <span>CNPJ</span>
                 <span>Telefone</span>
-                <span>E-mail</span>
+                <span>Vendedor</span>
                 <span></span>
               </div>
 
               {/* LISTA */}
               <div className={styles.lista}>
                 {/* LISTA VAZIA*/}
-                {fornecedores.length === 0 && (
+                {listaFornecedores?.length === 0 && (
                   <div className={styles.estadoVazio}>
                     <Building size={36} className={styles.iconeVazio} />
                     <p>Nenhum fornecedor cadastrado</p>
@@ -127,15 +263,23 @@ export function Fornecedor ({ setView }) {
                 )}
 
                 {/* LISTA FORNECEDORES */}
-                {fornecedores.map((f) => (
-                  <div key={f.id} className={`${styles.itemRow} ${styles.gridFornecedores}`}>
+                {listaFornecedores?.map((f) => (
+                  <div key={f.id} className={`${styles.itemRow} ${styles.gridFornecedores} ${f.status === "INATIVO" ? styles.inativo : ""}`}>
                     <span className={styles.cellFornecedor}>
                       <Building size={13} />
                       {f.nome}
                     </span>
                     <span>{f.cnpj || "—"}</span>
-                    <span>{f.telefone || "—"}</span>
-                    <span>{f.email || "—"}</span>
+                    <span>
+                    {f.telefone ?
+                    <BotaoWhatsApp 
+                      telefone={f.telefone}
+                      mensagem={"Olá! Aqui é comprador da Distribuidora de bebidas Amigão."}
+                    /> : 
+                    f.telefone || "—"
+                    }
+                    </span>
+                    <span>{f.vendedor || "—"}</span>
                     <div className={styles.acoesRow}>
 
                     {/* EDITAR FORNECEDOR */}
@@ -143,21 +287,21 @@ export function Fornecedor ({ setView }) {
                         <PencilSimple size={14} weight="bold" />
                       </button>
 
-                    {/* EXCLUIR */}
-
+                    {/* ATIVAR/INATIVAR STATUS */}
                     <AlertaRadix
-                        titulo="Cancelar pedido"
-                        descricao="Você realmente deseja cancelar o pedido?"
-                        tratar={'handleCancelarPedido'}
-                        confirmarTexto="Confirmar cancelamento"
+                        titulo="Inativar Fornecedor"
+                        descricao="Você realmente deseja inativar este fornecedor?"
+                        tratar={() => {handleInativarFornecedor(f)}}
+                        confirmarTexto="Confirmar inativação!"
                         cancelarTexto="Sair"
                         trigger={
                             <button
                                 className={`${styles.btnIcone} ${styles.btnIconeRed}`}
-                                onClick={() => handleInativarFornecedor(f)}
                                 title="Excluir">
-
-                                <Trash size={14} weight="bold" />
+                                
+                                {f.status === "ATIVO" 
+                                ? <TrashIcon size={14} weight="bold" color='red'/>
+                                : <ArrowCircleUpIcon size={14} weight="bold" color='green'/>}
                             </button>
                         }
                     />
@@ -165,6 +309,7 @@ export function Fornecedor ({ setView }) {
                     </div>
                   </div>
                 ))}
+
               </div>
               
             </div>

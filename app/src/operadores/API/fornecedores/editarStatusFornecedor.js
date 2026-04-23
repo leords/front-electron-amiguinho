@@ -1,21 +1,20 @@
 import { api } from "../../../utils/conexaoAxios";
 
-export const criarOrdem = async (usuarioId, fornecedorId, itens) => {
+export const editarStatusFornecedor = async (id) => {
   const token = localStorage.getItem("token");
 
   try {
-    const resposta = await api.post("/criar-ordem", 
-      {usuarioId, fornecedorId, itens},
-      {headers: {
-        Authorization: `Bearer ${token}`,
-      }},
+    const resposta = await api.patch(`/editar-status-fornecedor/${id}`,
+    { 
+        headers: {Authorization: `Bearer ${token}`} 
+    }
     );
 
     return resposta.data;
   } catch (error) {
     if (error.response) {
       throw new Error(
-        error.response.data.mensagem || "Erro ao criar nova ordem de compra"
+        error.response.data.mensagem || "Erro ao editar fornecedor"
       );
     }
     if (error.request) {

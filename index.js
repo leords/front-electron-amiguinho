@@ -1,9 +1,10 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { app, BrowserWindow, ipcMain, dialog, shell } from "electron";
 import path from "path";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import buscarGroq from "./backend/groq.js";
 import buscarClima from "./backend/buscarClima.js";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -134,3 +135,113 @@ ipcMain.on("imprimir-cupom", async (event, htmlContent) => {
     );
   });
 });
+
+ipcMain.handle('abrir-link', (_, url) => {
+  return shell.openExternal(url);
+});
+
+// PDF
+ipcMain.handle('gerar-pdf-estoque', async (event, itens) => {
+
+  try {
+        const win = new BrowserWindow({
+      show: false // não precisa aparecer
+    })
+
+    // 🧾 Monta HTML na mão
+    const html = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial;
+              padding: 20px;
+            }
+
+            h1 {
+              text-align: center;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+
+            th, td {
+              border: 1px solid #ccc;
+              padding: 8px;
+              text-align: left;
+            }
+
+            th {
+              background: #f4f4f4;
+            }
+          </style>
+        </head>
+
+        <body>
+          <h1>Relatório de Estoque</h1>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Quantidade</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${itens.map(item => `
+                <tr>
+                  <td>${item.id}</td>
+                  <td>${item.nome}</td>
+                  <td>${item.estoque}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+        </body>
+      </html>
+    `
+
+    await win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`)
+
+    const pdf = await win.webContents.printToPDF({
+      printBackground: true,
+      pageSize: 'A4'
+    })
+
+    const { filePath } = await dialog.showSaveDialog({
+      title: 'Salvar PDF do estoque',
+      defaultPath: `estoque-${new Date().toISOString().slice(0,10)}.pdf`,
+      filters: [{ name: 'PDF', extensions: ['pdf'] }]
+    })
+
+    if (!filePath) {
+      return {
+        sucesso: false,
+        mensagem: 'Usuário cancelou'
+      }
+    }
+
+    fs.writeFileSync(filePath, pdf)
+
+    win.close()
+
+    return {
+      sucesso: true,
+      mensagem: 'PDF gerado com sucesso!'
+    }
+  } catch (error) {
+    return {
+      sucesso: false,
+      mensagem: 'Erro ao gerar PDF'
+    }
+  }
+
+  return true
+})
+
