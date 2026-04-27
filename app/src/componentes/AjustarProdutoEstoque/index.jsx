@@ -51,6 +51,7 @@ export default function AjustarProdutoEstoque({setAtualizarLista}) {
 
 
     return (
+      
           <div className={styles.modal} >
 
             {/* TITULO */}
@@ -155,9 +156,6 @@ export default function AjustarProdutoEstoque({setAtualizarLista}) {
               </button>
 
               {/* BOTÕES SALVAR*/}
-
-
-
               <AlertaRadix
                 titulo="Novo ajuste de estoque"
                 descricao="Você realmente deseja salvar o ajuste?"

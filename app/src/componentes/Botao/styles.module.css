@@ -21,6 +21,7 @@
   position: relative;
   overflow: hidden;
   transition: all 0.2s ease;
+  min-height: 90px;
 }
 
 /* Barra lateral colorida */
@@ -84,9 +85,8 @@
   color: #868e96;
   margin: 0;
   line-height: 1.4;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 /* Seta */

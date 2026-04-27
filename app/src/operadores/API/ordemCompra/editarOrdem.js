@@ -11,14 +11,11 @@ export const editarOrdem = async (id, status, usuarioId) => {
 
     return resposta.data;
   } catch (error) {
-    if (error.response) {
-      throw new Error(
-        error.response.data.mensagem || "Erro ao editar ordem de serviço"
-      );
-    }
-    if (error.request) {
+    if (error.request && !error.response) {
       throw new Error("Servidor não respondeu, tente novamente");
     }
-    throw new Error(error.message || "Erro inesperado");
+    
+    // 🔥 mantém erro original do backend
+    throw error
   }
 };

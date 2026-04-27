@@ -6,8 +6,7 @@ export default async function GerarVersiculo() {
     Para a data de hoje (${hoje}), responda exatamente nos 3 blocos abaixo:
 
     1 - Conteúdo do dia:
-    Escolha APENAS UM dos formatos abaixo (varie diariamente, evite repetir conteúdos recentes):
-    - Versículo bíblico curto (máx 2 frases + referência)
+    (varie diariamente, evite repetir conteúdos recentes):
     - Curiosidade interessante (mundo, ciência, negócios ou comportamento)
     - Frase motivacional curta
 
@@ -22,9 +21,10 @@ export default async function GerarVersiculo() {
 
     (quebra linha)
 
-    3 - Título do conteúdo:
-    Informe o tipo do conteúdo escolhido:
-    Ex: "Versículo", "Curiosidade", "Reflexão"
+    3 - Versículo bíblico:
+    (varie diariamente, evite repetir conteúdos recentes):
+    - curto (máx 2 frases + referência)
+    
 
     Responda de forma objetiva, sem emojis e sem textos adicionais.
 `;

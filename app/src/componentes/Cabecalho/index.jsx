@@ -9,10 +9,10 @@ export default function Cabecalho() {
   const navegar = useNavigate();
   const { sair, usuario } = usarAuth();
   const [climaAtual, setClimaAtual] = useState({});
-    const [diaSemana, setDiaSemana] = useState("");
+  const [diaSemana, setDiaSemana] = useState("");
 
 
-  // GERA O NOME DA SEMANA EM EXTENSO.
+  // gera o nome da semana em extenso
   useEffect(() => {
     const diaDaSemana = async () => {
       const hojeDiaSeamana = new Date().toLocaleDateString("pt-BR", {
@@ -28,7 +28,7 @@ export default function Cabecalho() {
     diaDaSemana();
   }, []);
 
-  // PEGA O CLIMA ATUAL DO DIA.
+  // chama a API do clima
   useEffect(() => {
     const buscarClimaAtual = async () => {
       const clima = await window.API.buscarClima("Canoinhas");
@@ -36,7 +36,6 @@ export default function Cabecalho() {
         temperatura: clima.main.temp,
         condicao: clima.weather[0].description,
       });
-      console.log(clima);
     };
     buscarClimaAtual();
 
@@ -48,13 +47,12 @@ export default function Cabecalho() {
     return () => clearInterval(intervalo);
   }, []);
 
-
-  // VOLTAR AO MENU INICIAL.
+  // volta ao menu
   const tratarVoltarMenu = () => {
     navegar("/menu");
   };
 
-  // DESLOGAR.
+  // desloga o usuário.
   const tratarSair = async () => {
     console.log("Deslogar");
     try {
@@ -68,12 +66,18 @@ export default function Cabecalho() {
   return (
     <header className={styles.cabecalho}>
       <div className={styles.container}>
+        
+        {/* TÍTULO E USUÁRIO */}
         <div>
           <h1 className={styles.titulo}>Sistema de vendas Amiguinho</h1>
           <p>Usuário conectado: {usuario?.nome || "Carregando..."}</p>
         </div>
+        
+        {/* BOTÕES */}
         <div className={styles.botoescabecalho}>
           <div className={styles.botoes}>
+
+            {/* BOTÃO HOME */}
             <button
               title="Menu inicial"
               onClick={tratarVoltarMenu}
@@ -82,6 +86,8 @@ export default function Cabecalho() {
             >
               <HouseLineIcon size={28} />
             </button>
+
+            {/* BOTÃO DESLOGAR */}
             <AlertaRadix
               titulo="Deslogar da conta"
               descricao="Você realmente deseja sair da sua conta?"
@@ -98,7 +104,10 @@ export default function Cabecalho() {
                 </button>
               }
             />
+
           </div>
+
+          {/* DIA E CLIMA  */}
           <p>📅 {diaSemana}</p>
           <p>  
             {climaAtual.temperatura < 14 ? (
@@ -108,7 +117,9 @@ export default function Cabecalho() {
             )}
             {Math.round(climaAtual.temperatura)}°, {climaAtual.condicao} 
           </p>
+
         </div>
+
       </div>
     </header>
   );

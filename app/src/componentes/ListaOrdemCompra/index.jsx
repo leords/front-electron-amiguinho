@@ -8,9 +8,9 @@ import Select from "react-select";
 
 import { buscarFornecedores } from "../../operadores/API/fornecedores/buscarFornecedores.js";
 import { buscarOrdem } from "../../operadores/API/ordemCompra/buscarOrdem.js";
+import { usarToast } from "../Context/toastContext";
 
 
-// precisa passar por parametro setView, setOrdemSelecionada(), setEditStatus
 export default function ListaOrdemCompra({ setView, setOrdemSelecionada }) {
 
     // Estados
@@ -18,15 +18,19 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada }) {
     const [atualizarListaOrdem, setAtualizarListaOrdem] = useState(false)
 
     // Estados de filtros
-    const [dataInicio, setDataInicio] = useState(null);
-    const [dataFim, setDataFim] = useState(null);
+    const [dataInicio, setDataInicio] = useState("");
+    const [dataFim, setDataFim] = useState("");
     const [usuarioId, setUsuarioId] = useState(null);
     const [fornecedorId, setFornecedorId] = useState(null);
-    const [status, setStatus] = useState();
+    const [status, setStatus] = useState("");
 
     // Listas
     const [listaOrdem, setListaOrdem] = useState([])
     const [listaFornecedores, setListaFornecedores] = useState([])
+
+
+    // Hooks
+    const { setMensagem } = usarToast();
     
     // Lista de status
     const listaStatus = [
@@ -79,8 +83,12 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada }) {
                     dataFim,
                 })
                 setListaOrdem(resultado)
-            } catch (error) {
-                console.log(error)
+            } catch (e) {
+                const mensagem = e.response?.data?.erro.mensagem || 
+                  e.message ||
+                  "Erro, não foi possivel realizar a alteração!";
+                  
+                setMensagem(mensagem)
             } finally {
                 setCarregando(false)
             }

@@ -8,10 +8,13 @@ import { editarOrdem } from '../../operadores/API/ordemCompra/editarOrdem';
 import { AlertaRadix } from '../ui/alerta/alerta';
 import { usarToast } from '../Context/toastContext';
 import { useProdutos } from '../../hooks/useProdutos';
+import { gerarRelatorioEstoqueHTML } from '../../utils/gerarRelatorioEstoqueHTML';
 
 
 
 export function EditarStatusOrdem ({ ordemSelecionada, setView }) {
+
+    const dataHora = dataHoraFormatada();
 
     // Hooks
     const { setMensagem } = usarToast();
@@ -20,6 +23,7 @@ export function EditarStatusOrdem ({ ordemSelecionada, setView }) {
 
     //Storaged
     const usuarioId = localStorage.getItem('idUsuario')
+
 
     // Estados
     const [status, setStatus] = useState(null)
@@ -35,13 +39,39 @@ export function EditarStatusOrdem ({ ordemSelecionada, setView }) {
         setSalvando(true);
 
         try {
+            if(status.value === 'Pendente') {
+              
+              const relatorio = {
+                data: dataHoraFormatada(ordemSelecionada.data) || "",
+                dataAbertura: dataHora,
+                fornecedor: ordemSelecionada.fornecedor.nome || "",
+                total: ordemSelecionada.total || "",
+                codigo: (ordemSelecionada.fornecedorId || 0 + ordemSelecionada.id || 0), //vai validar a entrada na nota com esse ID
+                quantidade: ordemSelecionada.itens.length,
+                itens: ordemSelecionada.itens.map((item) => ({
+                  produto: produtos.find( produto => Number(produto.id) === Number(item.produtoId))?.nome,
+                  quantidade: item.quantidade,
+                  valorTotal: item.valorTotal,
+                  valorUnit: item.valorUnit
+                }))
+              }
+
+              window.IMPRESSORA.imprimir(gerarRelatorioEstoqueHTML(relatorio));
+
+            }
+
             await editarOrdem(ordemSelecionada.id, status.value, usuarioId);
 
+          
             setMensagem("Status da ordem de compra alterado com sucesso!")
             setView("lista");
 
-        } catch (e) {
-          setMensagem(e.message || "Erro, não foi possivel realizar a alteração!")
+        } catch(e) {
+          const mensagem = e.response?.data?.erro.mensagem || 
+          e.message ||
+          "Erro, não foi possivel realizar a alteração!";
+          
+          setMensagem(mensagem)
         } finally {
         setSalvando(false);
         }

@@ -164,6 +164,7 @@ export default function FechamentoBalcao() {
     setVinte(0); setDez(0); setCinco(0); setDois(0);
   };
 
+  
   // remover manutenção
   const removerManutencao = async (id) => {
     try {
@@ -176,7 +177,7 @@ export default function FechamentoBalcao() {
     }
   };
 
-  //finaliza fechamento
+  // finaliza fechamento
   const finalizarFechamento = async () => {
     const dados = { totalSistema: vendaBalcao?.resultado?.a_vista ?? 0, totalInformado: totalContado ?? 0 };
     try {

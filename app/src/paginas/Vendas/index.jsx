@@ -32,7 +32,7 @@ export default function Vendas() {
   const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
 
   // referencia para acessar componente
-  const inputProduto = useRef(null);
+  const inputProduto = useRef(null); 
 
   // hooks
   const { usuario } = usarAuth();
@@ -105,11 +105,13 @@ export default function Vendas() {
     setFormaPagamento("");
   };
 
-  // finaliza o pedido imprimindo e enviando para o backend
+  // finaliza o pedido, imprime e envia para o backend
   const handleGerarPedido = async () => {
     if (cupom.length === 0) { alert("Adicione produtos ao cupom antes de gerar o pedido!"); return; }
     if (!formaPagamento) { alert("Selecione a forma de pagamento!"); return; }
 
+    try {
+    // criando o pedido
     const pedido = {
       cliente: nome || "",
       formaPagamentoId: formaPagamento,
@@ -119,6 +121,7 @@ export default function Vendas() {
       itens: cupom.map((item) => ({ produtoId: item.id, quantidade: item.quantidade, valorUnit: item.precoUndVenda })),
     };
 
+    // criando o pedido para impressão
     const pedidoImprimir = {
       cliente: nome || "",
       formaPagamento: nomeFormaPagamento,
@@ -127,6 +130,7 @@ export default function Vendas() {
       itens: cupom.map((item) => ({ produtoId: item.id, nome: item.nome, quantidade: item.quantidade, valorUnit: item.precoUndVenda })),
     };
 
+    // função imprimir condicional
     if (nomeFormaPagamento === "ORÇAMENTO") {
       window.IMPRESSORA.imprimir(gerarOrcamento(pedidoImprimir));
       setMensagem("Orçamento gerado com sucesso!");
@@ -141,7 +145,15 @@ export default function Vendas() {
     setProdutoSelecionado(null);
     setQuantidade(1);
     setFormaPagamento(1);
+    } catch (e) {
+      console.log(e)
+      const mensagem = e.response?.data?.erro.mensagem || 
+        e.message ||
+        "Erro, não foi possivel realizar a alteração!";
+                  
+      setMensagem(mensagem)
   };
+}
 
   return (
     <div className={styles.container}>
@@ -150,10 +162,10 @@ export default function Vendas() {
 
       <main className={styles.main}>
 
-        {/* Lado esquerdo */}
+        {/* LADO ESQUERDO */}
         <div className={styles.colunaEsquerda}>
 
-          {/* Cabeçalho da página */}
+          {/* CABEÇALHO */}
           <div className={styles.cabecalhoPage}>
             <div className={styles.iconeWrapper}>
               <ShoppingCartIcon size={22} weight="fill" />
@@ -164,7 +176,7 @@ export default function Vendas() {
             </div>
           </div>
 
-          {/* Card de adicionar produto */}
+          {/* CARD ADICIONAR PRODUTO */}
           <div className={styles.cardAdicionar}>
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
@@ -175,7 +187,7 @@ export default function Vendas() {
 
             <div className={styles.formulario}>
 
-              {/* Select produto */}
+              {/* SELECT DE PRODUTO */}
               <div className={styles.campo}>
                 <label className={styles.label}>Produto</label>
                 {carregando ? (
@@ -198,8 +210,9 @@ export default function Vendas() {
                 )}
               </div>
 
-              {/* Quantidade + Preço */}
+              {/* INPUTS */}
               <div className={styles.linha}>
+              {/* QUANTIDADE */}
                 <div className={styles.campoMetade}>
                   <label className={styles.label}>Quantidade</label>
                   <input
@@ -210,6 +223,7 @@ export default function Vendas() {
                     className={styles.input}
                   />
                 </div>
+              {/* PREÇO */}
                 <div className={styles.campoMetade}>
                   <label className={styles.label}>Preço unitário</label>
                   <input
@@ -221,7 +235,7 @@ export default function Vendas() {
                 </div>
               </div>
 
-              {/* Total do produto */}
+              {/* TOTAL PRODUTO */}
               <div className={styles.campo}>
                 <label className={styles.label}>Total do produto</label>
                 <input
@@ -232,7 +246,7 @@ export default function Vendas() {
                 />
               </div>
 
-              {/* Botão adicionar */}
+              {/* BOTÃO ADICIONAR */}
               <button
                 className={styles.botaoAdicionar}
                 onClick={handleAddProduto}
@@ -245,17 +259,17 @@ export default function Vendas() {
             </div>
           </div>
 
-          {/* Mascote */}
+          {/* MASCOTE */}
           <div className={styles.mascote}>
             <img src={logo} alt="Logo" className={styles.logo} />
           </div>
 
         </div>
 
-        {/* ── Lado direito ── */}
+        {/* ── LADO DIREITO ── */}
         <div className={styles.colunaDireita}>
 
-          {/* Cupom */}
+          {/* CUPOM */}
           <div className={styles.cardCupom}>
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
@@ -266,8 +280,8 @@ export default function Vendas() {
                 {cupom.length} {cupom.length === 1 ? "item" : "itens"}
               </span>
             </div>
-
             <div className={styles.lista}>
+              {/* LISTA VAZIA */}
               {cupom.length === 0 ? (
                 <div className={styles.listaVazia}>
                   <PackageIcon size={40} weight="duotone" className={styles.iconeVazio} />
@@ -275,6 +289,7 @@ export default function Vendas() {
                   <span>Selecione produtos para iniciar a venda</span>
                 </div>
               ) : (
+                // LISTA
                 cupom.map((item) => (
                   <ItemListaPedido key={item.id} produto={item} onRemover={handleRemoveProduto} />
                 ))
@@ -282,10 +297,10 @@ export default function Vendas() {
             </div>
           </div>
 
-          {/* Resumo + pagamento + botões */}
+          {/* DOCUMENTO, TOTAIS, FORMA DE PAGAMENTO E BOTÕES */}
           <div className={styles.cardResumo}>
 
-            {/* Documento opcional */}
+            {/* DOCUMENTO OPCIONAL */}
             <div className={styles.checkboxRow}>
               <input
                 type="checkbox"
@@ -299,7 +314,7 @@ export default function Vendas() {
                 Adicionar documento de identificação
               </label>
             </div>
-
+            {/* INPUT OPCIONAL */}
             {abrirOpcaoNome && (
               <div className={styles.campoNome}>
                 <label className={styles.label}>Documento de identificação</label>
@@ -313,7 +328,7 @@ export default function Vendas() {
               </div>
             )}
 
-            {/* Totais */}
+            {/* TOTAIS */}
             <div className={styles.totais}>
               <div className={styles.linhaTotal}>
                 <span>Quantidade total</span>
@@ -329,12 +344,14 @@ export default function Vendas() {
               </div>
             </div>
 
-            {/* Forma de pagamento */}
+            {/* FORMA DE PAGAMENTO */}
             <div className={styles.campo}>
+
               <label className={styles.label}>
                 <CurrencyDollarIcon size={14} weight="bold" />
                 Forma de pagamento
               </label>
+
               <select
                 value={formaPagamento}
                 onChange={(e) => {
@@ -348,10 +365,12 @@ export default function Vendas() {
                   <option key={forma.id} value={forma.id}>{forma.nome}</option>
                 ))}
               </select>
+
             </div>
 
-            {/* Botões */}
+            {/* BOTÕES */}
             <div className={styles.botoesAcao}>
+              {/* CANCELAR */}
               <AlertaRadix
                 titulo="Cancelar pedido"
                 descricao="Você realmente deseja cancelar o pedido?"
@@ -365,6 +384,7 @@ export default function Vendas() {
                   </button>
                 }
               />
+              {/* GERAR PEDIDO */}
               <AlertaRadix
                 titulo="Gerar pedido"
                 descricao="Você realmente deseja gerar o pedido?"
@@ -381,6 +401,7 @@ export default function Vendas() {
             </div>
 
           </div>
+          
         </div>
       </main>
 

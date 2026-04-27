@@ -14,7 +14,7 @@ import { AlertaRadix } from "../ui/alerta/alerta";
 
 export default function NovaOrdemCompra({ setView, setMensagem }) {
 
-  // referencia para acessar componente
+  // Referencia para acessar componente
   const inputProduto = useRef(null);
 
   // Storaged
@@ -42,9 +42,10 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
 
   // Adicionar item na lista da ordem
   const handleAdicionarProduto = () => {
+    console.log(produtoSelecionado.precoCompra)
     // Validando variáveis
-    if(!produtoSelecionado.id || quantidade <= 0 || produtoSelecionado.precoCompra <=0 ) {
-      alert("Selecione produto e adicione quantidade de forma válida!")
+    if(!produtoSelecionado.id || quantidade <= 0 || produtoSelecionado.precoCompra <= 0 ) {
+      setMensagem("Selecione produto e adicione quantidade de forma válida!")
     }
 
     // Ajustando preço
@@ -95,7 +96,9 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
     if (!fornecedor) return;
 
     // filtrando da forma que a API espera
-    const itensValidos = formItens.filter((i) => i.produtoId && i.quantidade && i.valorUnit);
+    const itensValidos = formItens.filter((i) => i.produtoId && i.quantidade > 0 && i.valorUnit >= 0);
+
+    console.log('Itens validados: ', itensValidos)
 
     // Valida a existencia de item
     if (!itensValidos.length) return;
@@ -108,6 +111,8 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
         quantidade: Number(i.quantidade),
       }));
 
+      console.log('payload: ', payload)
+
       const novaOrdem = await criarOrdem(Number(usuarioId), fornecedor.value, payload);
 
       if(novaOrdem.id) {
@@ -119,7 +124,11 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
       setView("lista");
       resetFormOrdem();
     } catch (e) {
-      alert(e.message);
+        const mensagem = e.response?.data?.erro.mensagem || 
+            e.message ||
+            "Erro, não foi possivel realizar a alteração!";
+            
+          setMensagem(mensagem)
     } finally {
       setSalvando(false);
     }
@@ -159,6 +168,7 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
                   value={fornecedor}
                   onChange={setFornecedor}
                   placeholder="Selecione o fornecedor…"
+                  isDisabled={formItens.length > 0 } // fornecedor fica desabilitado quando houver produto na lista.
                 />
               </div>
             </div>

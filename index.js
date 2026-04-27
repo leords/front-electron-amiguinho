@@ -136,6 +136,7 @@ ipcMain.on("imprimir-cupom", async (event, htmlContent) => {
   });
 });
 
+// Abrir link externo
 ipcMain.handle('abrir-link', (_, url) => {
   return shell.openExternal(url);
 });
@@ -244,4 +245,5 @@ ipcMain.handle('gerar-pdf-estoque', async (event, itens) => {
 
   return true
 })
+
 

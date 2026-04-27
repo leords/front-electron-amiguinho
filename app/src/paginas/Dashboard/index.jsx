@@ -41,6 +41,8 @@ import { TopProdutos }        from "../../operadores/API/pedido/topProdutos.js";
 import { MixProdutos }        from "../../operadores/API/pedido/mixProdutos.js";
 import { QuantidadePedidos }  from "../../operadores/API/pedido/quantidadePedidos.js";
 import { RelatorioProduto }   from "../../operadores/API/produto/relatorioProduto.js";
+import { usarToast } from "../../componentes/Context/toastContext.jsx";
+import { ToastRadix } from "../../componentes/ui/notificacao/notificacao.jsx";
 
 const SETORES = ["balcao", "delivery", "externo"];
 const medalCores = ["#ff8c00", "#adb5bd", "#cd7f32"];
@@ -76,12 +78,15 @@ function KpiCard({ icone: Icone, cor, label, valor, sub, carregando }) {
   );
 }
 
-// Componente principal
+
 export default function Dashboard() {
   const [setor, setSetor]           = useState("balcao");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim]       = useState("");
   const [carregando, setCarregando] = useState(false);
+
+  //hooks
+    const { mensagem, setMensagem } = usarToast();
 
   // dados principais
   const [totalVendas, setTotalVendas]               = useState(null);
@@ -133,9 +138,13 @@ export default function Dashboard() {
       setProdutoSelecionado("");
       setRelatorioProduto(null);
       setExpandirRelatorio(false);
-    } catch (err) {
-      console.error("Erro ao carregar dashboard:", err);
-      alert("Erro ao carregar dados. Tente novamente.");
+    } catch (e) {
+      console.log(e)
+      const mensagem = e.response?.data?.erro.mensagem || 
+        e.message ||
+        "Erro, não foi possivel realizar a alteração!";
+                  
+      setMensagem(mensagem)
     } finally {
       setCarregando(false);
     }
@@ -184,6 +193,7 @@ export default function Dashboard() {
 
   return (
     <div className={styles.container}>
+      <ToastRadix mensagem={mensagem} />
       <Cabecalho />
 
       <main className={styles.main}>

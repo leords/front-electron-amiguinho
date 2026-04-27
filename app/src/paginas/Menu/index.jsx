@@ -56,7 +56,7 @@ export default function Menu() {
 
       <main className={styles.principal}>
 
-        {/* Saudação */}
+        {/* SAUDAÇÕES */}
         <div className={styles.cabecalho}>
           <div className={styles.saudacao}>
             <h1>
@@ -66,27 +66,31 @@ export default function Menu() {
           </div>
         </div>
 
-        {/* Grid de botões */}
+        {/* BOTÕES */}
         <div className={styles.menuBotoes}>
-          <MenuButton titulo="Vendas"         descricao="Registrar novos pedidos"           destino="/venda"          icone={ShoppingCartIcon}          cor="orange" />
-          <MenuButton titulo="Histórico"      descricao="Consultar pedidos anteriores"      destino="/historico"      icone={ClockCounterClockwiseIcon} cor="blue"   />
-          <MenuButton titulo="Fechamento"     descricao="Conferir caixa do dia"             destino="/fechamento"     icone={CoinsIcon}                 cor="green"  />
-          <MenuButton titulo="Dashboard"      descricao="Conferir números de venda"         destino="/dashboard"      icone={ChartLineIcon}             cor="gray"   />
-          <MenuButton titulo="Fechar balcão"  descricao="Finalizar operações do dia"        destino="/fechar-balcao"  icone={CurrencyCircleDollarIcon} cor="orange" />
-          <MenuButton titulo="Vales internos" descricao="Consultar histórico de vales"      destino="/vales-interno"  icone={HandWithdrawIcon}         cor="blue"   />
-          <MenuButton titulo="Pedidos"        descricao="Conferir pedidos realizados"       destino="/pedidos"        icone={ClipboardTextIcon}         cor="green"  />
-          <MenuButton titulo="Transmissão"    descricao="Realizar cargas forçadas"          destino="/transmissao"    icone={CloudArrowUpIcon}          cor="gray"   />
-          <MenuButton titulo="Estoque"        descricao="Controle de estoque"               destino="/estoque"          icone={PackageIcon}               cor="orange" />
+          <MenuButton titulo="Vendas balcão"         descricao="Registrar novos pedidos"           destino="/venda"          icone={ShoppingCartIcon}          cor="orange" />
+          <MenuButton titulo="Histórico balcão"      descricao="Consultar pedidos anteriores"      destino="/historico"      icone={ClockCounterClockwiseIcon} cor="blue"   />
+          <MenuButton titulo="Fechamento"            descricao="Conferir caixa do dia"             destino="/fechamento"     icone={CoinsIcon}                 cor="green"  />
+          <MenuButton titulo="Dashboard"             descricao="Conferir números de venda"         destino="/dashboard"      icone={ChartLineIcon}             cor="gray"   />
+          <MenuButton titulo="Fechar balcão"         descricao="Finalizar operações do dia"        destino="/fechar-balcao"  icone={CurrencyCircleDollarIcon} cor="orange" />
+          <MenuButton titulo="Vales internos"        descricao="Consultar histórico de vales"      destino="/vales-interno"  icone={HandWithdrawIcon}         cor="blue"   />
+          <MenuButton titulo="Pedidos"               descricao="Conferir pedidos realizados"       destino="/pedidos"        icone={ClipboardTextIcon}         cor="green"  />
+          <MenuButton titulo="Transmissão"           descricao="Realizar cargas forçadas"          destino="/transmissao"    icone={CloudArrowUpIcon}          cor="gray"   />
+          <MenuButton titulo="Estoque"               descricao="Controle de estoque"               destino="/estoque"          icone={PackageIcon}               cor="orange" />
         </div>
 
-        {/* Mascote + mensagem do dia */}
+        {/* MENSAGEM E MASCOTE */}
         <div className={styles.containerMascote}>
+
+          {/* MENSAGEM DO DIA */}
           <div className={styles.dicaDia}>
             <h3>
               <span className={styles.emojiDica}>💡</span> Mensagem do Dia
             </h3>
             <p>{mensagemDoDia || "Carregando mensagem..."}</p>
           </div>
+
+          {/* MASCOTE */}
           <img
             src={mascote}
             alt="Mascote Amigão Distribuidora"

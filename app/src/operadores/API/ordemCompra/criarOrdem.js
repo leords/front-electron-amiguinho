@@ -13,14 +13,12 @@ export const criarOrdem = async (usuarioId, fornecedorId, itens) => {
 
     return resposta.data;
   } catch (error) {
-    if (error.response) {
-      throw new Error(
-        error.response.data.mensagem || "Erro ao criar nova ordem de compra"
-      );
+      if (error.request && !error.response) {
+        throw new Error("Servidor não respondeu, tente novamente");
+      }
+      
+      // 🔥 mantém erro original do backend
+      throw error
     }
-    if (error.request) {
-      throw new Error("Servidor não respondeu, tente novamente");
-    }
-    throw new Error(error.message || "Erro inesperado");
-  }
-};
+  };
+  
