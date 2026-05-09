@@ -34,7 +34,8 @@ export default function EditarPedido() {
 const { state } = useLocation()
 const navegar = useNavigate() 
 
-  // Alerta
+
+  // Hooks
   const { mensagem, setMensagem } = usarToast();
 
   // Estado novo item
@@ -143,6 +144,7 @@ const enviarEdicao = async () => {
 
 
     } catch (error) {
+      setMensagem(error.message)
       console.log(error)
     }
   }

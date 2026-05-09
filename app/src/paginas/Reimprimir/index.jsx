@@ -28,6 +28,8 @@ export default function Reimprimir() {
   const { state } = useLocation();
   const { produtos } = useProdutos();
   const { usuario } = usarAuth();
+
+  // Hook
   const { mensagem, setMensagem } = usarToast();
 
   const cupom = state;
@@ -75,7 +77,8 @@ export default function Reimprimir() {
         handleVoltar()
       } 
     } catch (error) {
-      console.log('erro: ', error)
+      setMensagem(error.message)
+      console.log(error.message)
     } 
   }
 

@@ -19,6 +19,7 @@ import { buscarFechamentoBalcao } from "../../operadores/API/fechamento/buscarFe
 import { dataFormatadaCalendario } from "../../utils/data";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 import { formatarMoeda } from "../../utils/formartarMoeda";
+import { usarToast } from "../../componentes/Context/toastContext";
 
 export default function Fechamento() {
   const [duzentos, setDuzentos] = useState(0);
@@ -28,6 +29,10 @@ export default function Fechamento() {
   const [dez, setDez] = useState(0);
   const [cinco, setCinco] = useState(0);
   const [dois, setDois] = useState(0);
+
+
+  // Hooks
+  const { setMensagem } = usarToast();
 
   const [vendaDia, setVendaDia] = useState({
     total: 0,
@@ -43,14 +48,21 @@ export default function Fechamento() {
     return () => clearInterval(timer);
   }, []);
 
+  // Busca fechamento balcão por balcão 01, 02 ...
   useEffect(() => {
-    const dataFormatada = dataFormatadaCalendario();
-    const nome = import.meta.env.VITE_NOME_MAQUINA;
-    const buscarVendasDia = async () => {
-      const dados = await buscarFechamentoBalcao({ data: dataFormatada, vendedor: nome });
-      setVendaDia(dados);
-    };
-    buscarVendasDia();
+    try {
+      const dataFormatada = dataFormatadaCalendario();
+      const nome = import.meta.env.VITE_NOME_MAQUINA;
+      const buscarVendasDia = async () => {
+        const dados = await buscarFechamentoBalcao({ data: dataFormatada, vendedor: nome });
+        setVendaDia(dados);
+      };
+      buscarVendasDia();      
+    } catch (error) {
+      console.log(error.message)
+      setMensagem(error.message)
+    }
+
   }, []);
 
   const limpar = () => {

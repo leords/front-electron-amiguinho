@@ -12,12 +12,21 @@ export const BuscarFechamentoBalcaoDia = async (params = {}) => {
         });
         return resposta.data
     } catch (error) {
-        if(error.response) {
-            throw new Error(error.response.data.mensagem || "Erro ao buscar o fechamendo do balcao")
-        }
-        if(error.request) {
-            throw new Error("Servidor não respondeu, tente novamente")
-        }
-        throw new Error(error.message ) 
+
+    // ❌ sem resposta (API fora, internet, etc)
+    if (error.request && !error.response) {
+      throw new Error("Servidor não respondeu, tente novamente");
     }
-}
+
+    // 🔥 erro vindo do backend (AppError)
+    if (error.response) {
+      console.log("error response: ", error.response)
+      const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
+      throw new Error(mensagem);
+    }
+
+    // fallback
+    throw new Error("Erro inesperado na requisição");
+  }
+
+};

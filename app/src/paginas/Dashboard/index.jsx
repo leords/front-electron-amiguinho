@@ -102,6 +102,7 @@ export default function Dashboard() {
   const [carregandoProduto, setCarregandoProduto]       = useState(false);
   const [expandirRelatorio, setExpandirRelatorio]       = useState(false);
 
+
   // Inicializa datas com o primeiro dia do mês até hoje
   useEffect(() => {
     const hoje = new Date();
@@ -170,9 +171,11 @@ export default function Dashboard() {
       const params = { dataInicio, dataFim };
       const resultado = await RelatorioProduto(setor, produtoId, params);
       setRelatorioProduto(resultado);
-    } catch (err) {
-      console.error("Erro ao buscar relatório do produto:", err);
-      alert("Erro ao buscar relatório do produto.");
+    } catch (e) {
+      console.error("Erro ao buscar relatório do produto:", e);
+      setMensagem(e.message)
+
+      alert(e.message);
     } finally {
       setCarregandoProduto(false);
     }

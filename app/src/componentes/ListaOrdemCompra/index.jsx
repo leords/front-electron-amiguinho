@@ -83,12 +83,9 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada }) {
                     dataFim,
                 })
                 setListaOrdem(resultado)
-            } catch (e) {
-                const mensagem = e.response?.data?.erro.mensagem || 
-                  e.message ||
-                  "Erro, não foi possivel realizar a alteração!";
-                  
-                setMensagem(mensagem)
+            } catch (error) {
+                console.log(error.message)
+                setMensagem(error.message)
             } finally {
                 setCarregando(false)
             }
@@ -108,7 +105,8 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada }) {
           setListaFornecedores([...resultado.map((f) => ({ value: f.id, label: f.nome })), {value: "", label: "Todos"}])
           
         } catch (error) {
-          console.log(error)
+          console.log(error.message)
+          setMensagem(error.message)
         }
       }
 

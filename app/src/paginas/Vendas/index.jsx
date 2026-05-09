@@ -73,9 +73,16 @@ export default function Vendas() {
 
   // Adiciona produto
   const handleAddProduto = () => {
+
+    // Valida os campos de produto e quantidade
     if (!produtoSelecionado || quantidade <= 0) {
       alert("Selecione um produto e quantidade válida!");
       return;
+    }
+    // Valida existencia do produto em estoque antes de adicionar
+    if(produtoSelecionado.estoque < quantidade) {
+      alert(` Disponivel em estoque apenas ${produtoSelecionado.estoque} `)
+      return
     }
     const itemExistente = cupom.find((i) => i.id === produtoSelecionado.id);
     const novoCupom = itemExistente
@@ -145,13 +152,9 @@ export default function Vendas() {
     setProdutoSelecionado(null);
     setQuantidade(1);
     setFormaPagamento(1);
-    } catch (e) {
-      console.log(e)
-      const mensagem = e.response?.data?.erro.mensagem || 
-        e.message ||
-        "Erro, não foi possivel realizar a alteração!";
-                  
-      setMensagem(mensagem)
+    } catch (error) {
+      console.log(error.message)                  
+      setMensagem(error.message)
   };
 }
 

@@ -53,8 +53,8 @@ export function Fornecedor ({ setView }) {
               }
 
             } catch (error) {
-              console.log(error)
-              setMensagem(`Erro ao editar o fornecedor ${editarFornecedor.nome}`)
+              console.log(error.message)
+              setMensagem(`${error.message} ao editar o fornecedor ${editarFornecedor.nome}`)
             }
           }
 
@@ -76,8 +76,8 @@ export function Fornecedor ({ setView }) {
             }
 
           } catch (error) {
-            console.log(error)
-            setMensagem("Erro ao criar novo fornecedor")
+            console.log(error.message)
+            setMensagem(error.message)
           }
     }
 
@@ -100,8 +100,8 @@ export function Fornecedor ({ setView }) {
           return
         }
       } catch (error) {
-        console.log(error)
-        setMensagem(`Erro ao alterar status do fornecedor ${f.nome}`)
+          console.log(error.message)
+          setMensagem(error.message)
       }
     }
 
@@ -116,7 +116,8 @@ export function Fornecedor ({ setView }) {
           setListaFornecedores(resultado)
                   
         } catch (error) {
-          console.log(error)
+          console.log(error.message)
+          setMensagem(error.message)
         }
       }
     filtrarFornecedores();

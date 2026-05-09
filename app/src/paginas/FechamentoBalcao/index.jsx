@@ -82,8 +82,9 @@ export default function FechamentoBalcao() {
       try {
         const dados = await buscarFechamentoBalcao({ setor: 'balcao', data: dataFormatada, vendedor: balcao.value });
         setVendaBalcao(dados);
-      } catch (err) {
-        console.error('Erro ao buscar vendas:', err);
+      } catch (erro) {
+        console.log(erro.message);
+        setMensagem(erro.message);
       } finally {
         setCarregandoVendas(false);
       }
@@ -104,8 +105,8 @@ export default function FechamentoBalcao() {
         }
         setFechamentoAtual(fechamentoBalcao);
       } catch (error) {
-        console.log(error);
-        throw new Error('Erro ao buscar fechamento balcão');
+        console.log(error.mensagem);
+        setMensagem(error.message);
       }
     };
     buscarFechamentoBalcaoDia();
@@ -114,10 +115,15 @@ export default function FechamentoBalcao() {
   // busca as movimentações de caixa(entrada e saidas manuais)
   const buscarMovimentacoes = async () => {
     try {
-      const listaMovimentacoes = await buscarMovimentacao(fechamentoAtual.id);
-      setMovimentacoes(listaMovimentacoes);
+      // evita o erro de fechamentoAtual ser chamado e ainda ser nulo
+      if(fechamentoAtual) {
+        const listaMovimentacoes = await buscarMovimentacao(fechamentoAtual.id);
+        setMovimentacoes(listaMovimentacoes);
+      }
+
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
+      setMensagem(error.message);
     }
   };
 
@@ -142,12 +148,17 @@ export default function FechamentoBalcao() {
       descricao: descricaoManutencao.trim(),
       valor: valorManutencao,
     };
-    const movimentacao = await criarMovimentacao(novaManutencao);
-    if (movimentacao) setMensagem('Movimentação cadastrada com sucesso!');
-    setValorManutencao('');
-    setDescricaoManutencao('');
-    setTipoMovimentacao(tiposMovimentacao[0]);
-    await buscarMovimentacoes();
+      try {
+        const movimentacao = await criarMovimentacao(novaManutencao);
+        if (movimentacao) setMensagem('Movimentação cadastrada com sucesso!');
+        setValorManutencao('');
+        setDescricaoManutencao('');
+        setTipoMovimentacao(tiposMovimentacao[0]);
+        await buscarMovimentacoes();
+      } catch (error) {
+        console.log(error.message)
+        setMensagem(error.message)
+      }
   };
 
   // cancela 
@@ -165,15 +176,15 @@ export default function FechamentoBalcao() {
   };
 
   
-  // remover manutenção
+  // Remover manutenção
   const removerManutencao = async (id) => {
     try {
       await deletarMovimentacao(id);
       setMensagem('Movimentação excluída com sucesso!')
       await buscarMovimentacoes();
     } catch (error) {
-      const erroApi = error?.response?.data.erro;
-      setMensagem(erroApi?.codigo === 'MOVIMENTACAO_NOT_FOUND' ? erroApi.mensagem : 'Erro inesperado. Tente novamente.');
+      console.log(error.message)
+      setMensagem(error.message);
     }
   };
 
@@ -185,8 +196,8 @@ export default function FechamentoBalcao() {
       setMensagem('Fechamento finalizado com sucesso!');
       setStatusFechamento(prev => !prev);
     } catch (error) {
-      const erroApi = error?.response?.data.erro;
-      setMensagem(erroApi ? erroApi.mensagem : 'Erro inesperado. Tente novamente.');
+      console.log(error.message)
+      setMensagem(error.message);
     }
   };
 

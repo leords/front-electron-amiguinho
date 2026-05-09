@@ -66,12 +66,9 @@ export function EditarStatusOrdem ({ ordemSelecionada, setView }) {
             setMensagem("Status da ordem de compra alterado com sucesso!")
             setView("lista");
 
-        } catch(e) {
-          const mensagem = e.response?.data?.erro.mensagem || 
-          e.message ||
-          "Erro, não foi possivel realizar a alteração!";
-          
-          setMensagem(mensagem)
+        } catch(error) {
+          setMensagem(error.message)
+          console.log(error.message)
         } finally {
         setSalvando(false);
         }

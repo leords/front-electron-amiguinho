@@ -29,6 +29,8 @@ export default function AjustarProdutoEstoque({setAtualizarLista}) {
 
     // Função salvar ajuste
     async function salvarAjuste() {
+
+      try {
         const qtd = parseInt(quantidade, 10);
         if (!qtd || qtd <= 0) {
           setMensagem("Informe uma quantidade válida.")
@@ -45,7 +47,12 @@ export default function AjustarProdutoEstoque({setAtualizarLista}) {
 
         setAtualizarLista(prev => !prev)
        
-        setMensagem("Ajuste realizado com sucesso!")
+        setMensagem("Ajuste realizado com sucesso!")        
+      } catch (error) {
+        console.log(error.message)
+        setMensagem(error.messages)
+      }
+
 
     }
 

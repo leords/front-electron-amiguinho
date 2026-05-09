@@ -14,6 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { formatarMoeda } from "../../utils/formartarMoeda";
+import { usarToast } from "../../componentes/Context/toastContext";
 
 export default function Historico() {
 
@@ -25,6 +26,9 @@ export default function Historico() {
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [totalVendas, setTotalVendas] = useState(0);
+
+  // hooks
+  const { setMensagem } = usarToast();
 
   // atualizando data
   useEffect(() => {
@@ -45,8 +49,8 @@ export default function Historico() {
         });
         setPedidosFiltrados(resultado);
       } catch (error) {
-        console.error("Erro ao filtrar pedidos:", error);
-        alert("Erro ao buscar pedidos. Tente novamente.");
+        console.log(error.message);
+        setMensagem(error.message);
       } finally {
         setCarregando(false);
       }

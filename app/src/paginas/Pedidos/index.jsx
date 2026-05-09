@@ -138,8 +138,8 @@ export default function Pedidos() {
         }));
         setClientesFiltrados(clientesFormatados);
       } catch (error) {
-        console.error("Erro ao filtrar clientes", error);
-        alert("Erro ao buscar clientes. Tente novamente.");
+        console.error(error.message);
+        setMensagem(error.message);
       }
     };
     filtrarClientes();
@@ -296,8 +296,8 @@ export default function Pedidos() {
                 onChange={(e) => setStatusSelecionado(e.target.value)}
                 className={styles.selectInput}
               >
-                {status.map((s) => (
-                  <option value={s}>
+                {status.map((s, index) => (
+                  <option key={index} value={s}>
                     {s}
                   </option>
                 ))}

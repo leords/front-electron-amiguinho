@@ -31,7 +31,7 @@ export default function CartaoContador({
             }}
           />
         </svg>
-        <p className>{porcentagem}%</p>
+        <p>{porcentagem}%</p>
       </div>
       <div className={styles.valores}>
         <p className={styles.metodo}>{metodo}</p>

@@ -1,0 +1,81 @@
+
+/* ── Layout base ── */
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f2f4f7;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.principal {
+  flex: 1;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 28px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ── Cabeçalho ── */
+.tituloSection {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconeWrapper {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #ff8c00, #ffb347);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 14px rgba(25,113,194,0.35);
+  flex-shrink: 0;
+}
+
+.pageSubtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: orange;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 2px;
+}
+
+.pageTitulo {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+/* ── Grade de seções ── */
+.gradeSecoes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+/* ── Animação ── */
+.fadeUp {
+  animation: fadeUp 0.35s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsivo ── */
+@media (max-width: 640px) {
+  .gradeSecoes { grid-template-columns: 1fr; }
+  .principal { padding: 20px 16px 40px; }
+  .pageTitulo { font-size: 20px; }
+}

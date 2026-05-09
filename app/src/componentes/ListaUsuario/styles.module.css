@@ -1,0 +1,226 @@
+:root {
+  --orange:        #ff8c00;
+  --orange-light:  #fff3e0;
+  --orange-mid:    #ffd699;
+  --green:         #2f9e44;
+  --green-light:   #ebfbee;
+  --green-mid:     #8ce99a;
+  --blue:          #1971c2;
+  --blue-light:    #e7f5ff;
+  --blue-mid:      #a5d8ff;
+  --purple:        #7048e8;
+  --purple-light:  #f3f0ff;
+  --purple-mid:    #b197fc;
+  --red:           #c92a2a;
+  --red-light:     #fff5f5;
+  --red-mid:       #ffc9c9;
+  --indigo:        #3b5bdb;
+  --gray-900:      #1a1f2e;
+  --gray-700:      #495057;
+  --gray-500:      #868e96;
+  --gray-300:      #dee2e6;
+  --gray-100:      #f8f9fa;
+  --white:         #ffffff;
+  --border:        #eaecef;
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
+  --shadow-md:     0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06);
+  --radius:        14px;
+}
+
+/* Layout */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px 0;
+  animation: fadeUp 0.4s ease both;
+}
+
+/* Cabeçalho */
+.cabecalhoPage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.botoes {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding: 10px 10px;
+}
+
+
+.botaoNovoUsuario {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--green-light);
+  color: var(--green);
+  border: 1.5px solid var(--green-mid);
+  transition: all 0.5s;
+}
+
+.botaoNovoUsuario:hover {
+  background: var(--green);
+  color: var(--white);
+  border-color: var(--green-light);
+  transform: translateY(-1px);
+}
+
+.tituloSection {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Badge contador  */
+.badge {
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1px solid var(--orange-mid);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* Card wrapper */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+/* Tabela */
+.tabelaWrapper {
+  overflow-x: auto;
+}
+
+.tituloLista {
+  display: grid;
+  padding: 10px 16px;
+  background: var(--gray-100);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 700px;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  max-height: 480px;
+  overflow-y: auto;
+  min-width: 700px;
+}
+
+.lista::-webkit-scrollbar { width: 4px; }
+.lista::-webkit-scrollbar-track { background: var(--gray-100); }
+.lista::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+
+.itemRow {
+  display: grid;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 13px;
+  color: var(--gray-700);
+  font-weight: 400;
+  transition: background 0.15s;
+  align-items: center;
+  cursor: default;
+}
+
+.itemRow:last-child { border-bottom: none; }
+
+.itemRow:hover {
+  background: var(--orange-light);
+  color: var(--gray-900);
+}
+
+/* células especiais */
+.idCell {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+
+.nomeCell {
+  font-weight: 400;
+  color: var(--gray-800);
+}
+
+/*  Grids de colunas  */
+/* externo: ID | Nome | CNPJ | Cidade | Endereço | Telefone | Vendedor | Atendimento | Frequência */
+.gridExterno {
+  grid-template-columns: 40px 1.1fr 1.5fr 1.0fr 0.8fr 0.5fr ;
+  gap: 12px;
+}
+
+
+/*  Estado vazio  */
+.estadoVazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 52px 20px;
+  text-align: center;
+  gap: 8px;
+}
+
+.iconeVazio { color: var(--gray-300); }
+
+.estadoVazio p {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin: 0;
+}
+
+.estadoVazio span {
+  font-size: 13px;
+  color: var(--gray-300);
+}
+
+/*  Spinner  */
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--gray-300);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto;
+}
+
+
+/*  Animações  */
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/*  Responsividade  */
+@media (max-width: 768px) {
+  .pageTitulo { font-size: 20px; }
+  .cabecalhoPage { flex-direction: column; align-items: flex-start; }
+}
+

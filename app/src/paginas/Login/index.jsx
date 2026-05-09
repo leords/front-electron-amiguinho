@@ -7,6 +7,8 @@ import { usarAuth } from "../../componentes/Context/authContext.jsx";
 import { useState } from "react";
 import { ArrowLeft, SignIn, Key, EnvelopeSimple, LockKey, User, ArrowClockwise } from "@phosphor-icons/react";
 import ConectarServidor from "../ConectarServidor";
+import { usarToast } from "../../componentes/Context/toastContext";
+import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 
 export default function Login() {
 
@@ -22,6 +24,7 @@ export default function Login() {
 
   // hooks
   const { login } = usarAuth();
+  const { mensagem, setMensagem } = usarToast();
 
 
   // função de autenticar
@@ -44,13 +47,16 @@ export default function Login() {
 
       login(dadosUsuario);
     } catch (error) {
-      alert(error.message);
+      setMensagem(error.message)
+      console.log(error.message)
+
       setCarregamento(false);
     }
   }
 
   let clicks = 0;
 
+  // 5 clicks seguidos para abrir a opção de configurar o servidor
   function multiLogoClick() {
     clicks++;
     if (clicks >= 5) {
@@ -62,6 +68,8 @@ export default function Login() {
 
   return (
     <div className={styles.container}>
+      <ToastRadix mensagem={mensagem} />
+      {/* Acessar config de servidor */}
       {acessoMultiClick && (
         // função por parametro para controlar este componente
         <ConectarServidor funcaoParametro={() => setAcessoMultiClick(false)} />
@@ -99,7 +107,7 @@ export default function Login() {
       <div className={styles.ladoForm}>
         <p className={styles.rodape}>Distribuidora de bebidas Amigão 2025 · @Leords</p>
 
-      {render === "login" && (
+        {render === "login" && (
           <div className={`${styles.card} ${styles.fadeUp}`}>
             <div className={styles.logoWrap}>
               <img src={logo} alt="Amigão Distribuidora" className={styles.logo} />

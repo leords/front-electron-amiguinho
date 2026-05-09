@@ -13,14 +13,21 @@ export const editarFechamento = async (id, dados) => {
 
     return resposta.data;
   } catch (error) {
-    if (error.response) {
-      throw new Error(
-        error.response.data.mensagem || "Erro ao buscar movimentação"
-      );
-    }
-    if (error.request) {
+
+    // ❌ sem resposta (API fora, internet, etc)
+    if (error.request && !error.response) {
       throw new Error("Servidor não respondeu, tente novamente");
     }
-    throw new Error(error.message || "Erro inesperado");
+
+    // 🔥 erro vindo do backend (AppError)
+    if (error.response) {
+      console.log("error response: ", error.response)
+      const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
+      throw new Error(mensagem);
+    }
+
+    // fallback
+    throw new Error("Erro inesperado na requisição");
   }
+
 };

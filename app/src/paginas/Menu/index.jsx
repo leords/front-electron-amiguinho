@@ -7,6 +7,7 @@ import {
   HandWithdrawIcon,
   ClipboardTextIcon,
   CloudArrowUpIcon,
+  GearIcon,
   PackageIcon
 } from "@phosphor-icons/react";
 import MenuButton from "../../componentes/Botao/index";
@@ -16,10 +17,16 @@ import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
 import { useEffect, useState } from "react";
 import GerarVersiculo from "../../utils/gerarVersiculo";
+import { usarToast } from "../../componentes/Context/toastContext";
+import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 
 export default function Menu() {
   const [saudacao, setSaudacao] = useState("");
   const [mensagemDoDia, setMensagemDoDia] = useState("");
+
+
+  // Hook
+  const { mensagem } = usarToast();
 
   // carregando msg de IA
   useEffect(() => {
@@ -52,6 +59,7 @@ export default function Menu() {
 
   return (
     <div className={styles.container}>
+    <ToastRadix mensagem={mensagem} />
       <Cabecalho />
 
       <main className={styles.principal}>
@@ -72,11 +80,12 @@ export default function Menu() {
           <MenuButton titulo="Histórico balcão"      descricao="Consultar pedidos anteriores"      destino="/historico"      icone={ClockCounterClockwiseIcon} cor="blue"   />
           <MenuButton titulo="Fechamento"            descricao="Conferir caixa do dia"             destino="/fechamento"     icone={CoinsIcon}                 cor="green"  />
           <MenuButton titulo="Dashboard"             descricao="Conferir números de venda"         destino="/dashboard"      icone={ChartLineIcon}             cor="gray"   />
-          <MenuButton titulo="Fechar balcão"         descricao="Finalizar operações do dia"        destino="/fechar-balcao"  icone={CurrencyCircleDollarIcon} cor="orange" />
-          <MenuButton titulo="Vales internos"        descricao="Consultar histórico de vales"      destino="/vales-interno"  icone={HandWithdrawIcon}         cor="blue"   />
+          <MenuButton titulo="Fechar balcão"         descricao="Finalizar operações do dia"        destino="/fechar-balcao"  icone={CurrencyCircleDollarIcon}  cor="orange" />
+          <MenuButton titulo="Vales internos"        descricao="Consultar histórico de vales"      destino="/vales-interno"  icone={HandWithdrawIcon}          cor="blue"   />
           <MenuButton titulo="Pedidos"               descricao="Conferir pedidos realizados"       destino="/pedidos"        icone={ClipboardTextIcon}         cor="green"  />
           <MenuButton titulo="Transmissão"           descricao="Realizar cargas forçadas"          destino="/transmissao"    icone={CloudArrowUpIcon}          cor="gray"   />
-          <MenuButton titulo="Estoque"               descricao="Controle de estoque"               destino="/estoque"          icone={PackageIcon}               cor="orange" />
+          <MenuButton titulo="Estoque"               descricao="Controle de estoque"               destino="/estoque"        icone={PackageIcon}               cor="orange" />
+          <MenuButton titulo="Gestão"                descricao="Gerencie os registros do sistema"  destino="/gestao"         icone={GearIcon}                  cor="blue"   />
         </div>
 
         {/* MENSAGEM E MASCOTE */}

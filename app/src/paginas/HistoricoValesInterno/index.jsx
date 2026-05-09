@@ -16,6 +16,7 @@ import {
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { useFormaPagamento } from "../../hooks/useFormaPagamento";
 import { formatarMoeda } from "../../utils/formartarMoeda";
+import { usarToast } from "../../componentes/Context/toastContext";
 
 export default function HistoricoValesInterno() {
 
@@ -24,6 +25,7 @@ export default function HistoricoValesInterno() {
 
   // hook
   const { listaFormaPagamento } = useFormaPagamento();
+  const { setMensagem } = usarToast();
 
   // estados
   const [dataInicio, setDataInicio] = useState("");
@@ -34,15 +36,15 @@ export default function HistoricoValesInterno() {
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
   const [formaPagamento, setFormaPagamento] = useState("");
   
-  // lista à ser ignoradas
+  // Lista à ser ignoradas
   const ignorarItensLista = ["A VISTA", "PIX", "CARTÃO", "CHEQUE"];
 
-  // filtrando formas de pagamento, ignorando a lista ácima
+  // Filtrando formas de pagamento, ignorando a lista ácima
   const listaFormasPagamentoFiltrada = listaFormaPagamento?.filter(
     (forma) => !ignorarItensLista.includes(forma.nome)
   );
 
-  // setando datas de inicio e fim com a data atual
+  // Detando datas de inicio e fim com a data atual
   useEffect(() => {
     const hoje = dataFormatadaCalendario();
     setDataInicio(hoje);
@@ -66,8 +68,8 @@ export default function HistoricoValesInterno() {
           setPedidosFiltrados(resultado);
         }
       } catch (error) {
-        console.error("Erro ao filtrar pedidos:", error);
-        alert("Erro ao buscar pedidos. Tente novamente.");
+        setMensagem(error.message)
+        console.error(error.message);
       } finally {
         setCarregando(false);
       }

@@ -22,6 +22,7 @@ import { BuscarClienteDelivery } from "../../operadores/API/cliente/buscarClient
 import { BuscarClienteExterno } from "../../operadores/API/cliente/buscarClienteExterno";
 import { BuscarProduto } from "../../operadores/API/produto/buscarProduto";
 import { buscarFormaPagamento } from "../../operadores/API/formaPagamento/buscarFormaPagamento";
+import { usarToast } from "../../componentes/Context/toastContext";
 
 
 // Componente botão.
@@ -65,6 +66,10 @@ export default function Transmissao() {
   // Data atual
   const agora = new Date().toLocaleString('pt-BR')
 
+
+  // Hook
+  const { setMensagem } = usarToast();
+
   // Array de funções
   const acoes = {
     clientesDeliveryForce: async () => {
@@ -96,7 +101,8 @@ export default function Transmissao() {
       }
 
     } catch (error) {
-      console.log('Erro ao carregar dados', error)
+      console.log(error.message)
+      setMensagem(error.message)
     } finally {
       setCarregando(false)
     }

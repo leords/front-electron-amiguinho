@@ -15,6 +15,10 @@ import Pedidos from "../paginas/Pedidos/index.jsx";
 import Transmissao from "../paginas/Transmissao/index.jsx";
 import EditarPedido from "../paginas/EditarPedido/index.jsx";
 import Estoque from "../paginas/estoque/index.jsx";
+import Gestao from "../paginas/Gestao/index.jsx";
+import Usuarios from "../paginas/Usuarios/index.jsx";
+import Produtos from "../paginas/Produtos/index.jsx";
+import Clientes from "../paginas/Clientes/index.jsx";
 
 export function Navegador() {
   return (
@@ -36,6 +40,10 @@ export function Navegador() {
             <Route path="/transmissao" element={<Transmissao />} />
             <Route path="/editar" element={<EditarPedido />} />
             <Route path="/estoque" element={<Estoque />} />
+            <Route path="/gestao" element={<Gestao />} />
+            <Route path="/usuarios" element={<Usuarios />} />
+            <Route path="/produtos" element={<Produtos />} />
+            <Route path="/clientes" element={<Clientes />} />
           </Routes>
         </ToastProvedor>
       </AuthProvedor>

@@ -3,9 +3,13 @@ import Loading from "../../componentes/Loading/index.jsx";
 import Menu from "../Menu/index.jsx";
 import { buscarFormaPagamento } from "../../operadores/API/formaPagamento/buscarFormaPagamento.js";
 import { BuscarProduto } from "../../operadores/API/produto/buscarProduto.js";
+import { usarToast } from "../../componentes/Context/toastContext.jsx";
 
 
 export default function Sincronizar() {
+
+    // Hook
+    const { setMensagem } = usarToast();
 
     // estados
     const [carregando, setCarregando] = useState(true)
@@ -23,7 +27,8 @@ export default function Sincronizar() {
                 ])
                 
             } catch (error) {
-                console.error(error)
+                console.log(error.message)
+                setMensagem(error.message)
 }           finally {
                 
                 const tempoPassado = Date.now() - inicio // pega data final da execução - a de inicio

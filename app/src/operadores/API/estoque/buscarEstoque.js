@@ -12,13 +12,21 @@ export const buscarEstoque = async () => {
     return resposta.data;
 
   } catch (error) {
-    console.log("error", error)
+
+    // ❌ sem resposta (API fora, internet, etc)
+    if (error.request && !error.response) {
+      throw new Error("Servidor não respondeu, tente novamente");
+    }
+
+    // 🔥 erro vindo do backend (AppError)
     if (error.response) {
-      throw new Error(error.response.data || "Erro ao buscar saldo do estoque");
+      console.log("error response: ", error.response)
+      const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
+      throw new Error(mensagem);
     }
-    if (error.request) {
-      throw new Error("Servidor não respondeu. Tente novamente.");
-    }
-    throw new Error(error.message || "Erro inesperado");
+
+    // fallback
+    throw new Error("Erro inesperado na requisição");
   }
+
 };

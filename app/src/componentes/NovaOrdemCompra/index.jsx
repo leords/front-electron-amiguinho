@@ -123,12 +123,9 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
   
       setView("lista");
       resetFormOrdem();
-    } catch (e) {
-        const mensagem = e.response?.data?.erro.mensagem || 
-            e.message ||
-            "Erro, não foi possivel realizar a alteração!";
-            
-          setMensagem(mensagem)
+    } catch (error) {
+        console.log(error.message)
+        setMensagem(error.message)
     } finally {
       setSalvando(false);
     }

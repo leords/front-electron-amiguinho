@@ -13,11 +13,21 @@ export const NovoPedidoBalcao = async (setor, dados) => {
     );
     return resposta.data;
   } catch (error) {
-      if (error.request && !error.response) {
-        throw new Error("Servidor não respondeu, tente novamente");
-      }
-      
-      // 🔥 mantém erro original do backend
-      throw error
+
+    // ❌ sem resposta (API fora, internet, etc)
+    if (error.request && !error.response) {
+      throw new Error("Servidor não respondeu, tente novamente");
     }
-  };
+
+    // 🔥 erro vindo do backend (AppError)
+    if (error.response) {
+      console.log("error response: ", error.response)
+      const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
+      throw new Error(mensagem);
+    }
+
+    // fallback
+    throw new Error("Erro inesperado na requisição");
+  }
+
+};

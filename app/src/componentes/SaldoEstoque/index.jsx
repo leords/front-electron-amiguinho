@@ -45,8 +45,9 @@ export default function Estoque({ setView }) {
     try {
       const saldo = await buscarEstoque();
       setItens(saldo);
-    } catch {
-      setMensagem("Não foi possível carregar o estoque.");
+    } catch(error) {
+        console.log(error.message)
+        setMensagem(error.message)
     } finally {
       setCarregando(false);
     }

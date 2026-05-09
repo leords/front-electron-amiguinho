@@ -11,11 +11,21 @@ export const editarOrdem = async (id, status, usuarioId) => {
 
     return resposta.data;
   } catch (error) {
+
+    // ❌ sem resposta (API fora, internet, etc)
     if (error.request && !error.response) {
       throw new Error("Servidor não respondeu, tente novamente");
     }
-    
-    // 🔥 mantém erro original do backend
-    throw error
+
+    // 🔥 erro vindo do backend (AppError)
+    if (error.response) {
+      console.log("error response: ", error.response)
+      const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
+      throw new Error(mensagem);
+    }
+
+    // fallback
+    throw new Error("Erro inesperado na requisição");
   }
+
 };
