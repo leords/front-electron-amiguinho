@@ -15,10 +15,13 @@ contextBridge.exposeInMainWorld("API", {
   buscarClima: (cidade) => ipcRenderer.invoke("buscar-clima", cidade),
 });
 
-// Gerar pdf
+// Gerar pdf saldo de estoque e saida de produtos
 contextBridge.exposeInMainWorld('PDF', {
-  gerarPDFEstoque: (dados) => ipcRenderer.invoke('gerar-pdf-estoque', dados)
+  gerarPDFEstoque: (dados) => ipcRenderer.invoke('gerar-pdf-estoque', dados),
+  gerarPDFSaidaProdutos: (setor, dados) => ipcRenderer.invoke('gerar-pdf-saida-produto', setor, dados),
+  baixarCSV: (dados) => ipcRenderer.invoke('gerar-csv-saida-produto', dados),
 })
+
 
 // IA Groq
 contextBridge.exposeInMainWorld("IA", {

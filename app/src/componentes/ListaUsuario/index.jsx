@@ -79,6 +79,7 @@ export default function ListaUsuario({setRender, setObjetoUsuario}) {
                         <span>Whatsapp</span>
                         <span>Usuario</span>
                         <span>Status</span>
+                        <span>Nivel</span>
                     </div>
         
                     {/* LISTA */}
@@ -92,6 +93,7 @@ export default function ListaUsuario({setRender, setObjetoUsuario}) {
                             <span>{usuario.whatsapp || '-'}</span>
                             <span>{usuario.usuario || '-'}</span>
                             <span>{usuario.status === true ? 'ativo' : 'inativo'}</span>
+                            <span>{usuario.nivelAcesso || '-'}</span>
                         </div>
                     )}
                     </div>

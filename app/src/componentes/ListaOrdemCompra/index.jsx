@@ -94,6 +94,7 @@ export default function ListaOrdemCompra({ setView, setOrdemSelecionada }) {
         filtrarOrdemCompra();
     }, [dataInicio, dataFim, usuarioId, fornecedorId, status, atualizarListaOrdem])
 
+    
     // Buscando fornecedores.
     useEffect(() => {
       const filtrarFornecedores = async () => {

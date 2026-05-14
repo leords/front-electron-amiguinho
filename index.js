@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import buscarGroq from "./backend/groq.js";
 import buscarClima from "./backend/buscarClima.js";
 import fs from "fs";
+import baixarCSV from "./backend/baixarCSVRelatorioSPT.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -141,7 +142,7 @@ ipcMain.handle('abrir-link', (_, url) => {
   return shell.openExternal(url);
 });
 
-// PDF
+// PDF ESTOQUE ATUAL
 ipcMain.handle('gerar-pdf-estoque', async (event, itens) => {
 
   try {
@@ -215,6 +216,7 @@ ipcMain.handle('gerar-pdf-estoque', async (event, itens) => {
       pageSize: 'A4'
     })
 
+    // ABRE A CAIXA DE DIALOGO
     const { filePath } = await dialog.showSaveDialog({
       title: 'Salvar PDF do estoque',
       defaultPath: `estoque-${new Date().toISOString().slice(0,10)}.pdf`,
@@ -247,3 +249,109 @@ ipcMain.handle('gerar-pdf-estoque', async (event, itens) => {
 })
 
 
+// PDF RELATORIO SAIDA DE PRODUTOS
+ipcMain.handle('gerar-pdf-saida-produto', async (event, setor, relatorio) => {
+
+  try {
+        const win = new BrowserWindow({
+      show: false // não precisa aparecer
+    })
+
+    // 🧾 Monta HTML na mão
+    const html = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial;
+              padding: 20px;
+            }
+
+            h1 {
+              text-align: center;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+
+            th, td {
+              border: 1px solid #ccc;
+              padding: 8px;
+              text-align: left;
+            }
+
+            th {
+              background: #f4f4f4;
+            }
+          </style>
+        </head>
+
+        <body>
+          <h1>Relatório de Saída de produtos ${setor}</h1>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${relatorio.map(relatorio => `
+                <tr>
+                  <td>${relatorio.produto}</td>
+                  <td>${relatorio.quantidade}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+        </body>
+      </html>
+    `
+
+    await win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`)
+
+    const pdf = await win.webContents.printToPDF({
+      printBackground: true,
+      pageSize: 'A4'
+    })
+
+    const { filePath } = await dialog.showSaveDialog({
+      title: 'Salvar PDF do relatórios de saída de produtos',
+      defaultPath: `relatorio-saida-produtos-${new Date().toISOString().slice(0,10)}.pdf`,
+      filters: [{ name: 'PDF', extensions: ['pdf'] }]
+    })
+
+    if (!filePath) {
+      return {
+        sucesso: false,
+        mensagem: 'Usuário cancelou'
+      }
+    }
+
+    fs.writeFileSync(filePath, pdf)
+
+    win.close()
+
+    return {
+      sucesso: true,
+      mensagem: 'PDF gerado com sucesso!'
+    }
+  } catch (error) {
+    return {
+      sucesso: false,
+      mensagem: 'Erro ao gerar PDF'
+    }
+  }
+
+  return true
+})
+
+ipcMain.handle('gerar-csv-saida-produto', async(event, dados) => {
+  return await baixarCSV(dados)
+})

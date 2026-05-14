@@ -13,6 +13,7 @@ import { buscarEstoque } from "../../operadores/API/estoque/buscarEstoque";
 import AjustarProdutoEstoque from "../AjustarProdutoEstoque";
 import { usarToast } from "../Context/toastContext";
 import { AlertaRadix } from "../ui/alerta/alerta";
+import SaidaEstoque from "../SaidaEstoque";
 
 export default function Estoque({ setView }) {
   const [itens, setItens] = useState([]);
@@ -183,7 +184,11 @@ export default function Estoque({ setView }) {
         {/* AJUSTE */}
         <div className={styles.colunaAjuste}>
           <AjustarProdutoEstoque setAtualizarLista={setAtualizarLista} />
+          <div>
+              <SaidaEstoque />
+          </div>
         </div>
+
 
       </div>
     </div>

@@ -168,7 +168,7 @@
 /*  Grids de colunas  */
 /* externo: ID | Nome | CNPJ | Cidade | Endereço | Telefone | Vendedor | Atendimento | Frequência */
 .gridExterno {
-  grid-template-columns: 40px 1.1fr 1.5fr 1.0fr 0.8fr 0.5fr ;
+  grid-template-columns: 40px 1.1fr 1.5fr 1.0fr 0.8fr 0.5fr 0.5fr ;
   gap: 12px;
 }
 

@@ -66,7 +66,8 @@ export default function Usuarios() {
                         /> 
                         : render === 'editar' ?
                         <EditarUsuario 
-                            usuario = {objetoUsuario}
+                            setRender={setRender}
+                            usuario={objetoUsuario}
                         /> 
                         : render === 'cadastro' ?
                         <NovoUsuario 

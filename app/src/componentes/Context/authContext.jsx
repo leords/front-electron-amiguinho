@@ -12,12 +12,13 @@ export const AuthProvedor = ({ children }) => {
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    // verificar o token ao carregar o componente
+    // Verificar o token ao carregar o componente
     const token = localStorage.getItem("token");
     const nome = localStorage.getItem("nomeUsuario");
     const id = localStorage.getItem("idUsuario");
     const nivel = localStorage.getItem("nivelAcesso");
 
+    // Valida token
     if (token) {
       setUsuario({
         id: Number(id),
@@ -25,10 +26,12 @@ export const AuthProvedor = ({ children }) => {
         nivelAcesso: nivel,
       });
     }
+
   }, []);
 
+  // Função login
   const login = (credenciais) => {
-    console.log(credenciais.token);
+    console.log('em AuthContext: apagar', credenciais.token);
     // Armazenando os dados do usuário e token no Storaged.
     localStorage.setItem("token", credenciais.token);
     localStorage.setItem("nomeUsuario", credenciais.usuario.nome);
@@ -44,6 +47,7 @@ export const AuthProvedor = ({ children }) => {
     navegar("/sincronizar");
   };
 
+  // Função deslogar
   const sair = () => {
     // Remover do localStorage e limpar o estado
     localStorage.removeItem("token");

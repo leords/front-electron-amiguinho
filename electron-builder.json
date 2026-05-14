@@ -1,9 +1,10 @@
 {
   "appId": "com.amiguinho.balcao",
-  "productName": "Amiguinho Balcao",
+  "productName": "Amiguinho",
   "directories": {
     "output": "dist",
-    "app": "."
+    "app": ".",
+    "buildResources": "build"
   },
   "files": [
     "index.js",
@@ -22,6 +23,7 @@
   ],
   "asar": false,
   "win": {
-    "target": "nsis"
+    "target": "nsis",
+    "icon": "build/icon.ico"
   }
 }

@@ -78,6 +78,7 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  margin-top: 20px;
 }
 
 /* ─── Botões ─────────────────────────────────────────────────────────── */
@@ -117,6 +118,20 @@
   background: var(--green-light);
   color: var(--green);
   border: 1.5px solid var(--green-mid);
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.botaoRelatorioSaida {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1.5px solid var(--blue-mid);
   border-radius: 9px;
   font-size: 14px;
   font-weight: 700;

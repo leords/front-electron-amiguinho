@@ -34,6 +34,7 @@ import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { usarToast } from "../../componentes/Context/toastContext";
 import { Fornecedor } from "../../componentes/Fornecedor";
 import Estoque from "../../componentes/SaldoEstoque";
+import RelatorioSaidaProduto from "../../componentes/RelatorioSaidaProduto";
 
 
 export default function EstoquePage() {
@@ -65,22 +66,28 @@ export default function EstoquePage() {
           </div>
           { /* BOTÕES */ }
           <div className={styles.cabecalhoAcoes}>
-            {view !== 'fornecedores' &&
-              <button className={styles.botaoSecundario} onClick={() => setView("fornecedores")}>
-              <Buildings size={16} weight="bold" />
-              Fornecedores
-            </button>
-            }
             {view !== 'novaOrdem' && 
             <button className={styles.botaoPrincipal} onClick={() => { setView("novaOrdem") }}>
               <Plus size={16} weight="bold" />
               Nova Ordem
             </button>
             }
+            {view !== 'fornecedores' &&
+              <button className={styles.botaoSecundario} onClick={() => setView("fornecedores")}>
+              <Buildings size={16} weight="bold" />
+              Fornecedores
+            </button>
+            }
             {view !== 'saldoEstoque' &&
               <button className={styles.botaoSaldoEstoque} onClick={() => { setView("saldoEstoque") }}>
                 <PackageIcon size={16} weight="bold" />
                 Saldo do estoque
+              </button>
+            }
+            {view !== 'relatorioSaida' &&
+              <button className={styles.botaoRelatorioSaida} onClick={() => { setView("relatorioSaida") }}>
+                <PackageIcon size={16} weight="bold" />
+                Relatório de saídas
               </button>
             }
 
@@ -92,6 +99,13 @@ export default function EstoquePage() {
           <Estoque 
             setView={setView}
           />  
+        )}
+
+        {/* COMPONENTE RELATÓRIO DE SAÍDA DE PRODUTO */}
+        {view === "relatorioSaida" && (
+          <RelatorioSaidaProduto
+              setView={setView}
+          />
         )}
 
         {/* COMPONENTE LISTA */}

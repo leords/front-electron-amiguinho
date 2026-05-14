@@ -1,0 +1,170 @@
+/* ─── Variáveis essenciais ───────────────────────────── */
+:root {
+  --orange: #ff8c00;
+  --orange-light: #fff3e0;
+  --orange-mid: #ffd699;
+  --green: #2f9e44;
+  --green-light: #ebfbee;
+  --green-mid: #8ce99a;
+  --red: #c92a2a;
+  --red-light: #fff5f5;
+  --red-mid: #ffc9c9;
+  --gray-900: #1a1f2e;
+  --gray-700: #495057;
+  --gray-500: #868e96;
+  --gray-300: #dee2e6;
+  --gray-100: #f8f9fa;
+  --white: #ffffff;
+  --border: #eaecef;
+  --shadow-md: 0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06);
+  --radius: 14px;
+}
+
+.modal {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/*  Div botões setores */
+.tipoGroup {
+  display: grid;
+  grid-template-columns: 0.8fr 0.8fr 0.8fr 0.8fr 1fr 1fr;
+  gap: 4px;
+  padding: 20px 20px 4px 20px;
+  align-items: end;
+  justify-content: center;
+}
+
+.tituloLista {
+  display: flex;
+  padding: 10px 14px;
+  background: var(--gray-100);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* Botão setor */
+.tipoBotao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  color: var(--gray-500);
+  width: 120px;
+  height: 36px;
+  background: var(--white);
+
+}
+
+/* config botões setor */
+.tipoAtivo_entrada {
+  background: var(--green-light);
+  color: var(--green);
+  border-color: var(--green-mid);
+  font-weight: 600;
+}
+
+
+.filtroGrupo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  gap: 4px;
+}
+
+.filtroLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gray-500);
+}
+
+.calendario {
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1.5px solid var(--gray-300);
+  background: var(--white);
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.calendario:hover { border-color: #adb5bd; }
+.calendario:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255,140,0,0.12);
+}
+
+.divBotao {
+  padding: 20px 20px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+
+}
+
+.divBotao button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: var(--green);
+  color: var(--white);
+  border: none;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+
+/* Botão gerar */
+.botaoGerarPDF {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Botão gerar */
+.botaoGerarCSV {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: var(--green);
+  color: var(--white);
+  border: none;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}

@@ -2,11 +2,59 @@ import { useState } from 'react'
 import styles from './styles.module.css'
 import { AtIcon, EnvelopeIcon, FloppyDiskIcon, PowerIcon, IdentificationCardIcon, ListChecksIcon, ShieldIcon, WhatsappLogoIcon, XIcon } from '@phosphor-icons/react'
 import { AlertaRadix } from '../ui/alerta/alerta'
+import { AlterarUsuario } from '../../operadores/API/usuario/alterarUsuario'
+import { usarToast } from '../Context/toastContext'
 
-export default function EditarUsuario ({usuario}) {
+export default function EditarUsuario ({setRender, usuario}) {
 
+    // Estados
     const [nivelAcesso, setNivelAcesso] = useState("")
     const [status, setStatus] = useState("")
+
+    // Hook
+    const { setMensagem } = usarToast();
+
+    // Listas
+    const listaNiveisAcessos = ['ADMIN', 'BALCAO', 'DELIVERY', 'EXTERNO', 'USUARIO']
+
+
+    // Filtrar as lista de opções do select que apareça todas menos a opção atual do usuário
+    const listaNivelAcessoFiltrada = listaNiveisAcessos.filter(
+      lista => lista !== usuario.nivelAcesso
+    )
+    const listaStatusFiltrada = usuario.status === true ? 'INATIVO' : 'ATIVO'
+    
+
+    // Função salvar novas alterações
+    const alterarUsuario = async ()  => {
+      if(!nivelAcesso && !status) {
+        setMensagem('Verifique se realmente alterou os estados de pelo menos um dos campo entre Novo nivel de acesso e Status do usuário')
+        return
+      }
+
+      try {
+
+        console.log('Dados: ', status, '--' ,nivelAcesso)
+        const usuarioAlterado = await AlterarUsuario(usuario.id, status, nivelAcesso);
+
+        if(usuarioAlterado) {
+          setRender('lista')
+          setMensagem('Alteração realizada com sucesso!');        
+        } 
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+
+    //Função que cancela a alteração
+    const cancelarAlteracao = () => {
+      setStatus("")
+      setNivelAcesso("")
+
+      return
+    }
+
 
     return (
     <div className={styles.container}>
@@ -75,50 +123,75 @@ export default function EditarUsuario ({usuario}) {
               />
           </div>
 
-          {/* NIVEL DE ACESSO */}
+          {/* NÍVEL DE ACESSO ATUAL */}
           <div className={styles.divInput}>
             <label className={styles.filtroLabel}>
               <ShieldIcon size={13} />
-                NÍVEL DE ACESSO
+              NÍVEL DE ACESSO ATUAL
             </label>
-            <div className={styles.nivelWrapper}>
-
-              <select 
+            <input 
                 className={styles.input} 
                 value={usuario.nivelAcesso}
+                readOnly
+              />
+          </div>
+
+          {/* NOVO NIVEL DE ACESSO */}
+          <div className={styles.divInput}>
+            <label className={styles.filtroLabelEditar}>
+              <ShieldIcon size={13} />
+                NOVO NÍVEL DE ACESSO
+            </label>
+            <div className={styles.nivelWrapperEditar}>
+
+              <select 
+                className={styles.inputEditar} 
+                value={nivelAcesso}
                 onChange={(e) => setNivelAcesso(e.target.value)}
-                
                 >
-                <option value="" disabled>Selecione</option>
-                <option value={'ADMIN'}>admin</option>
-                <option value={'VENDAS'}>vendas</option>
-                <option value={'BALCAO'}>balcão</option>
-                <option value={'DELIVERY'}>delivery</option>
-                <option value={'EXTERNO'}>externo</option>
-                <option value={'USUARIO'}>usuário</option>
+                <option value={""} disabled>
+                  Selecione
+                </option>
+
+                {listaNivelAcessoFiltrada.map((lista, index) => (
+                  <option key={index} value={lista}>
+                    {lista}
+                  </option>
+                )
+              )}
               </select>
 
             </div>
           </div>
 
-            {/* STATUS DO USUÁRIO */}
-            <div className={styles.divInput}>
-                <label className={styles.filtroLabel}>
+          {/* STATUS USUÁRIO ATUAL */}
+          <div className={styles.divInput}>
+            <label className={styles.filtroLabel}>
+              <PowerIcon size={13} />
+              STATUS ATUAL DO USUÁRIO
+            </label>
+            <input 
+                className={styles.input} 
+                value={usuario.status ? 'ATIVO' : 'INATIVO'}
+                readOnly
+              />
+          </div>
+
+          {/* NOVO STATUS DO USUÁRIO */}
+          <div className={styles.divInput}>
+                <label className={styles.filtroLabelEditar}>
                     <PowerIcon size={13} />
-                    STATUS USUÁRIO
+                    NOVO STATUS
                 </label>
-                <div className={styles.nivelWrapper}>
+                <div className={styles.nivelWrapperEditar}>
 
                 <select 
-                    className={styles.input} 
-                    value={usuario.status === true ? 'ATIVO' : 'INATIVO'}
+                    className={styles.inputEditar} 
+                    value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    
                     >
-                    <option value="" disabled>Selecione</option>
-                    <option value={'ATIVO'}>ativo</option>
-                    <option value={'INATIVO'}>inativo</option>
-
+                    <option value={""} disabled>Selecione</option>
+                    <option value={listaStatusFiltrada}> {listaStatusFiltrada} </option> 
                 </select>
 
                 </div>
@@ -134,7 +207,7 @@ export default function EditarUsuario ({usuario}) {
           <AlertaRadix
             titulo="Cancelar alteração"
             descricao="Você realmente deseja cancelar esta alteração?"
-            tratar={''}
+            tratar={cancelarAlteracao}
             confirmarTexto="Confirmar"
             cancelarTexto="Sair"
             trigger={
@@ -149,7 +222,7 @@ export default function EditarUsuario ({usuario}) {
           <AlertaRadix
             titulo="Confirmar esta alteração"
             descricao="Você realmente deseja confirmar esta alteração?"
-            tratar={''}
+            tratar={alterarUsuario}
             confirmarTexto="Confirmar"
             cancelarTexto="Sair"
             trigger={
