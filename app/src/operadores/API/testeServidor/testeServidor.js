@@ -4,7 +4,8 @@ export const testeServidor = async (dominio) => {
 
 // dominio vem do link do servidor configurada na primeira tela do sistema
   try {
-    const resposta = await axios.get(`http://${dominio}:4000/online`, {
+    //const resposta = await axios.get(`http://${dominio}:4000/online`, {
+    const resposta = await axios.get(`https://${dominio}/online`, {
       timeout: 3000
     });
 

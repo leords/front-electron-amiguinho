@@ -34,7 +34,7 @@ app.on("ready", () => {
 
     //show: false, // opcional (evita "piscar" ao abrir)
 
-    //autoHideMenuBar: true, // esconde o menu (Alt ainda mostra)
+  //autoHideMenuBar: true, // esconde o menu (Alt ainda mostra)
 
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -44,10 +44,10 @@ app.on("ready", () => {
   });
 
   // // abre maximizado (tipo clicar no botão maximizar)
-  // mainWindow.maximize();
+  mainWindow.maximize();
 
   // // remove completamente o menu
-  // mainWindow.setMenu(null);
+  //mainWindow.setMenu(null);
 
   // // mostra a janela depois de pronta (opcional)
   // mainWindow.once("ready-to-show", () => {

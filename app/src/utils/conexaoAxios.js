@@ -1,13 +1,14 @@
 import axios from "axios";
 
 function getBaseURL() {
-  const servidor = localStorage.getItem('dominio');
+  const servidor = import.meta.env.VITE_API_URL
 
+  console.log('Domínio configurado: ', servidor)
 
-  return servidor
-    ? `http://${servidor}:4000`
-    : import.meta.env.VITE_API_URL;
+  return servidor || "https://node-prisma-amiguinho.onrender.com"
 }
+
+console.log('BASEURL: ', getBaseURL)
 
 export const api = axios.create({
   baseURL: getBaseURL(),
@@ -16,7 +17,7 @@ export const api = axios.create({
 
 export const apiLong = axios.create({
   baseURL: getBaseURL(),
-  timeout: 30000,
+  timeout: 50000,
 });
 
 

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styles from "./styles.module.css";
 import { LockKey, X, ArrowRight, NetworkIcon, CheckFatIcon, DesktopTowerIcon  } from "@phosphor-icons/react";
-import { testeServidor } from "../../operadores/API/testeServidor/testeServidor.js";
 import Spinner from "../../componentes/Spinner";
 
 export default function ConectarServidor({ funcaoParametro }) {
@@ -11,11 +10,9 @@ export default function ConectarServidor({ funcaoParametro }) {
 
     // estados
     const [senha, setSenha] = useState("");
-    const [dominio, setDominio] = useState("");
     const [carregamento, setCarregamento] = useState(false);
     const [acesso, setAcesso] = useState(false);
     const [informativo, setInformativo] = useState("")
-    const [statusCode, setStatusCode] = useState(0)
     const [balcao, setBalcao] = useState("")
 
 
@@ -50,8 +47,8 @@ export default function ConectarServidor({ funcaoParametro }) {
         }
     }
 
-    // Validando dominio de servidor.
-    async function iniciarAcessoDominio() {
+    // Validando balcao destino.
+    async function iniciarBalcaoDestino() {
 
         setCarregamento(true);
         
@@ -60,12 +57,9 @@ export default function ConectarServidor({ funcaoParametro }) {
         
         try {
             setCarregamento(true)
-            if(!dominio) {
-                setInformativo('Informe um domínio válido')
-                return
-            }
 
-            else if(!balcao) {
+
+            if(!balcao) {
                 setInformativo('Informe um balcão válido')
                 return
             }
@@ -78,20 +72,8 @@ export default function ConectarServidor({ funcaoParametro }) {
                 await new Promise((resolve) => setTimeout(resolve, restante));
             }
 
-            const retorno = await testeServidor(dominio);
-            if(retorno.mensagem !== 'Servidor conectado com sucesso') {
-                setInformativo('Servidor não conectado!')
-                return
-            }
-
-            setInformativo(`${retorno.mensagem} ✔`)
-            setStatusCode(retorno.status)
-
-            // setando o dominio e qual balcao no storaged
-            localStorage.setItem('dominio', dominio);
-
             // só salva se for um dos balcão
-            if(balcao !== 'delivery') {
+            if(balcao !== 'admin') {
                 localStorage.setItem('balcao', balcao);
             }
             
@@ -99,21 +81,18 @@ export default function ConectarServidor({ funcaoParametro }) {
             alert(error.message);
         } finally {
             setCarregamento(false);
-            setInformativo('')
+            console.log('Balcão destino: ', balcao)
+            funcaoParametro();
         }
     }
 
-    // Função que vem do elemento pai, controla a renderização desta tela
-    function finalizar() {
-        funcaoParametro();
-    }
 
 
   return (
     <div className={styles.containerADM}>
       <div className={styles.modal}>
 
-        {/* Cabeçalho */}
+        {/* CABEÇALHO */}
         <div className={styles.modalHeader}>
           <div className={styles.iconeWrapper}>
             <LockKey size={22} weight="fill" />
@@ -124,10 +103,10 @@ export default function ConectarServidor({ funcaoParametro }) {
           </div>
         </div>
 
-        {/* Validando senha para acesso a componentes */}
+        {/* VALIDANDO A SENHA */}
         {acesso === false 
             ? 
-            // Componente de senha
+            // COMPONENTE DE SENHA
             (       
             <>
                 <p className={styles.descricao}>
@@ -180,25 +159,13 @@ export default function ConectarServidor({ funcaoParametro }) {
             </>
             )
             : 
-            // Componente de domínio
+            // COMPONENTE DE BALCÃO DESTINO
             (
             <>
                 <p className={styles.descricao}>
-                Para configurar o servidor, insira seu domínio.
+                Para configurar o balcão destino, escolha entre as opções.
                 </p>
                 <div className={styles.campo}>
-                <label className={styles.label}>
-                    <NetworkIcon size={12} weight="bold" /> Domínio
-                </label>
-                <input
-                    key="dominio"
-                    onChange={e => setDominio(e.target.value)}
-                    value={dominio}
-                    className={styles.input}
-                    placeholder="meu-dominio.com/api"
-                    type="text"
-                />
-                {informativo && <p className={statusCode === "ok" ? styles.retornoOk  : styles.retorno}>{informativo}</p>}
                 <label className={styles.labelBalcao}>
                     <DesktopTowerIcon size={12} weight="bold" /> Balcão
                 </label>
@@ -209,11 +176,11 @@ export default function ConectarServidor({ funcaoParametro }) {
                     <option value="">Selecione</option>
                     <option value="b1">Balcão 01</option>
                     <option value="b2">Balcão 02</option>
-                    <option value="delivery">Delivery 01</option>
+
                 </select>
                 </div>
 
-                {/* Loading */}
+                {/* LOADING */}
                 {carregamento === true
                     ?
                     (
@@ -225,39 +192,15 @@ export default function ConectarServidor({ funcaoParametro }) {
                     :
                     (
                     <div className={styles.botoes}>
-                        {statusCode === "ok"
-                            ?
-                            // botão para finalizar sessão
-                            (
-                            <button className={styles.botaoConectar} onClick={finalizar}>
+                        {balcao && 
+                            <button className={styles.botaoConectar} onClick={iniciarBalcaoDestino}>
                                 <CheckFatIcon  size={15} weight="bold" />
-                                Finalizar
+                                Selecionar
                             </button>
-                            )
-                            :
-                            // botões de cancelar e conectar
-                            (                        
-                            <>
-                                <button className={styles.botaoCancelar} onClick={funcaoParametro}>
-                                    <X size={15} weight="bold" />
-                                    Cancelar
-                                </button>
-                                <button
-                                    key="dominio"
-                                    className={styles.botaoConectar}
-                                    onChange={(e) => setDominio(e.tarde.value)}
-                                    value={dominio}
-                                    onClick={() => iniciarAcessoDominio()}
-                                >
-                                    Conectar
-                                    <NetworkIcon size={15} weight="bold" />
-                                </button>
-                            </>
-                            )
                         }
+
                     </div>
-                    )
-                    
+                    )  
                 }
             </>
             )

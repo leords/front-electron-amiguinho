@@ -136,7 +136,7 @@
 .botoes {
   display: flex;
   gap: 10px;
-  padding-top: 4px;
+  padding-top: 20px;
 }
 
 .botaoCancelar {
