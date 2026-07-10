@@ -1,47 +1,23 @@
 import { useEffect, useState } from "react";
-import { LerProduto } from "../operadores/API/produto/lerProduto.js";
 import { LerClienteDelivery } from "../operadores/API/cliente/lerClienteDelivery.js";
-import { LerClienteExterno } from "../operadores/API/cliente/lerClienteExterno.js";
 
 export function useClientesDelivery() {
-  //estados
+
+  // Estados
   const [clientes, setClientes] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+  const [carregandoClientesDelivery, setCarregandoClientesDelivery] = useState(true);
   const [erro, setErro] = useState(null);
-
-  
-  const buscarCliente = async () => {
-    const ClienteStorage = localStorage.getItem("clientesDelivery");
-
-    // valido se existe cliente no storage
-    if (ClienteStorage) {
-      try {
-        const json = JSON.parse(ClienteStorage);
-
-        if (Array.isArray(json) && json.length > 0) {
-          return json;
-        }
-      } catch (e) {
-        console.warn("JSON inválido no storage, limpando", e);
-        localStorage.removeItem("clientesDelivery");
-      }
-    }
-      // caso não, busco via API e salvo no storage
-      const retornoProdutoAPI = await LerClienteDelivery()
-      localStorage.setItem("clientes", JSON.stringify(retornoProdutoAPI));
-      return retornoProdutoAPI;
-   
-  };
 
   useEffect(() => {
     const carregar = async () => {
       try {
-        const lista = await buscarCliente();
+        const lista = await LerClienteDelivery();
         setClientes(lista);
+        
       } catch (error) {
         setErro(error);
       } finally {
-        setCarregando(false);
+        setCarregandoClientesDelivery(false);
       }
     };
 
@@ -50,7 +26,7 @@ export function useClientesDelivery() {
 
   return {
     clientes,
-    carregando,
+    carregandoClientesDelivery,
     erro,
   };
 }

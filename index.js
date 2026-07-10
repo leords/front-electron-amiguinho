@@ -34,20 +34,23 @@ app.on("ready", () => {
 
     //show: false, // opcional (evita "piscar" ao abrir)
 
-  //autoHideMenuBar: true, // esconde o menu (Alt ainda mostra)
+    //autoHideMenuBar: true, // esconde o menu (Alt ainda mostra)
 
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
     },
+
+    
   });
 
-  // // abre maximizado (tipo clicar no botão maximizar)
+
+  // abre maximizado (tipo clicar no botão maximizar)
   mainWindow.maximize();
 
-  // // remove completamente o menu
-  //mainWindow.setMenu(null);
+  // remove completamente o menu
+  // mainWindow.setMenu(null);
 
   // // mostra a janela depois de pronta (opcional)
   // mainWindow.once("ready-to-show", () => {
@@ -190,16 +193,19 @@ ipcMain.handle('gerar-pdf-estoque', async (event, itens) => {
               <tr>
                 <th>ID</th>
                 <th>Nome</th>
-                <th>Quantidade</th>
+                <th>Caixa</th>
+                <th>Unidade</th>
               </tr>
             </thead>
 
             <tbody>
-              ${itens.map(item => `
+              ${itens.map(item => 
+                `
                 <tr>
                   <td>${item.id}</td>
                   <td>${item.nome}</td>
-                  <td>${item.estoque}</td>
+                  <td>${Math.floor(item.estoque)}</td>
+                  <td>${Math.round((item.estoque % 1) * item.quantidade)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -352,6 +358,7 @@ ipcMain.handle('gerar-pdf-saida-produto', async (event, setor, relatorio) => {
   return true
 })
 
+// BAIXAR CSV
 ipcMain.handle('gerar-csv-saida-produto', async(event, dados) => {
   return await baixarCSV(dados)
 })

@@ -1,0 +1,182 @@
+.busca-usuarios {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Header do card */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid #f1f3f5;
+}
+
+.card-header-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.card-header-title h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.card-header-icon { color: var(--orange); }
+
+/* Badge de carregando */
+.carregando-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1px solid var(--orange-mid);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.spinner-icon { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Input de pesquisa */
+.busca-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.busca-input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--gray-500);
+  pointer-events: none;
+}
+
+.busca-usuarios .input {
+  padding: 9px 12px 9px 36px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--white);
+  color: var(--gray-700);
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.busca-usuarios .input:hover { border-color: #adb5bd; }
+
+.busca-usuarios .input:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
+}
+
+/* Lista de usuários */
+.lista-usuarios {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.lista-usuarios::-webkit-scrollbar { width: 4px; }
+.lista-usuarios::-webkit-scrollbar-track { background: var(--gray-100); }
+.lista-usuarios::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+
+/* Card do usuário */
+.card-usuario {
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--white);
+}
+
+.card-usuario:hover {
+  border-color: var(--orange-mid);
+  background: var(--orange-light);
+  transform: translateY(-1px);
+}
+
+.card-usuario-ativo {
+  border-color: var(--orange);
+  background: var(--orange-light);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.15);
+}
+
+.card-usuario-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-usuario {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-usuario-ativo .avatar-usuario {
+  background: var(--orange);
+  color: var(--white);
+}
+
+.card-usuario strong {
+  display: block;
+  font-size: 14px;
+  color: var(--gray-900);
+  margin-bottom: 4px;
+}
+
+/* Badges de nível de acesso */
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge-orange {
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1px solid var(--orange-mid);
+}
+
+.badge-blue {
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue-mid);
+}
+
+/* Estado vazio */
+.estado-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  gap: 6px;
+}
+
+.estado-vazio .icone-vazio { color: var(--gray-300); }
+.estado-vazio p { font-size: 14px; font-weight: 600; color: var(--gray-500); margin: 0; }
+.estado-vazio span { font-size: 12px; color: var(--gray-300); }

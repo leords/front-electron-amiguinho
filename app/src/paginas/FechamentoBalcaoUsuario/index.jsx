@@ -20,8 +20,19 @@ import { dataFormatadaCalendario } from "../../utils/data";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 import { formatarMoeda } from "../../utils/formartarMoeda";
 import { usarToast } from "../../componentes/Context/toastContext";
+import { usarAuth } from "../../componentes/Context/authContext";
+import Select from "react-select";
+import Spinner from "../../componentes/Spinner";
 
-export default function Fechamento() {
+export default function FechamentoBalcaoUsuario() {
+
+  // Opções do Select
+  const balcaoOptions = [
+    { value: 'b1', label: 'Balcão 1' },
+    { value: 'b2', label: 'Balcão 2' },
+  ];
+
+  // Estados
   const [duzentos, setDuzentos] = useState(0);
   const [cem, setCem] = useState(0);
   const [cinquenta, setCinquenta] = useState(0);
@@ -29,11 +40,14 @@ export default function Fechamento() {
   const [dez, setDez] = useState(0);
   const [cinco, setCinco] = useState(0);
   const [dois, setDois] = useState(0);
-
+  const [balcao, setBalcao] = useState(balcaoOptions[0]);
+  const [carregando, setCarregando] = useState(false)
 
   // Hooks
   const { setMensagem } = usarToast();
+  const { usuario } = usarAuth();
 
+  
   const [vendaDia, setVendaDia] = useState({
     total: 0,
     interno: 0,
@@ -48,23 +62,29 @@ export default function Fechamento() {
     return () => clearInterval(timer);
   }, []);
 
-  // Busca fechamento balcão por balcão 01, 02 ...
+  // Busca fechamento balcão setado ou selecionado pelo adm ...
   useEffect(() => {
     try {
+      setCarregando(true) 
       const dataFormatada = dataFormatadaCalendario();
-      const nome = import.meta.env.VITE_NOME_MAQUINA;
       const buscarVendasDia = async () => {
-        const dados = await buscarFechamentoBalcao({ data: dataFormatada, vendedor: nome });
+        // Pega nome do balcão cadastrado na máquina, se não pega o que o admin escolher
+        const dados = await buscarFechamentoBalcao({ data: dataFormatada, vendedor: usuario?.nivelAcesso === 'ADMIN' ? balcao.value : localStorage.getItem('balcao') });
         setVendaDia(dados);
+ 
+        console.log('dados: ', dados)
       };
-      buscarVendasDia();      
+      buscarVendasDia();  
+      setCarregando(false)    
     } catch (error) {
       console.log(error.message)
       setMensagem(error.message)
+      setCarregando(false)  
     }
 
-  }, []);
+  }, [balcao]);
 
+  // Limpar os estados dos campos de notas
   const limpar = () => {
     setDuzentos(0); setCem(0); setCinquenta(0);
     setVinte(0); setDez(0); setCinco(0); setDois(0);
@@ -85,7 +105,7 @@ export default function Fechamento() {
 
       <main className={styles.main}>
 
-        {/* ── Cabeçalho da página ── */}
+        {/* CABEÇALHO*/}
         <div className={styles.pageHeader}>
           <div className={styles.pageHeaderLeft}>
             <div className={styles.iconeWrapper}>
@@ -93,7 +113,7 @@ export default function Fechamento() {
             </div>
             <div>
               <p className={styles.pageSubtitulo}>Terminal de caixa</p>
-              <h1 className={styles.pageTitulo}>Fechamento do Caixa</h1>
+              <h1 className={styles.pageTitulo}>Caixa Balcão</h1>
             </div>
           </div>
 
@@ -110,9 +130,24 @@ export default function Fechamento() {
           </div>
         </div>
 
-        <div className={styles.layout}>
+        {/* SELECT DE BALCAO */}
+        {usuario?.nivelAcesso === 'ADMIN' &&
+          <div className={styles.balcaoSelector}>
+            <label className={styles.labelForm}>Selecione o balcão destino</label>
+            <Select
+              classNamePrefix="custom"
+              options={balcaoOptions}
+              value={balcao}
+              onChange={setBalcao}
+              isSearchable={false}
+            />
+          </div>          
+        }
 
-          {/* ══ COLUNA ESQUERDA: Contador ══ */}
+        <div className={styles.layout}>
+        
+
+          {/* COLUNA ESQUERDA CONTADOR */}
           <div className={styles.colunaContador}>
             <div className={styles.card}>
 
@@ -126,6 +161,7 @@ export default function Fechamento() {
                 </span>
               </div>
 
+              {/* CONTADOR DE NOTAS */}
               <div className={styles.tituloTabela}>
                 <span>Qtd</span>
                 <span>Nota</span>
@@ -142,6 +178,7 @@ export default function Fechamento() {
                 <ItemContador quantidade={dois}     nota={2}   alterarQuantidade={setDois}     navegavel={true} />
               </div>
 
+              {/* BOTÃO LIMPAR NOTAS */}
               <div className={styles.rodapeContador}>
                 <AlertaRadix
                   titulo="Limpar contador"
@@ -162,7 +199,7 @@ export default function Fechamento() {
                 </div>
               </div>
 
-              {/* ── Conferência ── */}
+              {/* CONFERENCIA */}
               {totalContado > 0 && (
                 <div className={`${styles.conferencia} ${styles[`conferencia_${diferencaStatus}`]}`}>
                   <div className={styles.conferenciaHeader}>
@@ -193,46 +230,59 @@ export default function Fechamento() {
             </div>
           </div>
 
-          {/* ══ COLUNA DIREITA: Resumo ══ */}
-          <div className={styles.colunaResumo}>
+          {/* COLUNA DIREITA RESUMO */}
+          {carregando ? 
+            <div className={styles.enviandoPedido}> 
+              <Spinner />
+              <p>Enviando pedido, aguarde um instante...</p>
+              <span>Estabelecendo conexão com o banco de dados...</span>
+            </div>
+            :
+            <>
+              <div className={styles.colunaResumo}>
 
-            {/* Card total geral */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardHeaderTitle}>
-                  <ChartPieSliceIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
-                  <h2>Resumo do Dia</h2>
+                {/* Card total geral */}
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.cardHeaderTitle}>
+                      <ChartPieSliceIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                      <h2>Resumo do Dia</h2>
+                    </div>
+                  </div>
+                  <div className={styles.totalGeralWrapper}>
+                    <CartaoContador valor={vendaDia.total} metodo="Total" />
+                  </div>
                 </div>
-              </div>
-              <div className={styles.totalGeralWrapper}>
-                <CartaoContador valor={vendaDia.total} metodo="Total" />
-              </div>
-            </div>
 
-            {/* Card formas de pagamento */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardHeaderTitle}>
-                  <span className={styles.formasPagLabel}>Formas de pagamento</span>
+                {/* Card formas de pagamento */}
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.cardHeaderTitle}>
+                      <span className={styles.formasPagLabel}>Formas de pagamento</span>
+                    </div>
+                  </div>
+                  <div className={styles.gridCartoes}>
+                    <CartaoContador valor={vendaDia.resultado.a_vista} metodo="Dinheiro" total={vendaDia.total} />
+                    <CartaoContador valor={vendaDia.resultado.cartão}  metodo="Cartão"   total={vendaDia.total} />
+                    <CartaoContador valor={vendaDia.resultado.pix}     metodo="PIX"      total={vendaDia.total} />
+                    <CartaoContador valor={vendaDia.interno}           metodo="Interno"  total={vendaDia.total} />
+                  </div>
                 </div>
-              </div>
-              <div className={styles.gridCartoes}>
-                <CartaoContador valor={vendaDia.resultado.a_vista} metodo="Dinheiro" total={vendaDia.total} />
-                <CartaoContador valor={vendaDia.resultado.cartão}  metodo="Cartão"   total={vendaDia.total} />
-                <CartaoContador valor={vendaDia.resultado.pix}     metodo="PIX"      total={vendaDia.total} />
-                <CartaoContador valor={vendaDia.interno}           metodo="Interno"  total={vendaDia.total} />
-              </div>
-            </div>
 
-            {/* Mascote + mensagem */}
-            <div className={styles.mascoteCard}>
-              <img src={logo} alt="Logo" className={styles.logo} />
-              <p className={styles.textoMascote}>
-                Confira o fechamento do caixa e garanta que tudo está correto!
-              </p>
-            </div>
+                {/* Mascote + mensagem */}
+                <div className={styles.mascoteCard}>
+                  <img src={logo} alt="Logo" className={styles.logo} />
+                  <p className={styles.textoMascote}>
+                    Confira o fechamento do caixa e garanta que tudo está correto!
+                  </p>
+                </div>
 
-          </div>
+              </div>
+            </>
+            
+        }
+
+
         </div>
       </main>
 

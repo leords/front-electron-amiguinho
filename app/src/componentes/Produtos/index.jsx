@@ -19,7 +19,7 @@ export default function ListaProduto() {
         window.LINK.abrirLinkExterno(link);
     }
 
-    // Função que busca clientes
+    // Função que busca produtos
     useEffect(() => {
         const buscarProdutos = async () => {
         setCarregando(true);

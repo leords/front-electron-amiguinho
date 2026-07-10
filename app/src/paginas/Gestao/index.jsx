@@ -1,5 +1,5 @@
 
-import { GearIcon, Users, Package, Storefront, Truck } from "@phosphor-icons/react";
+import { GearIcon, Users, Package, Storefront, Truck, CoinsIcon, GpsFixIcon } from "@phosphor-icons/react";
 import styles from "./styles.module.css";
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
@@ -51,6 +51,21 @@ export default function Gestao() {
                         icone={Storefront}
                         cor="orange"   
                     />
+                    <MenuButton 
+                        titulo="Ajustes de caixas"
+                        descricao="Visualisar e ajustar inicio de caixa"
+                        destino="/caixa"
+                        icone={CoinsIcon}
+                        cor="blue"   
+                    />
+                    <MenuButton 
+                        titulo="Localizar"
+                        descricao="Visualizar localização de aplicações externas"
+                        destino="/buscar-localizacao"
+                        icone={GpsFixIcon}
+                        cor="green" 
+                    />
+
 
                 </div>
                 

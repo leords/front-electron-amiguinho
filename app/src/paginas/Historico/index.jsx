@@ -15,38 +15,53 @@ import {
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { formatarMoeda } from "../../utils/formartarMoeda";
 import { usarToast } from "../../componentes/Context/toastContext";
+import { usarAuth } from "../../componentes/Context/authContext";
+import Select from "react-select";
 
 export default function Historico() {
 
-  // variável .env
-  const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
+  // Opções 
+  const balcaoOptions = [
+    { value: 'b1', label: 'Balcão 1' },
+    { value: 'b2', label: 'Balcão 2' },
+    { value: undefined, label: 'Geral'}
+  ];
+  
+  // Storaged
+  const nomeMaquina = localStorage.getItem('balcao')
 
   // estados
   const [dataAtual, setDataAtual] = useState("");
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [totalVendas, setTotalVendas] = useState(0);
+  const [balcao, setBalcao] = useState([balcaoOptions[2]]);
 
-  // hooks
+  // Hooks
   const { setMensagem } = usarToast();
+  const { usuario } = usarAuth();
 
-  // atualizando data
+
+  // Atualizando data
   useEffect(() => {
     setDataAtual(dataFormatadaCalendario());
   }, []);
 
-  // filtrando pedidos
+  // Filtrando pedidos
   useEffect(() => {
-    if (!dataAtual || !nomeMaquina) return;
+    if (!dataAtual || !balcao) return;
+
     const filtrarPedidos = async () => {
       setCarregando(true);
       try {
         const resultado = await buscarPedido({
           setor: "balcao",
-          vendedor: nomeMaquina,
+          vendedor: usuario.nivelAcesso === 'ADMIN' ? balcao.value : balcao,
           dataInicio: dataAtual,
           dataFim: dataAtual,
+          status: 'finalizado'
         });
+  
         setPedidosFiltrados(resultado);
       } catch (error) {
         console.log(error.message);
@@ -55,10 +70,11 @@ export default function Historico() {
         setCarregando(false);
       }
     };
-    filtrarPedidos();
-  }, [dataAtual, nomeMaquina]);
 
-  // soma o total de pedidos filtrados
+    filtrarPedidos();
+  }, [dataAtual, nomeMaquina, balcao]);
+
+  // Soma o total de pedidos filtrados
   useEffect(() => {
     const total = pedidosFiltrados.reduce(
       (acc, pedido) =>
@@ -68,13 +84,11 @@ export default function Historico() {
     setTotalVendas(total);
   }, [pedidosFiltrados]);
 
-  // pega o valor de data selecionado no input
-  const tratarAlteracao = (e) => setDataAtual(e.target.value);
+  // Pega o valor de data selecionado no input
+  //const tratarAlteracao = (e) => setDataAtual(e.target.value);
 
-  // função que seta o dia atual
-  const setarHoje = () => setDataAtual(dataFormatadaCalendario());
 
-  // formatação de data
+  // Formatação de data
   const dataSelecionada = dataAtual
     ? new Date(dataAtual + "T00:00:00").toLocaleDateString("pt-BR", {
         weekday: "long",
@@ -90,8 +104,9 @@ export default function Historico() {
 
       <main className={styles.principal}>
 
-        {/* Cabeçalho */}
+        {/* CABEÇALHO */}
         <div className={styles.cabecalhoPage}>
+          {/* TÍTULO */}
           <div className={styles.tituloSection}>
             <div className={styles.iconeWrapper}>
               <ReceiptIcon size={22} weight="fill" />
@@ -102,31 +117,42 @@ export default function Historico() {
             </div>
           </div>
 
-          {/* Filtro */}
+          {/* FILTRO */}
           <div className={styles.filtroBloco}>
-            <label className={styles.filtroLabel}>
-              <CalendarBlankIcon size={14} weight="bold" />
-              Data
-            </label>
+            
             <div className={styles.inputGroup}>
-              <input
-                className={styles.calendario}
-                type="date"
-                value={dataAtual}
-                onChange={tratarAlteracao}
-              />
-              <button className={styles.botaoHoje} onClick={setarHoje}>
-                Hoje
-              </button>
+
+              {/* SELECT - OPÇÃO SERÁ DISPONIVEL APENAS PARA USUÁRIO ADMIN */}
+                {usuario?.nivelAcesso === 'ADMIN' &&
+                <>
+                <div className={styles.containerSelector}>
+                  <p className={styles.subtituloBalcaoSelector}>Escolha o balcão:</p>
+                </div>
+                  <div className={styles.balcaoSelector}>
+                    <Select
+                      classNamePrefix="custom"
+                      options={balcaoOptions}
+                      value={balcao}
+                      onChange={setBalcao}
+                      placeholder="Selecione o balcão"
+                      isSearchable={false}
+                    />
+                  </div>  
+                </>        
+              }
+
             </div>
+
             {dataSelecionada && (
               <span className={styles.dataLegenda}>{dataSelecionada}</span>
             )}
           </div>
         </div>
 
-        {/* Cards de resumo */}
+        {/* CARDS DE RESUMO */}
         <div className={styles.resumoCards}>
+
+          {/* CARD QUANTIDADE */}
           <div className={styles.card}>
             <div className={styles.cardIcone} data-color="orange">
               <FileTextIcon size={20} weight="fill" />
@@ -140,6 +166,7 @@ export default function Historico() {
             </div>
           </div>
 
+          {/* CARD TOTAL */}
           <div className={styles.card}>
             <div className={styles.cardIcone} data-color="green">
               <CurrencyDollarIcon size={20} weight="fill" />
@@ -150,12 +177,13 @@ export default function Historico() {
               <p className={styles.cardSub}>total em vendas</p>
             </div>
           </div>
+
         </div>
 
-        {/* Conteúdo principal */}
+        {/* CONTEÚDO PRINCIPAL */}
         <div className={styles.main}>
 
-          {/* Tabela */}
+          {/* TABELA */}
           <section className={styles.containerLista}>
             <div className={styles.cabecalhoLista}>
               <div className={styles.cabecalhoListaEsq}>
@@ -203,7 +231,7 @@ export default function Historico() {
             </div>
           </section>
 
-          {/* Mascote */}
+          {/* MASCOTE */}
           <aside className={styles.containerMascote}>
             <div className={styles.mascoteCard}>
               <img src={logo} alt="Logo" className={styles.logo} />
@@ -214,6 +242,7 @@ export default function Historico() {
           </aside>
 
         </div>
+
       </main>
 
       <Rodape />

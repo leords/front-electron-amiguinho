@@ -201,7 +201,7 @@ export default function Dashboard() {
 
       <main className={styles.main}>
 
-        {/*  Cabeçalho  */}
+        {/*  CABEÇALHO  */}
         <div className={styles.pageHeader}>
           <div className={styles.pageHeaderLeft}>
             <div className={styles.iconeWrapper}>
@@ -221,14 +221,14 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/*  Filtros  */}
+        {/*  FILTROS  */}
         <div className={styles.painelFiltros}>
           <div className={styles.filtrosHeader}>
             <FunnelIcon size={14} weight="bold" className={styles.filtroIcone} />
             <span>Filtros</span>
           </div>
           <div className={styles.filtrosGrid}>
-            {/* Setor */}
+            {/* SETOR */}
             <div className={styles.filtroGrupo}>
               <label className={styles.filtroLabel}>Setor</label>
               <div className={styles.setorTabs}>
@@ -243,7 +243,7 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
-            {/* Data Inicial */}
+            {/* DATA INICIAL */}
             <div className={styles.filtroGrupo}>
               <label className={styles.filtroLabel}>
                 <CalendarBlankIcon size={13} weight="bold" />
@@ -256,7 +256,7 @@ export default function Dashboard() {
                 onChange={(e) => setDataInicio(e.target.value)}
               />
             </div>
-            {/* Data Final */}
+            {/* DATA FINAL */}
             <div className={styles.filtroGrupo}>
               <label className={styles.filtroLabel}>
                 <CalendarBlankIcon size={13} weight="bold" />
@@ -313,7 +313,7 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Gráfico de vendas e Pedidos por vendedor */}
+        {/* GRÁFICO DE VENDAS E PEDIDOS POR VDE */}
         <div className={styles.linhaGraficos}>
 
           <div className={`${styles.card} ${styles.cardGrande}`}>
@@ -375,7 +375,7 @@ export default function Dashboard() {
 
         </div>
 
-        {/* Top produtos e Mix */}
+        {/* TOP PRODUTOS E MIX */}
         <div className={styles.linhaInferior}>
 
           {/* Top produtos */}
@@ -457,7 +457,7 @@ export default function Dashboard() {
 
         </div>
 
-        {/* ── Relatório de produto ── */}
+        {/* RELATÓRIO E PRODUTOS*/}
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderTitle}>

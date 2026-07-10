@@ -16,44 +16,43 @@ import {
   CreditCardIcon,
   TrashIcon,
   PencilIcon,
-  ShieldIcon
+  ShieldIcon,
+  SpinnerIcon
 } from "@phosphor-icons/react";
 import { usarAuth } from "../../componentes/Context/authContext";
 import { CancelarPedido } from "../../operadores/API/pedido/cancelarPedido";
 import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
+import { useState } from "react";
+import { gerarCupomDelivery } from "../../utils/gerarCupomDelivery";
 
 export default function Reimprimir() {
   const navegar = useNavigate();
+
+  // Hook
   const { state } = useLocation();
   const { produtos } = useProdutos();
   const { usuario } = usarAuth();
-
-  // Hook
-  const { mensagem, setMensagem } = usarToast();
+  const { setMensagem } = usarToast();
+  const [ carregando, setCarregando ] = useState(false)
 
   const cupom = state;
 
-  // se não houver cupom, retornar à historico.
+  // Se não houver cupom, retornar à historico.
   if (!cupom) {
     navegar("/historico");
     return null;
   }
 
-  // função para retornar 1 pagina a menos.
-  const handleVoltar = () => navegar("/pedidos", {
-    state: "Pedido cancelado com sucesso!"
-    
-  });
+  // Função para retornar 1 pagina a menos.
+  const handleVoltar = () => navegar(-1);
 
-  // chama a tela editar conforme status do pedido
+  // Chama a tela editar conforme status do pedido
   const handleEditarPedido = async () => {
     try {
       if(cupom.status !== 'cancelado' || cupom.status !== 'pendente') {
         setMensagem('Este pedido não deve ser alterado devido ao seu status atual')
       }
-
-      console.log('status do cupom:',cupom)
 
       navegar('/editar', {
         state: cupom
@@ -64,14 +63,13 @@ export default function Reimprimir() {
     }
   }
 
-  // função para cancelar pedido.
+  // Função para cancelar pedido.
   const handleCancelarPedido = async () => {
     try {
       if(cupom.status === 'cancelado') {
         setMensagem('Este pedido já está cancelado!')
       }
 
-      console.log('status do cupom:',cupom)
       const resposta = await CancelarPedido(cupom.tipo, cupom.uuid);
       if (resposta.mensagem === "Pedido cancelado com sucesso") {
         handleVoltar()
@@ -82,8 +80,39 @@ export default function Reimprimir() {
     } 
   }
 
-  // função para imprimir segunda via.
+  // Função para imprimir segunda via.
   const handleImprimirSegundaVia = async () => {
+    setCarregando(true)
+
+    if(cupom.tipo === 'balcao') {
+      const cupomFormatado = {
+        tipo: "segundaVia",
+        motivo: "PRODUTO JÁ CARREGADO!",
+        data: cupom.data,
+        cliente: cupom.cliente,
+        vendedor: cupom.vendedor,
+        nomeUsuario: cupom.nomeUsuario,
+        itens: cupom.itens.map((item) => ({
+            produtoId: item.produtoId,
+            nome: produtos.find((p) => 
+            p.id === item.produtoId)?.nome || "",
+            quantidade: item.quantidade,
+            valorUnit: item.valorUnit,
+        })),
+        pagamentos: cupom.pagamentos.map((pagamento) => ({ 
+          idFormaPagamentoParcial: pagamento.idFormaPagamentoParcial, 
+          nomeFormaPagamentoParcial: pagamento.nomeFormaPagamentoParcial, 
+          valorParcialFormaPagamento: pagamento.valorParcialFormaPagamento  
+        }))
+      };
+
+        const html = gerarCupom(cupomFormatado);
+        window.IMPRESSORA.imprimir(html);
+
+        setCarregando(false)
+
+    }
+
     const cupomFormatado = {
       tipo: "segundaVia",
       motivo: "PRODUTO JÁ CARREGADO!",
@@ -93,29 +122,32 @@ export default function Reimprimir() {
       vendedor: cupom.vendedor,
       nomeUsuario: cupom.nomeUsuario,
       itens: cupom.itens.map((item) => ({
-        produtoId: item.produtoId,
-        nome: produtos.find((p) => p.id === item.produtoId)?.nome || "",
-        quantidade: item.quantidade,
-        valorUnit: item.valorUnit,
+          produtoId: item.produtoId,
+          nome: produtos.find((p) => 
+          p.id === item.produtoId)?.nome || "",
+          quantidade: item.quantidade,
+          valorUnit: item.valorUnit,
       })),
     };
 
-    const html = gerarCupom(cupomFormatado);
+    const html = gerarCupomDelivery(cupomFormatado);
     window.IMPRESSORA.imprimir(html);
+
+    setCarregando(false)
   };
 
-  // faz a soma dos pedidos
+  // Faz a soma dos pedidos
   const totalItens = cupom.itens.reduce((acc, item) => acc + item.quantidade, 0);
 
   return (
     <div className={styles.container}>
-      <ToastRadix mensagem={mensagem} />
       <Cabecalho />
 
       <main className={styles.principal}>
 
         {/* CABEÇALHO */}
         <div className={styles.cabecalhoPage}>
+          {/* TITULO */}   
           <div className={styles.tituloSection}>
             <div className={styles.iconeWrapper}>
               <PrinterIcon size={22} weight="fill" />
@@ -133,6 +165,7 @@ export default function Reimprimir() {
 
             {/* CARDS DE RESUMO */}
             <div className={styles.resumoCards}>
+
               {/* QUANTIDADE DE ITENS */}
               <div className={styles.card}>
                 <div className={styles.cardIcone} data-color="orange">
@@ -162,20 +195,35 @@ export default function Reimprimir() {
                 </div>
                 <div>
                   <p className={styles.cardLabel}>Forma de pagamento</p>
-                  <strong className={styles.cardValorPagamento}>{cupom.formaPagamento.nome}</strong>
+                  {cupom.tipo === 'balcao'
+                  ?
+                    <strong className={styles.cardValorPagamento}>
+                        {cupom.pagamentos
+                          .map((p) => p.formaPagamento.nome)
+                          .join(" / ")}
+                    </strong>                    
+                  :
+                    <strong className={styles.cardValorPagamento}>
+                        {cupom.formaPagamento?.nome}
+                    </strong>
+                }
+
                   <p className={styles.cardSub}>método utilizado</p>
                 </div>
-              </div>
+              </div> 
+
             </div>
 
             {/* CUPOM */}
             <div className={styles.cupomFiscal}>
 
               <div className={styles.cupomHeader}>
+                {/* BOTÃO VOLTAR */}
                 <button className={styles.botaoVoltar} onClick={handleVoltar}>
                   <ArrowCircleLeftIcon size={18} weight="regular" />
                   Voltar
                 </button>
+
                 <div className={styles.cupomHeaderCenter}>
                   <div className={styles.cupomHeaderIcon}>
                     <ReceiptIcon size={18} weight="bold" className={styles.cupomHeaderIcon} />
@@ -196,7 +244,7 @@ export default function Reimprimir() {
                   <span className={styles.badge}>{cupom.itens.length} {cupom.itens.length === 1 ? "item" : "itens"}</span>
               </div>
 
-              {/* Tabela */}
+              {/* TABELA */}
               <div className={styles.tabelaCupom}>
                 <div className={styles.tabelaHeader}>
                   <span>Qtd</span>
@@ -219,7 +267,7 @@ export default function Reimprimir() {
                 </div>
               </div>
 
-              {/* Resumo */}
+              {/* RESUMO */}
               <div className={styles.resumo}>
                 <div className={styles.resumoItem}>
                   <span>Quantidade total</span>
@@ -229,6 +277,21 @@ export default function Reimprimir() {
                   <span>Subtotal</span>
                   <span>{formatarMoeda(cupom.total)}</span>
                 </div>
+
+                {cupom.tipo === 'balcao'
+                  ?
+                    <div className={styles.resumoItem}>
+                      <span>Pagamentos</span>
+                        {cupom.pagamentos
+                          .map((p) => `${p.formaPagamento.nome}: R$ ${p.valor.toFixed(2)}`)
+                          .join(" + ")}
+                    </div>                    
+                  :
+                    <strong className={styles.cardValorPagamento}>
+                        {cupom.formaPagamento?.nome}
+                    </strong>
+                }
+
                 <div className={styles.totalFinal}>
                   <span>Total</span>
                   <span className={styles.valorTotal}>{formatarMoeda(cupom.total)}</span>
@@ -236,23 +299,28 @@ export default function Reimprimir() {
 
               </div>
 
-              {/* Botão imprimir */}
-              <div className={styles.botoesFinais}>
-                <AlertaRadix
-                  titulo="2ª via do pedido"
-                  descricao="Você realmente deseja imprimir?"
-                  tratar={handleImprimirSegundaVia}
-                  confirmarTexto="Sim, imprimir segunda via!"
-                  cancelarTexto="Cancelar"
-                  trigger={
-                    <button className={styles.botaoImprimir}>
-                      <PrinterIcon size={18} weight="bold" />
-                      Imprimir 2ª via
-                    </button>
-                  }
-                />
-              </div>
-
+              {/* BOTÃO IMPRIMIR */}
+              {usuario.nivelAcesso !== "DELIVERY" && 
+                <div className={styles.botoesFinais}>
+                  <AlertaRadix
+                    titulo="2ª via do pedido"
+                    descricao="Você realmente deseja imprimir?"
+                    tratar={handleImprimirSegundaVia}
+                    confirmarTexto="Sim, imprimir segunda via!"
+                    cancelarTexto="Cancelar"
+                    trigger={
+                      <button 
+                        className={styles.botaoImprimir}
+                        disabled={carregando}
+                        >
+                        <PrinterIcon size={18} weight="bold" />
+                        {carregando ? 'Imprimindo...' : 'Imprimir 2ª via'}
+                
+                      </button>
+                    }
+                  />
+                </div>
+              }
             </div>
           </div>
 
@@ -264,6 +332,8 @@ export default function Reimprimir() {
                 Reimpressão da segunda via do pedido selecionado.
               </p>
             </div>
+
+            {/* SÓ RENDERIZA SE USUARIO FOR ADMIN */}
             {usuario.nivelAcesso === "ADMIN" && 
               <div className={styles.botoesFinais}>
                 <div className={styles.botoesFinaisHeader}>
@@ -279,13 +349,14 @@ export default function Reimprimir() {
                     confirmarTexto="Sim, quero editar!"
                     cancelarTexto="Cancelar"
                   
-                  trigger={
-                    <button className={styles.botaoEditar}>
-                      <PencilIcon size={15} />
-                      Editar este pedido
-                    </button>
-                  }
+                    trigger={
+                      <button className={styles.botaoEditar}>
+                        <PencilIcon size={15} />
+                        Editar este pedido
+                      </button>
+                    }
                   />
+
                   <AlertaRadix
                     titulo="Cancelar este pedido"
                     descricao="Você realmente deseja cancelar este pedido?"

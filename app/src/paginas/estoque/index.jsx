@@ -64,6 +64,7 @@ export default function EstoquePage() {
               <h1 className={styles.pageTitulo}>Ordens de Compra</h1>
             </div>
           </div>
+          
           { /* BOTÕES */ }
           <div className={styles.cabecalhoAcoes}>
             {view !== 'novaOrdem' && 

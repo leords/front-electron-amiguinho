@@ -5,6 +5,7 @@ import { UserPlusIcon, WhatsappLogoIcon, IdentificationCardIcon, EnvelopeIcon, A
 import { CriarUsuario } from '../../operadores/API/usuario/criarUsuario';
 import { ToastRadix } from '../ui/notificacao/notificacao';
 import { usarToast } from '../Context/toastContext';
+import Spinner from '../Spinner';
 
 
 export default function NovoUsuario({setRender}) {
@@ -19,26 +20,28 @@ export default function NovoUsuario({setRender}) {
   const [confirmaSenha, setConfirmarSenha] = useState("")
   const [validaDados, setValidaDados] = useState(false)
   const [validaSenha, setValidaSenha] = useState(false)
+  const [carregando, setCarregando] = useState(false)
 
 
   // Hook
   const { setMensagem } = usarToast();
 
     
-
+  // Enviar novo cadastro de usuário
   const EnviarNovoCadastro = async () => {
-    // valida o preenchimento de todos os campos
+    // Valida o preenchimento de todos os campos
     if(!nome || !usuario || !email || !nivelAcesso || !senha || !confirmaSenha) {
       setValidaDados(true)
       return
     }
-    // valida se as senhas se coincidem 
+    // Valida se as senhas se coincidem 
     if(senha !== confirmaSenha) {
       setValidaSenha(true)
       return
     }
 
     try {
+      setCarregando(true)
       // Criando objeto do novo cadastro
       const novoUsuarioData = {
         nome: nome,
@@ -63,11 +66,14 @@ export default function NovoUsuario({setRender}) {
 
       }
     } catch (error) {
-      alert('Erro: ', error) 
-      setMensagem(`${error.message} ao cadastrar novo usuário, tente novamente`)
+      console.log(error)
+      alert(`Error: ${error.message}, tente novamente`)
+    } finally {
+      setCarregando(false)
     }
   }
 
+  // Limpar estados
   const LimparNovoCadastro = async () => {
     setNome("")
     setEmail("")
@@ -96,158 +102,176 @@ export default function NovoUsuario({setRender}) {
           </div>
         </div>
 
-        {/* INPUTS */}
-        <div className={styles.containerInputs}>
-          {/* NOME */}
-          <div className={styles.divInput}>
-            <label className={`
-                ${styles.filtroLabel}
-                ${validaDados ? styles.filtroLabelErro : ''}
-              `}>
-
-              <IdentificationCardIcon size={13} />
-              { validaDados === true ? 'Nome é obrigatório *' : 'Nome' }
-            </label>
-            <input 
-              className={styles.input} 
-              type="text" 
-              placeholder="Nome completo" 
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              />
+        
+        {carregando ? 
+          <div className={styles.enviandoPedido}> 
+            <Spinner />
+            <p>Enviando novo cadastro, aguarde um instante...</p>
+            <span>Estabelecendo conexão com o banco de dados...</span>
           </div>
+        : 
+        <>
+          {/* INPUTS */}
+          <div className={styles.containerInputs}>
 
-          {/* EMAIL */}
-          <div className={styles.divInput}>
-            <label className={`
-                ${styles.filtroLabel}
-                ${validaDados ? styles.filtroLabelErro : ''}
-              `}>
+            {/* NOME */}
+            <div className={styles.divInput}>
+              <label className={`
+                  ${styles.filtroLabel}
+                  ${!nome && validaDados ? styles.filtroLabelErro : ''}
+                `}>
 
-              <EnvelopeIcon size={13} />
-              { validaDados === true ? 'Email é obrigatório *' : 'Email' }
-            </label>
-            <input 
-              className={styles.input} 
-              type="email" 
-              placeholder="email@empresa.com" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              
-              />
-          </div>
-
-          {/* USUARIO */}
-          <div className={styles.divInput}>
-            <label className={`
-                ${styles.filtroLabel}
-                ${validaDados ? styles.filtroLabelErro : ''}
-              `}>
-
-              <AtIcon size={13} />
-              { validaDados === true ? 'Usuário é obrigatório *' : 'USUÁRIO' }
-            </label>
-            <input 
-              className={styles.input} 
-              type="text" 
-              placeholder="nome.usuario"
-              value={usuario}
-              onChange={(e) => setUsuario(e.target.value)}
-              />
-          </div>
-
-          {/* WHATSAPP */}
-          <div className={styles.divInput}>
-            <label className={styles.filtroLabel}>
-              <WhatsappLogoIcon size={13} />
-              WHATSAPP
-            </label>
-            <input 
-              className={styles.input} 
-              type="number" 
-              placeholder="47911223344"
-              value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
-              />
-          </div>
-
-          {/* SENHA */}
-          <div className={styles.divInput}>
-            <label className={`
-                ${styles.filtroLabel}
-                ${validaDados ? styles.filtroLabelErro : ''}
-              `}>
-
-              <LockIcon size={13} />
-              { validaDados === true ? 'Senha é obrigatório *' : 'SENHA' }
-            </label>
-            <input 
-              className={styles.input} 
-              type="password" 
-              placeholder="••••••••" 
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              />
-          </div>
-
-          {/* NIVEL DE ACESSO */}
-          <div className={styles.divInput}>
-            <label className={`
-                ${styles.filtroLabel}
-                ${validaDados ? styles.filtroLabelErro : ''}
-              `}>
-
-              <ShieldIcon size={13} />
-              { validaDados === true ? 'Nível de acesso é obrigatório *' : 'NÍVEL DE ACESSO' }
-            </label>
-            <div className={styles.nivelWrapper}>
-
-              <select 
+                <IdentificationCardIcon size={13} />
+                { !nome && validaDados === true ? 'Nome é obrigatório *' : 'Nome' }
+              </label>
+              <input 
                 className={styles.input} 
-                placeholder="ex: vendas, balcao, delivery…"
-                value={nivelAcesso}
-                onChange={(e) => setNivelAcesso(e.target.value)}
+                type="text" 
+                placeholder="Nome completo" 
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                />
+            </div>
+
+            {/* EMAIL */}
+            <div className={styles.divInput}>
+              <label className={`
+                  ${styles.filtroLabel}
+                  ${!email && validaDados ? styles.filtroLabelErro : ''}
+                `}>
+
+                <EnvelopeIcon size={13} />
+                { !email && validaDados === true ? 'Email é obrigatório *' : 'Email' }
+              </label>
+              <input 
+                className={styles.input} 
+                type="email" 
+                placeholder="email@empresa.com" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 
-                >
-                <option value="" disabled>Selecione</option>
-                <option value={'ADMIN'}>admin</option>
-                <option value={'VENDAS'}>vendas</option>
-                <option value={'BALCAO'}>balcão</option>
-                <option value={'DELIVERY'}>delivery</option>
-                <option value={'EXTERNO'}>externo</option>
-                <option value={'USUARIO'}>usuário</option>
-              </select>
+                />
+            </div>
+
+            {/* USUARIO */}
+            <div className={styles.divInput}>
+              <label className={`
+                  ${styles.filtroLabel}
+                  ${!usuario && validaDados ? styles.filtroLabelErro : ''}
+                `}>
+
+                <AtIcon size={13} />
+                { !usuario && validaDados === true ? 'Usuário é obrigatório *' : 'USUÁRIO' }
+              </label>
+              <input 
+                className={styles.input} 
+                type="text" 
+                placeholder="nome.usuario"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                />
+            </div>
+
+            {/* WHATSAPP */}
+            <div className={styles.divInput}>
+              <label className={`
+                  ${styles.filtroLabel}
+                  ${!whatsapp && validaDados ? styles.filtroLabelErro : ''}
+                `}>
+                <WhatsappLogoIcon size={13} />
+                { !whatsapp && validaDados === true ? 'Whatsapp é obrigatório *' : 'WHATSAPP' }
+              </label>
+              <input 
+                className={styles.input} 
+                type="number" 
+                placeholder="47911223344"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+                />
+            </div>
+
+            {/* SENHA */}
+            <div className={styles.divInput}>
+              <label className={`
+                  ${styles.filtroLabel}
+                  ${validaDados ? styles.filtroLabelErro : ''}
+                `}>
+
+                <LockIcon size={13} />
+                { !senha && validaDados === true ? 'Senha é obrigatório *' : 'SENHA' }
+              </label>
+              <input 
+                className={styles.input} 
+                type="password" 
+                placeholder="••••••••" 
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                />
+            </div>
+
+            {/* CONFIRMAR SENHA */}
+            <div className={styles.divInput}>
+              <label className={`
+                  ${styles.filtroLabel}
+                  ${validaDados ? styles.filtroLabelErro : ''}
+                `}>
+
+                <LockKeyIcon size={13} />
+                { !confirmaSenha && validaDados === true ? 'Confirmação de senha é obrigatório *' : 'CONFIRME A SENHA' }
+              </label>
+              <input 
+                className={styles.input} 
+                type="password" 
+                placeholder="••••••••" 
+                value={confirmaSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
+                />
 
             </div>
+
+            
+            {/* NIVEL DE ACESSO */}
+            <div className={styles.divInput}>
+              <label className={`
+                  ${styles.filtroLabel}
+                  ${validaDados ? styles.filtroLabelErro : ''}
+                `}>
+
+                <ShieldIcon size={13} />
+                { !nivelAcesso && validaDados === true ? 'Nível de acesso é obrigatório *' : 'NÍVEL DE ACESSO' }
+              </label>
+              <div className={styles.nivelWrapper}>
+
+                <select 
+                  className={styles.input} 
+                  placeholder="ex: vendas, balcao, delivery…"
+                  value={nivelAcesso}
+                  onChange={(e) => setNivelAcesso(e.target.value)}
+                  
+                  >
+                  <option value="" disabled>Selecione</option>
+                  <option value={'ADMIN'}>admin</option>
+                  <option value={'VENDAS'}>vendas</option>
+                  <option value={'BALCAO'}>balcão</option>
+                  <option value={'DELIVERY'}>delivery</option>
+                  <option value={'EXTERNO'}>externo</option>
+                  <option value={'USUARIO'}>usuário</option>
+                  <option value={'ENTREGADOR'}>entregador</option>
+                </select>
+
+              </div>
+            </div>
+    
           </div>
-
-          {/* CONFIRMAR SENHA */}
-          <div className={styles.divInput}>
-            <label className={`
-                ${styles.filtroLabel}
-                ${validaDados ? styles.filtroLabelErro : ''}
-              `}>
-
-              <LockKeyIcon size={13} />
-              { validaDados === true ? 'Confirmação de senha é obrigatório *' : 'CONFIRME A SENHA' }
-            </label>
-            <input 
-              className={styles.input} 
-              type="password" 
-              placeholder="••••••••" 
-              value={confirmaSenha}
-              onChange={(e) => setConfirmarSenha(e.target.value)}
-              />
-
-          </div>
-
-
-        </div>
-        { validaSenha && 
-          <div className={styles.containerRetornoSenha}>
-            <p className={styles.retornoSenha}> As senhas não coincidem, tente novamente!</p>
-          </div> 
+          {/* RETORNO DE ERRO DE COMPARAÇÃO DE SENHAS */} 
+          { validaSenha && 
+            <div className={styles.containerRetornoSenha}>
+              <p className={styles.retornoSenha}> As senhas não coincidem, tente novamente!</p>
+            </div> 
+          }
+        </>
         }
+
 
         {/* BOTÕES */}
         <div className={styles.acoes}>

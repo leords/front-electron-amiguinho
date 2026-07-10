@@ -17,7 +17,7 @@ import {
 import Select from "react-select";
 import styles from "./styles.module.css";
 import { useProdutos } from "../../hooks/useProdutos";
-import { useFormaPagamento } from "../../hooks/useFormaPagamento";
+
 import { formatarMoeda } from "../../utils/formartarMoeda";
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
@@ -27,13 +27,13 @@ import { EnviarEdicaoPedido } from "../../operadores/API/pedido/editarPedido";
 import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
+import { useFormaPagamentoExterna } from "../../hooks/useFormaPagamentoExterna";
 
 
 export default function EditarPedido() {  
 
 const { state } = useLocation()
 const navegar = useNavigate() 
-
 
   // Hooks
   const { mensagem, setMensagem } = usarToast();
@@ -46,13 +46,13 @@ const navegar = useNavigate()
   const [valorTotal, setValorTotal] = useState();
 
   // Hooks
-  const { listaFormaPagamento } = useFormaPagamento();
+  const { listaFormaPagamento } = useFormaPagamentoExterna();
   const { produtos } = useProdutos(); 
 
   // Mapeando produtos para o <Select />
   const options = produtos.map((p) => ({ value: p.id, label: p.nome }));
 
-  // adiciona o nome referente ao id e key a todos os itens
+  // Adiciona o nome referente ao id e key a todos os itens
   useEffect(() => {
     if (!produtos.length) return;
 
@@ -67,7 +67,7 @@ const navegar = useNavigate()
     );
   }, [produtos]);
 
-  // calcula o valor total do pedido
+  // Calcula o valor total do pedido
   useEffect(() => {
     if (!itens.length) return;
 
@@ -76,23 +76,28 @@ const navegar = useNavigate()
 
   }, [itens]);
 
-
-  // funções p/ lista de produtos
+  // Funções p/ lista de produtos
   const atualizarQuantidade = (key, valor) => {
     setItens((prev) =>
       prev.map((item) => (item._key === key ? { ...item, quantidade: Number(valor) } : item))
     );
     setMensagem('Quantidade alterada')
   };
+
+  // Atualiza o valor total
   const atualizarValor = (key, valor) => {
     setItens((prev) =>
       prev.map((item) => (item._key === key ? { ...item, valorUnit: valor } : item))
     );
   };
+
+  // Remove produto
   const removerItem = (key) => {
     setItens((prev) => prev.filter((item) => item._key !== key));
     setMensagem('Item removido')
   };
+
+  // Adiciona produto
   const adicionarItem = () => { 
     if (!produtoSelecionado) return;
 
@@ -115,8 +120,7 @@ const navegar = useNavigate()
     setNovaQuantidade(1);
   };
 
-  
-  // Enviar edição
+  // Envia a nova edição
 const enviarEdicao = async () => {
     try {
 
@@ -130,12 +134,12 @@ const enviarEdicao = async () => {
         setMensagem('Valor unitário igual ou menor que zero')
       }
 
-      // formatando o array para enviar apenas os dados que precisa para o banco
+      // Formatando o array para enviar apenas os dados que precisa para o banco
       const payload = (itens || []).map(({id, _key, pedidoId, nomeProduto, valorTotal, ...rest}) => rest)
 
       console.log(payload)
 
-      // enviando
+      // Enviando edição de pedido
       const retorno = await EnviarEdicaoPedido(state.tipo, state.uuid, formaPagamento, payload);
 
       setMensagem(retorno.mensagem)
@@ -156,8 +160,9 @@ const enviarEdicao = async () => {
     <Cabecalho />
       <main className={styles.principal}>
 
-        {/* Cabeçalho */}
+        {/* CABEÇALHO */}
         <div className={styles.cabecalhoPage}>
+          {/* TÍTULO */}
           <div className={styles.tituloSection}>
             <div className={styles.iconeWrapper}>
               <PencilSimple size={22} weight="fill" />
@@ -167,15 +172,16 @@ const enviarEdicao = async () => {
               <h1 className={styles.pageTitulo}>Editar Pedido #{state.id}</h1>
             </div>
           </div>
-
+          {/* BOTÃO VOLTAR */}
           <button className={styles.botaoVoltar} onClick={() => {navegar(-1)}}>
             <ArrowLeft size={15} weight="bold" />
             Voltar
           </button>
         </div>
 
-        {/* Informações do pedido */}
+        {/* INFORMAÇÕES DO PEDIDO */}
         <div className={`${styles.card} ${styles.fadeUp}`}>
+          {/* SUBTÍTULO */}
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderTitle}>
               <Receipt size={17} weight="fill" className={styles.cardHeaderIcon} />
@@ -184,6 +190,7 @@ const enviarEdicao = async () => {
             <span className={styles.badge}>{state.tipo.toUpperCase()}</span>
           </div>
 
+          {/* INFORMATIVO */}
           <div className={styles.infoGrid}>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>UUID</span>
@@ -222,7 +229,7 @@ const enviarEdicao = async () => {
           </div>
         </div>
 
-        {/* Selecionar forma de pagamento*/}
+        {/* FORMA DE PAGAMENTO*/}
         <div className={`${styles.card} ${styles.fadeUp}`} style={{ animationDelay: "0.06s" }}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderTitle}>
@@ -251,7 +258,7 @@ const enviarEdicao = async () => {
           </div>
         </div>
 
-        {/* Itens do pedido */}
+        {/* LISTA DE ITENS */}
         <div className={`${styles.card} ${styles.fadeUp}`} style={{ animationDelay: "0.12s" }}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderTitle}>
@@ -261,7 +268,7 @@ const enviarEdicao = async () => {
             <span className={styles.badge}>{itens.length} {itens.length === 1 ? "item" : "itens"}</span>
           </div>
 
-          {/* Tabela de itens */}
+          {/* TABELA DE ITENS */}
           {itens.length > 0 ? (
             <div className={styles.tabelaWrapper}>
               <div className={styles.tituloLista}>
@@ -277,7 +284,7 @@ const enviarEdicao = async () => {
                     <span className={styles.itemIdx}>{idx + 1}</span>
                     <span className={styles.itemNome}>{it.nomeProduto}</span>
 
-                    {/* Quantidade já na lista */}
+                    {/* QUANTIDADE JA NA LISTA */}
                       <input
                         type="number"
                         className={styles.input}
@@ -285,7 +292,7 @@ const enviarEdicao = async () => {
                         onChange={(e) => atualizarQuantidade(it._key, e.target.value)}
                       />
 
-                    {/* Valor unitário */}
+                    {/* VALOR UNITARIO */}
                     <span
                       className={styles.itemSubtotal}
                       value={it.valorUnit}
@@ -293,12 +300,12 @@ const enviarEdicao = async () => {
                       {formatarMoeda(it.valorUnit)}
                     </span>
 
-                    {/* Subtotal */}
+                    {/* SUBTOTAL */}
                     <span className={styles.itemSubtotal}>
                       {formatarMoeda(it.quantidade * it.valorUnit)}
                     </span>
 
-                    { /* Remover item */}
+                    { /* REMOVER ITEM */}
                     <button
                       className={styles.btnRemover}
                       onClick={() => removerItem(it._key)}
@@ -318,7 +325,7 @@ const enviarEdicao = async () => {
             </div>
           )}
 
-          {/* Adicionar novo item */}
+          {/* ADICIONAR NOVO PRODUTO */}
           <div className={styles.adicionarWrapper}>
             <p className={styles.adicionarTitulo}>
               <Plus size={13} weight="bold" />
@@ -327,7 +334,7 @@ const enviarEdicao = async () => {
             {/* GRID ADICIONAR NOVO PRODUTO */}
             <div className={styles.adicionarGrid}>
 
-              {/* Selecionar produto */}
+              {/* SELECIONAR PRODUTO */}
               <div className={styles.filtroGrupo} style={{ gridColumn: "1 / 2" }}>
                 <label className={styles.filtroLabel}>
                   <Package size={12} />
@@ -343,7 +350,8 @@ const enviarEdicao = async () => {
                     noOptionsMessage={() => "Nenhum produto encontrado"}
                   />
               </div>
-              {/* Quantidade */} 
+
+              {/* QUANTIDADE */} 
               <div className={styles.filtroGrupo}>
                 <label className={styles.filtroLabel}>
                   <Hash size={12} />
@@ -358,7 +366,7 @@ const enviarEdicao = async () => {
                   />
               </div>
 
-              {/* Valor Unitário */}
+              {/* VALOR UNITARIO */}
               <div className={styles.filtroGrupo}>
                 <label className={styles.filtroLabel}>
                   <CurrencyDollar size={12} />
@@ -373,7 +381,7 @@ const enviarEdicao = async () => {
                 />
               </div>
 
-              {/* Valor Total */}
+              {/* VALOR TOTAL */}
               <div className={styles.filtroGrupo}>
                 <label className={styles.filtroLabel}>
                   <CurrencyDollar size={12} />
@@ -387,9 +395,10 @@ const enviarEdicao = async () => {
                   readOnly
                 />
               </div>
+
             </div>
 
-            {/* Botão adicionar produto */}
+            {/* BOTÃO ADICIONAR NOVO PRODUTO */}
             <div className={styles.filtroGrupoBotao}>
               <label className={styles.filtroLabel} style={{ visibility: "hidden" }}>.</label>
               <button
@@ -404,20 +413,22 @@ const enviarEdicao = async () => {
           </div>
         </div>
 
-        {/* Rodapé e botões*/}
+        {/* TOTAL E BOTÕES */}
         <div className={styles.rodape}>
+          {/* TOTAL */}
           <div className={styles.totalWrapper}>
             <span className={styles.totalLabel}>Total do Pedido</span>
             <span className={styles.totalValor}>{formatarMoeda(valorTotal)}</span>
           </div>
-          {/* Botões */}
+
+          {/* BOTÕES */}
           <div className={styles.acoesWrapper}>
-            {/* cancelar */}
+            {/* CANCELAR */}
             <button className={styles.botaoCancelar} onClick={() => {navegar(-1)}}>
               <ArrowLeft size={15} weight="bold" />
               Cancelar
             </button>
-            {/* salvar */}
+            {/* SALVAR */}
             <AlertaRadix
                 titulo="Salvar Alteração"
                 descricao="Você realmente deseja salvar a alteração?"

@@ -1,9 +1,10 @@
-import { HouseLineIcon, SignOutIcon } from "@phosphor-icons/react";
+import { CloudCheckIcon, CloudXIcon, HouseLineIcon, SignOutIcon, UserCircleCheckIcon } from "@phosphor-icons/react";
 import styles from "./styles.module.css";
 import { useNavigate } from "react-router-dom";
 import { usarAuth } from "../Context/authContext";
 import { useEffect, useState } from "react";
 import { AlertaRadix } from "../ui/alerta/alerta.jsx";
+
 
 export default function Cabecalho() {
   const navegar = useNavigate();
@@ -12,7 +13,8 @@ export default function Cabecalho() {
   const [diaSemana, setDiaSemana] = useState("");
 
 
-  // gera o nome da semana em extenso
+
+  // Gera o nome da semana em extenso
   useEffect(() => {
     const diaDaSemana = async () => {
       const hojeDiaSeamana = new Date().toLocaleDateString("pt-BR", {
@@ -28,7 +30,7 @@ export default function Cabecalho() {
     diaDaSemana();
   }, []);
 
-  // chama a API do clima
+  // Chama a API do clima
   useEffect(() => {
     const buscarClimaAtual = async () => {
       const clima = await window.API.buscarClima("Canoinhas");
@@ -47,12 +49,12 @@ export default function Cabecalho() {
     return () => clearInterval(intervalo);
   }, []);
 
-  // volta ao menu
+  // Voltar ao menu
   const tratarVoltarMenu = () => {
     navegar("/menu");
   };
 
-  // desloga o usuário.
+  // Deslogar o usuário.
   const tratarSair = async () => {
     console.log("Deslogar");
     try {
@@ -66,13 +68,17 @@ export default function Cabecalho() {
   return (
     <header className={styles.cabecalho}>
       <div className={styles.container}>
-        
-        {/* TÍTULO E USUÁRIO */}
-        <div>
+
+        {/* TÍTULO, USUÁRIO E STATUS DE SERVIDOR */}
+        <div className={styles.containerTitulos}>
           <h1 className={styles.titulo}>Sistema de vendas Amiguinho</h1>
-          <p>Usuário conectado: {usuario?.nome || "Carregando..."}</p>
+          <p> 
+            <UserCircleCheckIcon size={24} color="gray" weight="duotone" alt="Servidor conectado!"/> 
+            Usuário conectado: {usuario?.nome || "Carregando..."} 
+          </p>
+
         </div>
-        
+ 
         {/* BOTÕES */}
         <div className={styles.botoescabecalho}>
           <div className={styles.botoes}>

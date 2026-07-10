@@ -263,13 +263,51 @@
   width: 100%;
 }
 
+/* ── BOTÃO PRINCIPAL ────────────────────────────────────── */
+.botaoPrincipal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255,140,0,0.28);
+  margin-top: 4px;
+  width: 100%;
+}
+
 .botaoPrincipal:hover {
   background: #e07b00;
   transform: translateY(-2px);
   box-shadow: 0 5px 16px rgba(255,140,0,0.38);
 }
 
+.botaoPrincipal:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+
+}
+
 .botaoPrincipal:active { transform: translateY(0); }
+
+
+.spin {
+  animation: spin 1s linear infinite;
+  color: #f8f9fa;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* ── LINK ESQUECI ───────────────────────────────────────── */
 .linkEsqueci {

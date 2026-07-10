@@ -1,12 +1,19 @@
 import styles from "./styles.module.css";
-import { TrashIcon } from "@phosphor-icons/react";
+import { TrashIcon, WarningCircleIcon } from "@phosphor-icons/react";
 
 export default function ItemListaPedido({
   produto,
   onRemover,
   botaoRemover = true,
+
 }) {
-  console.log(produto);
+
+  const precoUnitario = parseFloat(
+    produto.precoUndVenda.replace(",", ".")
+  )
+  const preco = precoUnitario * produto.quantidade
+
+
   return (
     <div className={styles.container}>
       <table className={styles.tabela}>
@@ -15,27 +22,35 @@ export default function ItemListaPedido({
             <td>{produto.quantidade}</td>
             <td>{produto.nome}</td>
             <td>
-              {Number(produto?.precoUndVenda || 0).toLocaleString("pt-BR", {
+              {precoUnitario.toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",
               })}
             </td>
             <td>
-              {Number(
-                produto.precoUndVenda * produto.quantidade
-              ).toLocaleString("pt-BR", {
+              {preco.toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",
               })}
             </td>
             {botaoRemover ? (
               <td>
-                <TrashIcon
-                  onClick={() => {
-                    onRemover(produto.id);
-                  }}
-                  size={20}
-                />
+                {produto?.nome !== 'TAXA ENTREGA'
+                  ?
+                  <TrashIcon
+                    onClick={() => {
+                      onRemover(produto.id);
+                    }}
+                    size={20}
+                  />
+                  : 
+                  <WarningCircleIcon
+                    color="orange"
+                    size={20}
+                    weight="duotone"
+                  />
+                }
+
               </td>
             ) : (
               <td></td>

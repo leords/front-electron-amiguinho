@@ -16,16 +16,28 @@ export default function PedidoHistorico({ pedidos }) {
             <tr
               key={index}
               onClick={() => navegar("/reimprimir", { state: pedido })}
+              className={pedido.status === 'cancelado' ? styles.validaStatus : ''}
             >
               <td>{pedido.id}</td>
-              <td>{pedido.tipo}</td>
+             
               
               <td>{dataHoraFormatada(pedido.data)}</td>
-              <td>{`${pedido.vendedor} - ${pedido.nomeUsuario}`}</td>
+              <td>{pedido.tipo === 'delivery' ? `delivery - ${pedido.vendedor}` : `${pedido.vendedor} - ${pedido.nomeUsuario}`}</td>
               <td>
                 {formatarMoeda(pedido.total)}
               </td>
-              <td>{pedido.formaPagamento.nome}</td>
+              {pedido.tipo === 'balcao' ?
+                <td>
+                  {pedido.pagamentos
+                    .map((p) => p.formaPagamento.nome)
+                    .join(" | ")}
+                </td>
+                :
+                <td>
+                  {pedido.formaPagamento?.nome}
+                </td>
+              }
+
             </tr>
           ))}
         </tbody>

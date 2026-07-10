@@ -24,13 +24,17 @@
   font-size: 14px;
 }
 
+.validaStatus td {
+  color: red;
+}
+
 .tabela td {
   padding: 5px;
   font-size: 14px;
   border-top: 1px solid #f3f3f3;
 }
 .tabela td:nth-child(1) {
-  width: 60px;
+  width: 30px;
 }
 .tabela td:nth-child(2) {
   width: 80px;
@@ -39,17 +43,15 @@
   width: 100px;
 }
 .tabela td:nth-child(4) {
-  width: 100px;
+  width: 60px;
 }
 .tabela td:nth-child(5) {
   width: 100px;
+  font-size: 13px;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
-.tabela td:nth-child(6) {
-  width: 80px;
-}
-.tabela td:nth-child(6) {
-  width: 80px;
-}
+
 
 .tabela tr:nth-child(even) {
   background-color: #ececec;

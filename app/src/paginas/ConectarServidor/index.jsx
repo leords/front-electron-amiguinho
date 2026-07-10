@@ -1,19 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
-import { LockKey, X, ArrowRight, NetworkIcon, CheckFatIcon, DesktopTowerIcon  } from "@phosphor-icons/react";
+import { LockKey, X, ArrowRight, NetworkIcon, CheckFatIcon, DesktopTowerIcon, CheckCircleIcon  } from "@phosphor-icons/react";
 import Spinner from "../../componentes/Spinner";
+import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 
 export default function ConectarServidor({ funcaoParametro }) {
 
-    // variável .env
+    // Variável .env
     const senhaServidor = import.meta.env.VITE_SENHA_CONFIG_SERVIDOR;
 
-    // estados
+    // Estados
     const [senha, setSenha] = useState("");
     const [carregamento, setCarregamento] = useState(false);
     const [acesso, setAcesso] = useState(false);
     const [informativo, setInformativo] = useState("")
     const [balcao, setBalcao] = useState("")
+    const [validaTerminal, setValidaTerminal] = useState("")
+
+
+    // Validar status atual do terminal configurado.
+    useEffect(() => {
+        // Buscando o valor alocado no storaged
+        setValidaTerminal(localStorage.getItem('balcao'))
+    }, [])
+
+    async function limparTerminal() {
+        setValidaTerminal("")
+        localStorage.setItem('balcao', "")
+    }
 
 
     // Validando acesso de ADM
@@ -58,8 +72,7 @@ export default function ConectarServidor({ funcaoParametro }) {
         try {
             setCarregamento(true)
 
-
-            if(!balcao) {
+            if(!balcao && !validaTerminal) {
                 setInformativo('Informe um balcão válido')
                 return
             }
@@ -72,11 +85,12 @@ export default function ConectarServidor({ funcaoParametro }) {
                 await new Promise((resolve) => setTimeout(resolve, restante));
             }
 
-            // só salva se for um dos balcão
-            if(balcao !== 'admin') {
+            // Só salva se for um dos balcão.
+            if(balcao && balcao !== 'admin') {
                 localStorage.setItem('balcao', balcao);
             }
-            
+
+                    
         } catch (error) {
             alert(error.message);
         } finally {
@@ -85,7 +99,6 @@ export default function ConectarServidor({ funcaoParametro }) {
             funcaoParametro();
         }
     }
-
 
 
   return (
@@ -110,7 +123,7 @@ export default function ConectarServidor({ funcaoParametro }) {
             (       
             <>
                 <p className={styles.descricao}>
-                Para configurar o servidor, insira sua senha de administrador.
+                    Para configurar o servidor, insira sua senha de administrador.
                 </p>
                 <div className={styles.campo}>
                 <label className={styles.label}>
@@ -163,21 +176,36 @@ export default function ConectarServidor({ funcaoParametro }) {
             (
             <>
                 <p className={styles.descricao}>
-                Para configurar o balcão destino, escolha entre as opções.
+                    Para configurar o balcão destino, escolha entre as opções.
                 </p>
                 <div className={styles.campo}>
-                <label className={styles.labelBalcao}>
-                    <DesktopTowerIcon size={12} weight="bold" /> Balcão
-                </label>
-                <select
-                    className={styles.input}
-                    onChange={(e) => setBalcao(e.target.value)}
-                >
-                    <option value="">Selecione</option>
-                    <option value="b1">Balcão 01</option>
-                    <option value="b2">Balcão 02</option>
+                
+                {/* VALIDA O CAMPO DE CONFIGURAR TERMINAL. */}
+                {validaTerminal
+                    ?
+                    <div className={styles.terminal}>
+                        <DesktopTowerIcon size={18} weight="duotone" color="orange" />
+                        <label className={styles.modalSub}>
+                            {`Este terminal já está configurado para: ${validaTerminal}`}
+                        </label>
+                    </div>
+                    :
+                    <>
+                        <label className={styles.labelBalcao}>
+                            <DesktopTowerIcon size={12} weight="bold" /> Balcão
+                        </label>
+                        <select
+                            className={styles.input}
+                            onChange={(e) => setBalcao(e.target.value)}
+                        >
+                            <option value="">Selecione</option>
+                            <option value="b1">Balcão 01</option>
+                            <option value="b2">Balcão 02</option>
 
-                </select>
+                        </select>
+                    </>
+                }
+
                 </div>
 
                 {/* LOADING */}
@@ -192,11 +220,34 @@ export default function ConectarServidor({ funcaoParametro }) {
                     :
                     (
                     <div className={styles.botoes}>
-                        {balcao && 
+                        {!validaTerminal ?
+
                             <button className={styles.botaoConectar} onClick={iniciarBalcaoDestino}>
                                 <CheckFatIcon  size={15} weight="bold" />
                                 Selecionar
                             </button>
+                            :
+                            <>
+                            <AlertaRadix
+                                titulo="Limpar terminal"
+                                descricao="Você realmente deseja limpar o terminal de destino?"
+                                tratar={limparTerminal}
+                                confirmarTexto="Sim, limpar!"
+                                cancelarTexto="Cancelar"
+                                trigger={
+                                <button className={styles.botaoLimpar}>
+                                    <CheckCircleIcon size={18} weight="bold" />
+                                    Limpar terminal
+                                </button>
+                                }
+                            />
+                            <button className={styles.botaoSair} onClick={() => funcaoParametro()}>
+                                <CheckFatIcon  size={15} weight="bold" />
+                                Sair
+                            </button>
+                            </>
+
+
                         }
 
                     </div>

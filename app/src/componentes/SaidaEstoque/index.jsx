@@ -82,13 +82,12 @@ export default function SaidaEstoque({setSetor, setDataInicio, setDataFim, dataI
                             <CalendarBlankIcon size={13} weight="bold" />
                             Data final
                         </label>
-                            <input
+                        <input
                             type="date"
                             className={styles.calendario}
                             value={dataFim}
                             onChange={(e) => setDataFim(e.target.value)}
-                            />
-                    
+                        />
                 </div>
     
             </div>

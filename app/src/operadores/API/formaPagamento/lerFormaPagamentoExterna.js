@@ -1,10 +1,9 @@
 import { api } from "../../../utils/conexaoAxios";
 
-export const LerFormaPagamento = async (params = {}) => {
+export const lerFormaPagamentoExterna = async () => {
   const token = localStorage.getItem("token");
   try {
-    const resposta = await api.get("/ler-formas-pagamento", {
-      params,
+    const resposta = await api.get("/ler-formas-pagamento-externa", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

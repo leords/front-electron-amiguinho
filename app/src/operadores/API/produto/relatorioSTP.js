@@ -1,4 +1,4 @@
-import { api } from "../../../utils/conexaoAxios";
+import { api, apiLong } from "../../../utils/conexaoAxios";
 
 // STP = Saída total de produtos.
 
@@ -6,7 +6,7 @@ export const RelatorioSTP = async (setor, params={}) => {
     const token = localStorage.getItem("token")
 
     try {
-        const resposta = await api.get(`/relatorio-stp/${setor}`, {
+        const resposta = await apiLong.get(`/relatorio-stp/${setor}`, {
             params,
             headers: {
                 Authorization: `Bearer ${token}`

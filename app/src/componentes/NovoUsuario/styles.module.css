@@ -102,6 +102,34 @@
 
 .cardHeaderIcon { color: var(--orange); }
 
+.enviandoPedido {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 2px;
+
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  gap: 10px;
+
+}
+
+
+.enviandoPedido p {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin-top: 10opx;
+}
+
+.enviandoPedido span {
+  font-size: 13px;
+  color: var(--gray-300);
+}
+
 /* Grid de inputs */
 .containerInputs {
   display: grid;
@@ -222,9 +250,10 @@
 
 .containerRetornoSenha {
     display: flex;
-    justify-content: start;
+    justify-content: center;
     align-items: center;
     padding: 1px 20px;
+    margin-top: 10px;
 }
 
 .retornoSenha {

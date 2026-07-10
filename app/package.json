@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
     "date-fns": "^4.1.0",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.26.2",
-    "react-select": "^5.10.2",
-    "@radix-ui/react-alert-dialog": "^1.1.15"
+    "react-select": "^5.10.2"
   },
   "overrides": {
     "react": "18.2.0",

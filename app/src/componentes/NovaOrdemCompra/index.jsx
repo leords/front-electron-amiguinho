@@ -30,6 +30,7 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
   const [quantidade, setQuantidade] = useState()
   const [ajustePreco, setAjustePreco] = useState()
 
+
   //Listas
   const [listaFornecedores, setListaFornecedores] = useState([])
 
@@ -39,6 +40,8 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
   // Calculo
   const totalProduto = (preco, qtd, ajuste) => ((preco - ajuste) * qtd);
   const ajuste = Number(( ajustePreco || "0").replace(",", ".")) || 0
+
+  console.log('produto selecionado: ', produtoSelecionado)
 
   // Adicionar item na lista da ordem
   const handleAdicionarProduto = () => {
@@ -284,7 +287,7 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
                 </div>
               ) : (
                 formItens.map((item, index) => (
-                  <ItemListaOrdemCompra key={item.id} item={item} removeItem={handleRemoveProduto} indexItem={index} />
+                  <ItemListaOrdemCompra key={index} item={item} removeItem={handleRemoveProduto} indexItem={index} />
                 ))
               )}
             </div>

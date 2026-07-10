@@ -14,7 +14,7 @@ export default function ListaUsuario({setRender, setObjetoUsuario}) {
     }
 
 
-    // Função que busca clientes
+    // Função que busca usuários
     useEffect(() => {
         const buscarUsuarios = async () => {
             setCarregando(true);
@@ -61,7 +61,7 @@ export default function ListaUsuario({setRender, setObjetoUsuario}) {
                 {carregando ? (
                 <div className={styles.estadoVazio}>
                     <div className={styles.spinner} />
-                    <p>Carregando produtos...</p>
+                    <p>Carregando usuários...</p>
                 </div>
                 ) : usuarios.length === 0 ? (
                 <div className={styles.estadoVazio}>

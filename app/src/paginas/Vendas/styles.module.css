@@ -1,30 +1,38 @@
-/* ============================================================
-   VARIÁVEIS
-   ============================================================ */
+/*
+   VARIÁVEIS (conjunto completo, conforme design system)
+   */
 :root {
-  --orange:       #ff8c00;
-  --orange-light: #fff3e0;
-  --orange-mid:   #ffd699;
-  --green:        #2f9e44;
-  --green-light:  #ebfbee;
-  --red:          #c92a2a;
-  --red-light:    #fff5f5;
-  --red-mid:      #ffc9c9;
-  --gray-900:     #1a1f2e;
-  --gray-700:     #495057;
-  --gray-500:     #868e96;
-  --gray-300:     #dee2e6;
-  --gray-100:     #f8f9fa;
-  --white:        #ffffff;
-  --border:       #eaecef;
-  --shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
-  --shadow-md:    0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06);
-  --radius:       14px;
+  --orange:        #ff8c00;
+  --orange-light:  #fff3e0;
+  --orange-mid:    #ffd699;
+  --green:         #2f9e44;
+  --green-light:   #ebfbee;
+  --green-mid:     #8ce99a;
+  --blue:          #1971c2;
+  --blue-light:    #e7f5ff;
+  --blue-mid:      #a5d8ff;
+  --purple:        #7048e8;
+  --purple-light:  #f3f0ff;
+  --purple-mid:    #b197fc;
+  --red:           #c92a2a;
+  --red-light:     #fff5f5;
+  --red-mid:       #ffc9c9;
+  --indigo:        #3b5bdb;
+  --gray-900:      #1a1f2e;
+  --gray-700:      #495057;
+  --gray-500:      #868e96;
+  --gray-300:      #dee2e6;
+  --gray-100:      #f8f9fa;
+  --white:         #ffffff;
+  --border:        #eaecef;
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
+  --shadow-md:     0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06);
+  --radius:        14px;
 }
 
-/* ============================================================
+/*
    BASE
-   ============================================================ */
+   */
 .container {
   display: flex;
   flex-direction: column;
@@ -44,9 +52,9 @@
   align-items: flex-start;
 }
 
-/* ============================================================
+/*
    COLUNAS
-   ============================================================ */
+   */
 .colunaEsquerda {
   width: 420px;
   flex-shrink: 0;
@@ -63,10 +71,43 @@
   min-width: 0;
 }
 
-/* ============================================================
-   CABEÇALHO
-   ============================================================ */
+.enviandoPedido {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 2px;
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  gap: 10px;
+}
+
+.enviandoPedido p {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin-top: 10px;
+}
+
+.enviandoPedido span {
+  font-size: 13px;
+  color: var(--gray-300);
+}
+
+/*
+   CABEÇALHO (padrão obrigatório do design system)
+   */
 .cabecalhoPage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tituloSection {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -102,9 +143,24 @@
   letter-spacing: -0.5px;
 }
 
-/* ============================================================
+.balcaoSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.labelForm {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/*
    CARDS
-   ============================================================ */
+   */
 .cardAdicionar,
 .cardCupom,
 .cardResumo {
@@ -119,7 +175,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   padding-bottom: 14px;
   border-bottom: 1.5px solid #f1f3f5;
 }
@@ -127,7 +183,7 @@
 .cardHeaderTitle {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
 }
 
 .cardHeaderTitle h2 {
@@ -143,15 +199,15 @@
   background: var(--orange-light);
   color: var(--orange);
   border: 1px solid var(--orange-mid);
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
 }
 
-/* ============================================================
+/*
    FORMULÁRIO
-   ============================================================ */
+   */
 .formulario {
   display: flex;
   flex-direction: column;
@@ -162,6 +218,12 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.notificacaoNomeMaquina {
+  font-size: 12px;
+  text-align: center;
+  color: var(--red);
 }
 
 .label {
@@ -176,7 +238,7 @@
 }
 
 .input {
-  padding: 10px 12px;
+  padding: 9px 12px;
   border: 1.5px solid var(--gray-300);
   border-radius: 8px;
   font-size: 14px;
@@ -209,7 +271,7 @@
   font-size: 15px !important;
   color: var(--green) !important;
   background: var(--green-light) !important;
-  border-color: #8ce99a !important;
+  border-color: var(--green-mid) !important;
 }
 
 .linha {
@@ -274,15 +336,15 @@
 .spinnerIcon { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ============================================================
-   BOTÃO ADICIONAR
-   ============================================================ */
+/*
+   BOTÃO ADICIONAR (botaoPrincipal laranja)
+   */
 .botaoAdicionar {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px;
+  padding: 12px 20px;
   background: var(--orange);
   color: var(--white);
   border: none;
@@ -307,13 +369,13 @@
   box-shadow: none;
 }
 
-/* ============================================================
+/*
    CUPOM — LISTA
-   ============================================================ */
+   */
 .lista {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 2px;
   max-height: 340px;
   overflow-y: auto;
   padding-right: 4px;
@@ -347,9 +409,9 @@
   color: var(--gray-300);
 }
 
-/* ============================================================
+/*
    RESUMO
-   ============================================================ */
+   */
 .checkboxRow {
   display: flex;
   align-items: center;
@@ -420,7 +482,7 @@
 
 .select {
   width: 100%;
-  padding: 10px 12px;
+  padding: 9px 12px;
   border: 1.5px solid var(--gray-300);
   border-radius: 8px;
   font-size: 14px;
@@ -439,9 +501,9 @@
   box-shadow: 0 0 0 3px rgba(255,140,0,0.12);
 }
 
-/* ============================================================
-   BOTÕES DE AÇÃO
-   ============================================================ */
+/*
+   BOTÕES DE AÇÃO (botaoPrincipal / botaoCancelar do design system)
+   */
 .botoesAcao {
   display: flex;
   gap: 10px;
@@ -455,7 +517,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 13px;
+  padding: 12px 20px;
   border: none;
   border-radius: 9px;
   font-size: 14px;
@@ -497,9 +559,41 @@
   box-shadow: none;
 }
 
-/* ============================================================
+.botaoSalvarNovaFormaPagamento {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 10px;
+  width: 100%;
+  background: var(--green);
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(47,158,68,0.25);
+}
+
+.botaoSalvarNovaFormaPagamento:hover:not(:disabled) {
+  background: #258837;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(47,158,68,0.35);
+}
+
+.botaoSalvarNovaFormaPagamento:disabled {
+  background: var(--gray-300);
+  color: var(--gray-500);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/*
    MASCOTE
-   ============================================================ */
+   */
 .mascote {
   display: flex;
   justify-content: center;
@@ -513,9 +607,107 @@
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
 }
 
-/* ============================================================
+.inputTroco {
+  padding: 9px 12px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--white);
+  color: var(--gray-700);
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inputTroco:hover { border-color: #adb5bd; }
+
+.inputTroco:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255,140,0,0.12);
+}
+
+.labelTroco {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 10px;
+}
+
+.entradaTrocoWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
+  padding: 15px 16px;
+  margin-bottom: 20px;
+}
+
+.filtroGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.trocoResult {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--green-light);
+  border: 1.5px solid var(--green-mid);
+  border-radius: 10px;
+}
+
+.trocoResult.negativo {
+  background: var(--red-light);
+  border-color: var(--red-mid);
+}
+
+.trocoLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.trocoValor {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: -0.3px;
+}
+
+.trocoValorNegativo {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--red);
+  letter-spacing: -0.3px;
+}
+
+.campoMultiFormas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  padding: 4px;
+}
+
+.totalSoma {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/*
    RESPONSIVO
-   ============================================================ */
+   */
 @media (max-width: 1100px) {
   .main { flex-direction: column; align-items: stretch; }
   .colunaEsquerda { width: 100%; }
@@ -524,6 +716,9 @@
 @media (max-width: 768px) {
   .main { padding: 20px 16px 40px; }
   .linha { flex-direction: column; }
+  .campoMultiFormas { grid-template-columns: 1fr; }
   .botoesAcao { flex-direction: column; }
   .pageTitulo { font-size: 20px; }
+  .cabecalhoPage { justify-content: flex-start; }
+  .balcaoSelector { width: 100%; }
 }

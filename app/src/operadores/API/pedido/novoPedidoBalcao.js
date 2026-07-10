@@ -1,10 +1,10 @@
-import { api } from "../../../utils/conexaoAxios";
+import { apiLong } from "../../../utils/conexaoAxios";
 
 export const NovoPedidoBalcao = async (setor, dados) => {
   const token = localStorage.getItem("token");
   try {
     //balcao, externo, delivery
-    const resposta = await api.post(
+    const resposta = await apiLong.post(
       `/novo-pedido/${setor}`,
       { setor, dados },
       {

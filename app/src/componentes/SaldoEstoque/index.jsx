@@ -31,7 +31,6 @@ export default function Estoque({ setView }) {
 
     const pdf = await window.PDF.gerarPDFEstoque(estoqueMaiorZero);
 
-    console.log(pdf)
 
     if(pdf.sucesso === false) {
       setMensagem(pdf.mensagem)
@@ -54,21 +53,16 @@ export default function Estoque({ setView }) {
     }
   }, []);
 
-  // ouvindo função.
+  // Ouvindo função.
   useEffect(() => {
     carregarEstoque();
   }, [carregarEstoque, atualizarLista]);
 
+  // Filtro
   const itensFiltrados = itens.filter((i) =>
     i.nome.toLowerCase().includes(busca.toLowerCase())
   );
 
-  function nivelEstoque(qtd) {
-    if (qtd <= 20) return "critico";
-    if (qtd <= 80) return "baixo";
-    if (qtd <= 200) return "medio";
-    return "alto";
-  }
 
   return (
     <div className={styles.container}>
@@ -137,8 +131,8 @@ export default function Estoque({ setView }) {
               <div className={styles.tituloLista}>
                 <span>#</span>
                 <span>Produto</span>
-                <span>Qtd</span>
-                <span>Status</span>
+                <span>Caixa</span>
+                <span>UND</span>
               </div>
 
             {/* LISTA */}
@@ -158,20 +152,15 @@ export default function Estoque({ setView }) {
                 // LISTA
                 <div className={styles.lista}>
                   {itensFiltrados.map((item) => {
-                    const nivel = nivelEstoque(item.estoque);
+                    const caixasFechadas = Math.floor(item.estoque);
+                    const unidades = Math.round((item.estoque % 1) * item.quantidade)
+
                     return (
                       <div key={item.id} className={styles.itemRow}>
                         <span className={styles.itemId}>#{item.id}</span>
                         <span className={styles.itemNome}>{item.nome}</span>
-                        <span className={styles.itemEstoque}>{item.estoque}</span>
-                        <span>
-                          <span className={`${styles.statusBadge} ${styles[`status_${nivel}`]}`}>
-                            {nivel === "critico" && "⚠ Crítico"}
-                            {nivel === "baixo" && "↓ Baixo"}
-                            {nivel === "medio" && "● Normal"}
-                            {nivel === "alto" && "✓ Bom"}
-                          </span>
-                        </span>
+                        <span className={styles.itemCaixa}>{caixasFechadas}</span>
+                        <span className={styles.itemUnd}>{unidades}</span>
                       </div>
                     );
                   })}
@@ -184,9 +173,6 @@ export default function Estoque({ setView }) {
         {/* AJUSTE */}
         <div className={styles.colunaAjuste}>
           <AjustarProdutoEstoque setAtualizarLista={setAtualizarLista} />
-          <div>
-              <SaidaEstoque />
-          </div>
         </div>
 
 

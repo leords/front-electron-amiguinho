@@ -211,6 +211,54 @@
   box-shadow: 0 5px 16px rgba(48, 131, 0, 0.38);
 }
 
+.botaoLimpar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 16px;
+  background: #e00b0b;
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.28);
+}
+
+.botaoLimpar:hover {
+  background: #d40101;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(168, 11, 11, 0.38);
+}
+
+.botaoSair {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 16px;
+  background: #018301;
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.28);
+}
+
+.botaoSair:hover {
+  background: #138f13;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(10, 87, 27, 0.38);
+}
+
 .retorno {
     font-size: 13px;
     color: #e23535;
@@ -233,4 +281,26 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
+}
+
+.containerCheckBox {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 5px;
+  margin-top: 8px;
+
+  border-top: 1px dashed #dfdfdf;
+}
+
+.checkbox {
+  width: 20px;
+  color: #e07b00;
+}
+
+.terminal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }

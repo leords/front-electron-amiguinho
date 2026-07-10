@@ -1,6 +1,4 @@
-/* ============================================================
-   VARIÁVEIS GLOBAIS
-   ============================================================ */
+/* VARIÁVEIS GLOBAIS */
 :root {
   --orange:        #ff8c00;
   --orange-light:  #fff3e0;
@@ -23,9 +21,7 @@
   --radius:        14px;
 }
 
-/* ============================================================
-   BASE
-   ============================================================ */
+/* BASE */
 .container {
   display: flex;
   flex-direction: column;
@@ -45,9 +41,7 @@
   gap: 24px;
 }
 
-/* ============================================================
-   CABEÇALHO
-   ============================================================ */
+/* CABEÇALHO */
 .pageHeader {
   display: flex;
   align-items: center;
@@ -133,9 +127,7 @@
   flex-shrink: 0;
 }
 
-/* ============================================================
-   LAYOUT DUAS COLUNAS
-   ============================================================ */
+/* LAYOUT DUAS COLUNAS */
 .layout {
   display: grid;
   grid-template-columns: 480px 1fr;
@@ -143,9 +135,7 @@
   align-items: start;
 }
 
-/* ============================================================
-   CARD GENÉRICO
-   ============================================================ */
+/* CARD GENÉRICO */
 .card {
   background: var(--white);
   border-radius: var(--radius);
@@ -185,9 +175,7 @@
   color: var(--orange);
 }
 
-/* ============================================================
-   CONTADOR DE NOTAS
-   ============================================================ */
+/* CONTADOR DE NOTAS */
 .colunaContador {
   position: sticky;
   top: 20px;
@@ -284,7 +272,7 @@
   letter-spacing: -0.5px;
 }
 
-/* ── Conferência ── */
+/* Conferência */
 .conferencia {
   margin-top: 14px;
   padding: 14px 16px;
@@ -352,9 +340,36 @@
   opacity: 0.75;
 }
 
-/* ============================================================
-   COLUNA DIREITA
-   ============================================================ */
+/* COLUNA DIREITA */
+
+.enviandoPedido {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 2px;
+
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  gap: 10px;
+
+}
+
+
+.enviandoPedido p {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin-top: 10opx;
+}
+
+.enviandoPedido span {
+  font-size: 13px;
+  color: var(--gray-300);
+}
+
 .colunaResumo {
   display: flex;
   flex-direction: column;
@@ -379,7 +394,7 @@
   gap: 12px;
 }
 
-/* ── Mascote ── */
+/* Mascote */
 .mascoteCard {
   background: var(--white);
   border-radius: var(--radius);
@@ -407,9 +422,7 @@
   margin: 0;
 }
 
-/* ============================================================
-   RESPONSIVIDADE
-   ============================================================ */
+/* RESPONSIVIDADE */
 @media (max-width: 1100px) {
   .layout {
     grid-template-columns: 1fr;

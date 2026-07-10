@@ -135,8 +135,7 @@
 .mascote {
   width: 180px;
   height: auto;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.1));
-  animation: float 3s ease-in-out infinite;
+  margin-right: 40px;
   z-index: 1;
   flex-shrink: 0;
 }

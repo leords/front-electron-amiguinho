@@ -88,12 +88,32 @@
   letter-spacing: -0.5px;
 }
 
+
 /* ── Filtro ── */
+
+.balcaoSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}  
+.subtituloBalcaoSelector {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--gray-500);
+}
+
 .filtroBloco {
   display: flex;
   flex-direction: column;
   gap: 6px;
   align-items: flex-end;
+}
+
+.containerSelector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .filtroLabel {
@@ -320,7 +340,7 @@
 
 .tituloLista {
   display: grid;
-  grid-template-columns: 80px 160px 180px 120px 130px;
+  grid-template-columns: 50px 130px 140px 140px 130px;
   gap: 4px;
   padding: 9px 12px;
   background: var(--gray-100);

@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: flex-start; 
   padding: 10px 40px 1px 40px;
   background-color: rgb(255, 255, 255);
   border-bottom: 2px solid #f0f0f0;
@@ -19,8 +19,18 @@
 
 .cabecalho p {
   font-weight: 400;
-  margin-top: 10px;
+  margin-top: 5px;
   color: #666;
+
+  display: flex;
+  gap: 4px;
+}
+
+.containerTitulos {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  padding: 5px;
 }
 
 .titulo {
@@ -29,6 +39,7 @@
   color: #3a3a3a;
   margin: 0;
 }
+
 
 .botoescabecalho {
   display: flex;
@@ -78,3 +89,4 @@
   font-size: 22px;
   padding-right: 6px;
 }
+

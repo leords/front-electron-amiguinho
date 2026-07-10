@@ -21,7 +21,7 @@ export function gerarCupom(dados) {
   // Gerar HTML dos itens
   let itensHTML = "";
   dados.itens.forEach((item) => {
-    const valorTotal = item.quantidade * item.valorUnit;
+    const valorTotal = item.quantidade * item.valorUnit; 
 
     itensHTML += `
       <div class="item">
@@ -29,6 +29,19 @@ export function gerarCupom(dados) {
         <p>${item.nome}</p>
         <p>${formatarMoeda(Number(item.valorUnit))}</p>
         <p>${formatarMoeda(valorTotal)}</p>
+      </div>
+    `;
+  });
+
+    // Gerar HTML dos pagamentos
+  let pagamentosHTML = "";
+  dados.pagamentos.forEach((item) => {
+    
+    pagamentosHTML += `
+      <div class="item-pay">
+        <p>${item.idFormaPagamentoParcial}</p>
+        <p>${item.nomeFormaPagamentoParcial}</p>
+        <p>${formatarMoeda(Number(item.valorParcialFormaPagamento))}</p>
       </div>
     `;
   });
@@ -41,253 +54,285 @@ export function gerarCupom(dados) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nota Promissória</title>
   
-  <style>
-    * {
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    background: #f5f5f5;
+    font-size: 11px;
+    color: #000;
+    padding: 2mm;
+  }
+
+  #container {
+    width: 72mm;
+    margin: 0 auto;
+    background: white;
+    padding: 2mm;
+  }
+
+  .header-line {
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: bold;
+    color: #000;
+  }
+
+  .header-line.bold {
+    font-size: 12px;
+  }
+
+  .divider {
+    border-bottom: 1px dashed #000;
+    margin: 2mm 0;
+  }
+
+  .headerTitle {
+    font-size: 15px;
+    text-align: center;
+    font-weight: bold;
+    margin: 3mm 0 2mm 0;
+    letter-spacing: 1px;
+  }
+
+  .motivo {
+    font-size: 11px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 3mm;
+  }
+
+  #title {
+    text-align: justify;
+    font-size: 12px;
+    line-height: 1.3;
+    margin-bottom: 3mm;
+  }
+
+  #headerDivItens {
+    display: grid;
+    grid-template-columns: 12% 43% 20% 25%;
+    font-size: 11px;
+    font-weight: bold;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding: 1mm 0;
+    margin-bottom: 1mm;
+    width: 100%;
+  }
+
+  #headerDivItens p:nth-child(1) {
+    text-align: left;
+  }
+
+  #headerDivItens p:nth-child(2) {
+    text-align: left;
+    padding-left: 1mm;
+  }
+
+  #headerDivItens p:nth-child(3) {
+    text-align: right;
+    padding-right: 1mm;
+  }
+
+  #headerDivItens p:nth-child(4) {
+    text-align: right;
+  }
+
+  #divItens {
+    width: 100%;
+  }
+
+  .item {
+    display: grid;
+    grid-template-columns: 12% 43% 20% 25%;
+    font-size: 11px;
+    line-height: 1.3;
+    padding: 1mm 0;
+    border-bottom: 1px dotted #999;
+    width: 100%;
+    page-break-inside: avoid;
+  }
+
+  .item p:nth-child(1) {
+    text-align: left;
+    font-weight: bold;
+  }
+
+  .item p:nth-child(2) {
+    text-align: left;
+    padding-left: 1mm;
+    word-break: break-word;
+    font-weight: bold;
+  }
+
+  .item p:nth-child(3) {
+    text-align: right;
+    padding-right: 1mm;
+    font-weight: bold;
+  }
+
+  .item p:nth-child(4) {
+    text-align: right;
+    font-weight: bold;
+  }
+
+  .totals-section {
+    margin-top: 3mm;
+    padding-top: 2mm;
+    border-top: 1px solid #000;
+  }
+
+  .total-line.final {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  #infoPay {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3mm;
+    padding: 2mm 0;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    font-size: 11px;
+    font-weight: bold;
+    gap: 3mm;
+  }
+
+  #infoPay p:last-child {
+    text-align: right;
+  }
+
+  #inforFormPay {
+    margin-top: 3mm;
+    padding: 2mm 0;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    font-size: 11px;
+    font-weight: bold;
+  }
+
+  #inforFormPay .headerPagamentos {
+    display: grid;
+    grid-template-columns: 20% 45% 35%;
+    font-size: 11px;
+    font-weight: bold;
+    border-bottom: 1px solid #000;
+    padding-bottom: 1mm;
+    margin-bottom: 1mm;
+  }
+
+  #inforFormPay .headerPagamentos p:nth-child(1) {
+    text-align: left;
+  }
+
+  #inforFormPay .headerPagamentos p:nth-child(2) {
+    text-align: left;
+    padding-left: 1mm;
+  }
+
+  #inforFormPay .headerPagamentos p:nth-child(3) {
+    text-align: right;
+  }
+
+  #inforFormPay .item-pay {
+    display: grid;
+    grid-template-columns: 20% 45% 35%;
+    font-size: 11px;
+    line-height: 1.3;
+    padding: 0.5mm 0;
+    page-break-inside: avoid;
+  }
+
+  #inforFormPay .item-pay p:nth-child(1) {
+    text-align: left;
+  }
+
+  #inforFormPay .item-pay p:nth-child(2) {
+    text-align: left;
+    padding-left: 1mm;
+    word-break: break-word;
+  }
+
+  #inforFormPay .item-pay p:nth-child(3) {
+    text-align: right;
+  }
+
+  #footer {
+    margin-top: 4mm;
+    text-align: center;
+  }
+
+  #div-logo img {
+    max-width: 45mm;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: grayscale(100%);
+  }
+
+  #button {
+    margin-top: 5mm;
+  }
+
+  #button button {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    background: #000;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+  }
+
+  @media print {
+
+    @page {
+      size: 80mm auto;
+      margin: 0;
+    }
+
+    html,
+    body {
+      width: 80mm;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
+      background: white;
     }
 
     body {
-      font-family: 'Courier New', Courier, monospace;
-      background: #f5f5f5;
-      padding: 10px;
-      font-size: 14px;
-      color: #000;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
 
     #container {
-      width: 300px;
+      width: 72mm;
       margin: 0 auto;
-      background: white;
-      border: 2px solid #000;
-    }
-
-    .header-line {
-      text-align: center;
-      font-size: 12px;
-      line-height: 1.4;
-      margin-bottom: 3px;
-      font-weight: bold;
-      color: #000;
-    }
-
-    .header-line.bold {
-      font-weight: bold;
-      font-size: 13px;
-    }
-
-    .divider {
-      border-bottom: 2px solid #000;
-      margin: 10px 0;
-    }
-
-    .headerTitle {
-      font-size: 16px;
-      text-align: center;
-      font-weight: bold;
-      padding: 10px 0;
-      letter-spacing: 2px;
-      margin: 10px 0;
-      color: #000;
-    }
-
-    .motivo {
-      font-size: 14px;
-      text-align: center;
-      font-weight: bold;
-      padding: 10px 0;
-      letter-spacing: 2px;
-      margin: 10px 0;
-      color: #000;
-    }
-
-    #title {
-      text-align: justify;
-      font-size: 12px;
-      line-height: 1.1;
-      margin-bottom: 12px;
-      color: #000;
-      font-weight: 500;
-    }
-
-    .section-title {
-      font-size: 13px;
-      font-weight: bold;
-      margin: 12px 0 6px 0;
-      text-align: center;
-      color: #000;
-    }
-
-    #headerDivItens { 
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      font-size: 12px;
-      font-weight: bold;
-      border-bottom: 2px solid #000;
-      border-top: 2px solid #000;
-      margin-bottom: 6px;
-      color: #000;
-    }
-
-    #headerDivItens p:nth-child(1) { width: 20%; text-align: start; }
-    #headerDivItens p:nth-child(2) { width: 60%; text-align: left; padding-left: 10px }
-    #headerDivItens p:nth-child(3) { width: 15%; text-align: left; padding-right: 10px}
-    #headerDivItens p:nth-child(4) { width: 15%; text-align: right; }
-
-    #divItens {
-      background: white;
-      min-height: 150px;
-    }
-
-    .item {
-      display: flex;
-      justify-content: center;
-      font-size: 12px;
-      line-height: 1.4;
-      color: #000;
-      background-color: #d2d2d2;
-      margin-bottom: 2px;
-    }
-
-    .item p:nth-child(1) {
-      width: 8%;
-      text-align: start;
-      font-weight: bold;
-      color: #000;
-    }
-
-    .item p:nth-child(2) {
-      width: 42%;
-      text-align: left;
-      font-weight: bold;
-      font-size: 11px;
-      color: #000;
-    }
-
-    .item p:nth-child(3) {
-      width: 23%;
-      text-align: left;
-      font-size: 10px;
-      font-weight: bold;
-      color: #000;
-    }
-    
-    .item p:nth-child(4) {
-      width: 27%;
-      text-align: right;
-      font-size: 11px;
-      font-weight: bold;
-      color: #000;
-    }
-
-    .totals-section {
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 2px solid #000;
-      font-size: 12px;
-      color: #000;
-    }
-
-    .total-line {
-      display: flex;
-      justify-content: space-between;
-      padding: 3px 0;
-      font-weight: bold;
-      color: #000;
-    }
-
-    .total-line.final {
-      font-weight: bold;
-      font-size: 14px;
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 2px solid #000;
-      color: #000;
-    }
-
-    #infoPay {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      margin-top: 10px;
-      font-size: 13px;
-      font-weight: bold;
-      border-top: 2px solid #000;
-      border-bottom: 2px solid #000;
-      color: #000;
-    }
-
-    #infoPay p:first-child {
-      font-weight: bold;
-      color: #000;
-    }
-
-    #infoPay p:last-child {
-      font-weight: bold;
-      font-size: 14px;
-      color: #000;
-    }
-
-    #footer {
-      margin-top: 15px;
-      padding-top: 12px;
-      text-align: center;
-      border-top: 2px solid #000;
-    }
-
-    #div-logo img {
-      max-width: 180px;
-      height: auto;
-      display: block;
-      margin: 0 auto 8px auto;
-      filter: grayscale(100%) contrast(1.2);
+      padding: 2mm;
+      border: none;
     }
 
     #button {
-      margin-top: 15px;
+      display: none;
     }
 
-    #button button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      background: #000;
-      border: 2px solid #000;
-      color: white;
-      cursor: pointer;
-      font-family: 'Courier New', monospace;
+    .item,
+    .item-pay {
+      page-break-inside: avoid;
     }
-
-    #button button:hover {
-      background: #333;
-    }
-
-    @media print {
-      body {
-        background: white;
-        padding: 0;
-        margin: 0;
-      }
-
-      #container {
-        width: 280px;
-        margin: 0;
-        padding: 10px;
-        border: none;
-      }
-
-      #button {
-        display: none;
-      }
-
-      .item {
-        page-break-inside: avoid;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 
 <body>
@@ -326,8 +371,6 @@ export function gerarCupom(dados) {
     </p>`
     }
 
-
-
     <div class="divider"></div>
 
     <div id="headerDivItens">
@@ -350,10 +393,16 @@ export function gerarCupom(dados) {
       </div>
     </div>
 
-    <div id="infoPay">
-      <p>Forma de pagamento</p>
-      <p>${dados.formaPagamento}</p>
+    <div id="inforFormPay">
+      <div class="headerPagamentos">
+        <p>Cód</p>
+        <p>Forma de pagamento</p>
+        <p>Valor</p>
+      </div>
+      ${pagamentosHTML}
     </div>
+
+    <div class="divider"></div>
 
     <div id="footer">
       <div id="div-logo">
@@ -370,15 +419,3 @@ export function gerarCupom(dados) {
 </html>
   `;
 }
-
-// Exemplo de uso:
-// const pedido = {
-//   "cliente": "CICLANO",
-//   "formaPagamentoId": 3,
-//   "vendedor": "KETLIN",
-//   "itens": [
-//     { "produtoId": 2, "quantidade": 3, "valorUnit": 6.0 },
-//     { "produtoId": 9, "quantidade": 1, "valorUnit": 12.0 }
-//   ]
-// };
-// const htmlCupom = gerarCupom(pedido);

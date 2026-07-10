@@ -13,21 +13,19 @@ import {
   IdentificationCardIcon,
   UserIcon,
 } from "@phosphor-icons/react";
-import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
-import { useFormaPagamento } from "../../hooks/useFormaPagamento";
 import { formatarMoeda } from "../../utils/formartarMoeda";
 import { usarToast } from "../../componentes/Context/toastContext";
+import { buscarValeInterno } from "../../operadores/API/pedido/buscarValeInterno";
+import { useFormaPagamentoBalcao } from "../../hooks/useFormaPagamentoBalcao";
 
 export default function HistoricoValesInterno() {
 
-  // variável .env
-    const nomeMaquina = import.meta.env.VITE_NOME_MAQUINA;
 
-  // hook
-  const { listaFormaPagamento } = useFormaPagamento();
+  // Hook
+  const { listaFormaPagamento } = useFormaPagamentoBalcao();
   const { setMensagem } = usarToast();
 
-  // estados
+  // Estados
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
@@ -37,36 +35,37 @@ export default function HistoricoValesInterno() {
   const [formaPagamento, setFormaPagamento] = useState("");
   
   // Lista à ser ignoradas
-  const ignorarItensLista = ["A VISTA", "PIX", "CARTÃO", "CHEQUE"];
+  const ignorarItensLista = ["A VISTA", "PIX", "CARTÃO", "CHEQUE", "ORÇAMENTO", "BOLETO"];
 
   // Filtrando formas de pagamento, ignorando a lista ácima
   const listaFormasPagamentoFiltrada = listaFormaPagamento?.filter(
     (forma) => !ignorarItensLista.includes(forma.nome)
   );
 
-  // Detando datas de inicio e fim com a data atual
+  // Setando datas de inicio e fim com a data atual
   useEffect(() => {
     const hoje = dataFormatadaCalendario();
     setDataInicio(hoje);
     setDataFim(hoje);
   }, []);
 
-  // Buscando pedidos
+  // Buscando vales internos
   useEffect(() => {
     if (!dataInicio || !dataFim) return;
+
     const filtrarPedidos = async () => {
       setCarregando(true);
       try {
-        if (formaPagamento) {
-          const resultado = await buscarPedido({
+          const resultado = await buscarValeInterno({
             setor: "balcao",
-            vendedor: nomeMaquina,
             dataInicio,
             dataFim,
-            formaPagamentoId: formaPagamento,
+            formaPagamento: formaPagamento 
           });
+
           setPedidosFiltrados(resultado);
-        }
+          
+
       } catch (error) {
         setMensagem(error.message)
         console.error(error.message);
@@ -77,7 +76,7 @@ export default function HistoricoValesInterno() {
     filtrarPedidos();
   }, [dataInicio, dataFim, formaPagamento]);
 
-  // Realizando a soma do retorno dos pedidos buscados
+  // Realizando a soma total do retorno dos pedidos buscados
   useEffect(() => {
     const total = pedidosFiltrados.reduce(
       (acc, pedido) =>
@@ -87,13 +86,14 @@ export default function HistoricoValesInterno() {
     setTotalVendas(total);
   }, [pedidosFiltrados]);
 
+
   return (
     <div className={styles.container}>
       <Cabecalho />
 
       <main className={styles.principal}>
 
-        {/* Cabeçalho */}
+        {/* CABEÇALHO */}
         <div className={styles.cabecalhoPage}>
           <div className={styles.tituloSection}>
             <div className={styles.iconeWrapper}>
@@ -106,7 +106,7 @@ export default function HistoricoValesInterno() {
           </div>
         </div>
 
-        {/* Painel de filtros */}
+        {/* PAINEL DE FILTROS */}
         <div className={styles.painelFiltros}>
           <div className={styles.filtrosHeader}>
             <UserIcon size={14} weight="bold" className={styles.filtroIcone} />
@@ -115,30 +115,27 @@ export default function HistoricoValesInterno() {
 
           <div className={styles.filtrosGrid}>
 
-            {/* Colaborador */}
+            {/* COLABORADOR */}
             <div className={styles.filtroGrupo}>
               <label className={styles.filtroLabel}>Colaborador</label>
               <select
                 value={formaPagamento}
                 onChange={(e) => {
-                  const id = e.target.value;
-                  setFormaPagamento(id);
-                  setNomeFormaPagamento(
-                    listaFormasPagamentoFiltrada.find((f) => f.id === Number(id))?.nome || ""
-                  );
+                  setFormaPagamento(e.target.value);
+                  setNomeFormaPagamento(e.target.value);
                 }}
                 className={styles.selectInput}
               >
-                <option value="">Selecione o colaborador</option>
+                <option value="">GERAL</option>
                 {listaFormasPagamentoFiltrada?.map((forma) => (
-                  <option key={forma.id} value={forma.id}>
+                  <option key={forma.id} value={forma.nome}>
                     {forma.nome}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Data inicial */}
+            {/* DATA INICIAL */}
             <div className={styles.filtroGrupo}>
               <label className={styles.filtroLabel}>
                 <CalendarBlankIcon size={13} weight="bold" />
@@ -152,7 +149,7 @@ export default function HistoricoValesInterno() {
               />
             </div>
 
-            {/* Data final */}
+            {/* DATA FINAL */}
             <div className={styles.filtroGrupo}>
               <label className={styles.filtroLabel}>
                 <CalendarBlankIcon size={13} weight="bold" />
@@ -177,7 +174,7 @@ export default function HistoricoValesInterno() {
           </div>
         </div>
 
-        {/* Cards de resumo */}
+        {/* CARDS DE RESUMO */}
         <div className={styles.resumoCards}>
           <div className={styles.card}>
             <div className={styles.cardIcone} data-color="orange">
@@ -204,7 +201,7 @@ export default function HistoricoValesInterno() {
           </div>
         </div>
 
-        {/* Conteúdo principal */}
+        {/* CONTEUDO PRINCIPAL */}
         <div className={styles.main}>
 
           <section className={styles.containerLista}>
@@ -243,12 +240,6 @@ export default function HistoricoValesInterno() {
                   <div className={styles.estadoVazio}>
                     <div className={styles.spinner} />
                     <p>Buscando pedidos...</p>
-                  </div>
-                ) : !formaPagamento ? (
-                  <div className={styles.estadoVazio}>
-                    <UserIcon size={44} weight="duotone" className={styles.iconeVazio} />
-                    <p>Selecione um colaborador</p>
-                    <span>Escolha o colaborador para visualizar os vales</span>
                   </div>
                 ) : pedidosFiltrados.length === 0 ? (
                   <div className={styles.estadoVazio}>

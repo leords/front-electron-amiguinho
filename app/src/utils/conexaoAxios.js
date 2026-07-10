@@ -3,12 +3,8 @@ import axios from "axios";
 function getBaseURL() {
   const servidor = import.meta.env.VITE_API_URL
 
-  console.log('Domínio configurado: ', servidor)
-
-  return servidor || "https://node-prisma-amiguinho.onrender.com"
+  return servidor || "https://www.amigaodistribuidora.com.br"
 }
-
-console.log('BASEURL: ', getBaseURL)
 
 export const api = axios.create({
   baseURL: getBaseURL(),
