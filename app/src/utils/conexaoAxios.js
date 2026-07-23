@@ -25,7 +25,7 @@ api.interceptors.response.use((response) => response, (error) => {
 
       localStorage.removeItem('token')
 
-      window.location.href = '/login'
+      window.location.href = '/'
     }
 
     return Promise.reject(error)
@@ -38,7 +38,7 @@ apiLong.interceptors.response.use((response) => response, (error) => {
 
       localStorage.removeItem('token')
 
-      window.location.href = '/login'
+      window.location.href = '/'
     }
 
     return Promise.reject(error)

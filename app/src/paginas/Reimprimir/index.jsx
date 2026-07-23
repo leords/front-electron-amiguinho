@@ -25,6 +25,7 @@ import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { useState } from "react";
 import { gerarCupomDelivery } from "../../utils/gerarCupomDelivery";
+import { dataFormatada } from "../../utils/data";
 
 export default function Reimprimir() {
   const navegar = useNavigate();
@@ -100,40 +101,48 @@ export default function Reimprimir() {
             valorUnit: item.valorUnit,
         })),
         pagamentos: cupom.pagamentos.map((pagamento) => ({ 
-          idFormaPagamentoParcial: pagamento.idFormaPagamentoParcial, 
-          nomeFormaPagamentoParcial: pagamento.nomeFormaPagamentoParcial, 
-          valorParcialFormaPagamento: pagamento.valorParcialFormaPagamento  
+          idFormaPagamentoParcial: pagamento.formaPagamento.id, 
+          nomeFormaPagamentoParcial: pagamento.formaPagamento.nome, 
+          valorParcialFormaPagamento: pagamento.valor  
         }))
       };
+
+      console.log('cupom formatado - formas: ', cupomFormatado)
 
         const html = gerarCupom(cupomFormatado);
         window.IMPRESSORA.imprimir(html);
 
         setCarregando(false)
 
+    } else {
+        const cupomFormatado = {
+          tipo: "segundaVia",
+          motivo: "PRODUTO JÁ CARREGADO!",
+          data: cupom.data,
+          cliente: cupom.cliente.nome,
+          endereco: cupom.cliente.endereco,
+          cidade: cupom.cliente.cidade,
+          telefone: cupom.cliente.telefone,
+          referencia: cupom.cliente.referencia,
+          formaPagamento: cupom.formaPagamento.nome,
+          vendedor: cupom.vendedor,
+          nomeUsuario: cupom.vendedor,
+          itens: cupom.itens.map((item) => ({
+              produtoId: item.produtoId,
+              nome: produtos.find((p) => 
+              p.id === item.produtoId)?.nome || "",
+              quantidade: item.quantidade,
+              valorUnit: item.valorUnit,
+          })),
+        };
+
+        console.log('cupom formatado - 1 forma: ', cupomFormatado)
+
+      const html = gerarCupomDelivery(cupomFormatado);
+      window.IMPRESSORA.imprimir(html);
+
+      setCarregando(false)
     }
-
-    const cupomFormatado = {
-      tipo: "segundaVia",
-      motivo: "PRODUTO JÁ CARREGADO!",
-      data: cupom.data,
-      cliente: cupom.cliente,
-      formaPagamento: cupom.formaPagamento.nome,
-      vendedor: cupom.vendedor,
-      nomeUsuario: cupom.nomeUsuario,
-      itens: cupom.itens.map((item) => ({
-          produtoId: item.produtoId,
-          nome: produtos.find((p) => 
-          p.id === item.produtoId)?.nome || "",
-          quantidade: item.quantidade,
-          valorUnit: item.valorUnit,
-      })),
-    };
-
-    const html = gerarCupomDelivery(cupomFormatado);
-    window.IMPRESSORA.imprimir(html);
-
-    setCarregando(false)
   };
 
   // Faz a soma dos pedidos
@@ -243,6 +252,27 @@ export default function Reimprimir() {
                 </div>
                   <span className={styles.badge}>{cupom.itens.length} {cupom.itens.length === 1 ? "item" : "itens"}</span>
               </div>
+
+              {cupom.tipo !== 'balcao' &&
+                <div className={styles.infoCliente}>
+                  <strong styles={styles.cardValorPagamento}>
+                    📋 INFORMAÇÕES DO PEDIDO
+                    </strong>
+                  <div className={styles.containerInfo}> 
+                    <div className={styles.cardInfoPedido}>
+                      <p className={styles.cardLabel}>◉ Cliente: {cupom.cliente.nome}</p>
+                      <p className={styles.cardLabel}>◉ Usuário: {cupom.vendedor}</p>
+                      <p className={styles.cardLabel}>◉ Realizado: {dataFormatada(cupom.data)}</p>
+                    </div>
+
+                    <div className={styles.cardInfoPedido}>
+                      <p className={styles.cardLabel}> {cupom.dataCarregada ? `◉ Carregado: ${dataFormatada(cupom.dataCarregada)}` : '○ Carregado: Não'} </p>
+                      <p className={styles.cardLabel}> {cupom.dataEntregue ? `◉ Entregue: ${dataFormatada(cupom.dataEntrega)}` : '○ Entrega: pendente' } </p>
+                    </div>
+                  </div>
+
+                </div>
+              }
 
               {/* TABELA */}
               <div className={styles.tabelaCupom}>

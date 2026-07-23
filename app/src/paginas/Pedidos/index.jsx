@@ -163,6 +163,7 @@ export default function Pedidos() {
       }
     };
 
+
     filtrarPedidos();
   }, [dataInicio, dataFim, formaPagamento, setor, cliente, statusSelecionado, vendedorSelecionado]);
 

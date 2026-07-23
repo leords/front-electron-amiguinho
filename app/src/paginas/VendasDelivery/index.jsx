@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import { useEffect, useMemo, useState} from "react";
 import Select from "react-select";
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
@@ -27,7 +27,9 @@ import {
   ExclamationMarkIcon,
   ChatTeardropTextIcon,
   WarningCircleIcon,
-  QuestionIcon
+  QuestionIcon,
+  ArrowsClockwiseIcon,
+  ArrowClockwiseIcon
 } from "@phosphor-icons/react";
 import Loading from "../../componentes/Loading";
 import Spinner from "../../componentes/Spinner";
@@ -37,6 +39,9 @@ import { LerTaxaDelivery } from "../../operadores/API/taxaDelivery/lerInicioCaix
 import { gerarCupomDelivery } from "../../utils/gerarCupomDelivery";
 import ItemListaPedidoDelivery from "../../componentes/ItemListaPedidoDelivery";
 import { useFormaPagamentoExterna } from "../../hooks/useFormaPagamentoExterna";
+import { buscarPedido } from "../../operadores/API/pedido/buscarPedido";
+import { dataFormatadaCalendario } from "../../utils/data";
+import { tempoMedioEntregaDelivery } from "../../operadores/API/delivery/tempoMedioEntregaDelivery";
 
 export default function VendasDelivery() {
   
@@ -58,9 +63,12 @@ export default function VendasDelivery() {
   const [statusPedido, setStatusPedido] = useState(false)
   const [taxaEntrega, setTaxaEntrega] = useState("")
   const [ajusteTaxa, setAjusteTaxa] = useState(0)
-
+  const [quantidadePedidos, setQuantidadePedidos] = useState(null)
+  const [tempoEntrega, setTempoEntrega] = useState(null)
+  const [carregandoClientes, setCarregando] = useState(false)
   const [controleNovoPedido, setControleNovopedido] = useState(false)
   const [ajustePrecoProduto, setAjustePrecoProduto] = useState("")
+  const [atualizarRelatorio, setAtualizarRelatorio] = useState(false)
 
 
   
@@ -259,6 +267,56 @@ export default function VendasDelivery() {
     };
   }
 
+  // Buscando tempo médio de entrega, preparação, médio total e quantidade
+  useEffect(() => {
+    const buscarRelatorio = async () => {
+      try {
+        const relatorio = await tempoMedioEntregaDelivery({
+          dataInicio: dataFormatadaCalendario(new Date),
+          dataFim: dataFormatadaCalendario(new Date) 
+        });
+
+      setTempoEntrega(relatorio)
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+
+    buscarRelatorio();
+  }, [atualizarRelatorio])
+
+
+  // Busca a quantidade de pedido por status.
+  useEffect(() => {
+
+    const buscarPedidos = async () => {
+      setCarregando(true);
+      try {
+        const resultado = await buscarPedido({
+          setor: 'delivery',
+          dataInicio: dataFormatadaCalendario(new Date()),
+          dataFim: dataFormatadaCalendario(new Date()),
+        });
+        setQuantidadePedidos(resultado);
+      } catch (error) {
+          console.error("Erro ao filtrar pedidos:", error);
+          alert("Erro ao buscar pedidos. Tente novamente.");
+        } finally {
+          setCarregando(false);
+        }        
+    }
+    buscarPedidos();
+  }, [controleNovoPedido, atualizarRelatorio])
+
+  const resumo = useMemo(() => ({
+    cancelado: quantidadePedidos?.filter(p => p.status === "cancelado").length,
+    pendente: quantidadePedidos?.filter(p => p.status === "pendente").length,
+    entregue: quantidadePedidos?.filter(p => p.status === "entregue").length,
+    carregado: quantidadePedidos?.filter(p => p.status === "carregado").length,
+  }), [quantidadePedidos]);
+
 
   return (
     <div className={styles.container}>
@@ -281,6 +339,63 @@ export default function VendasDelivery() {
             </div>
           </div>
 
+          {/* CONTROLE DE STATUS DE PEDIDOS */}
+          {carregandoClientes 
+          ?
+            <Spinner />
+          :
+            <div className={styles.containerPedidos}>
+              <div className={styles.containerPedidosHeader}>
+                <p className={styles.cardLabel}>Relatório de pedidos do dia</p>
+                <div 
+                  className={styles.reload}
+                  onClick={() => setAtualizarRelatorio(prev => !prev)}
+                  title="Atualizar relatório"
+                >
+                  <ArrowClockwiseIcon 
+                    size={18} 
+                    weight="bold" 
+                    color="green" 
+                  />
+                </div>
+              </div>
+
+              <div className={styles.containerContagemPedidos}>
+                <label className={styles.labelContagem}>
+                  ⚠️ Pendentes: {resumo.pendente ? resumo.pendente : 0}
+                </label>
+                <label className={styles.labelContagem}>
+                  ⬆️ Carregado: {resumo.carregado ? resumo.carregado : 0}
+                </label>
+                <label className={styles.labelContagem}>
+                  ✅ Entregue: {resumo.entregue ? resumo.entregue  : 0}
+                </label>
+                <label className={styles.labelContagem}>
+                  ❌ Cancelado: {resumo.cancelado ? resumo.cancelado : 0}
+                </label>
+                <label className={styles.labelContagem}>
+                  📋 Total: {tempoEntrega?.totalPedidos ? tempoEntrega?.totalPedidos : 0}
+                </label>
+              </div>
+
+              <p className={styles.TempoLabel}></p>
+
+              <div className={styles.containerTempoMedio}>
+                <label className={styles.labelTempoMedio}>
+                  📦 Preparação: {tempoEntrega?.tempoMedioPreparacao ? `${tempoEntrega?.tempoMedioPreparacao} min` : `${0} min`}
+                </label>
+                <label className={styles.labelTempoMedio}>
+                  🚚 Deslocamento: {tempoEntrega?.tempoMedioEntrega ? `${tempoEntrega?.tempoMedioEntrega} min` : `${0} min`}
+                </label>
+                <label className={styles.labelTempoMedio}>
+                  🕒 Entrega: {tempoEntrega?.tempoMedioTotal ? `${tempoEntrega?.tempoMedioTotal} min`  : `${0} min`}
+                </label>
+              </div>
+            </div>
+          }
+          
+          
+
           {/* CARD TAXA DE ENTREGA */}
           <div className={styles.card}>
             <div className={styles.cardIcone}>
@@ -289,10 +404,9 @@ export default function VendasDelivery() {
             <div>
               <p className={styles.cardLabel}>Taxa de entrega</p>
               <strong className={styles.cardValor}>{formatarMoeda(taxaEntrega.valor + ajusteTaxa)} {ajusteTaxa > 0 ? <span className={styles.ajuste} title="Taxa de entrega com ajuste do ADM!"> <HandCoinsIcon size={20} weight="duotone" color="green"/> </span> : ""} </strong>
-              
             </div>
           </div>
-
+          
         </div>
 
         {/* CARD NOVO PEDIDO */}

@@ -4,7 +4,7 @@ export default function Rodape() {
   return (
     <footer className={styles.rodape}>
       <p className={styles.descricao}>
-        Distribuidora de Bebidas Amigão — Sistema de Vendas balcão v1.0
+        Distribuidora de Bebidas Amigão — Sistema de Vendas v2.0 - 
         Desenvolvido por Leonardo Rodrigues © 2026
       </p>
     </footer>

@@ -583,6 +583,146 @@
 }
 
 
+/* ===========================
+   PAGAMENTOS BALCÃO
+=========================== */
+
+.balcaoCard{
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 24px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.05);
+}
+
+.balcaoFadeUp{
+    animation: fadeUp .35s ease;
+}
+
+.balcaoHeader{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.balcaoHeaderTitle{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.balcaoHeaderTitle h2{
+    font-size:18px;
+    font-weight:600;
+    color:var(--gray-800);
+}
+
+.balcaoContainer{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.balcaoLabel{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--gray-500);
+}
+
+.balcaoLista{
+    display:flex;
+    flex-direction:column;
+    gap:0px;
+    
+}
+
+.balcaoItem{
+    display:grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap:12px;
+    align-items:center;
+
+    padding:8px;
+}
+
+.balcaoSelect{
+    height:42px;
+    border:1px solid var(--gray-300);
+    border-radius:8px;
+    padding:0 10px;
+    font-size:14px;
+    background:white;
+}
+
+.balcaoInput{
+    height:42px;
+    border:1px solid var(--gray-300);
+    border-radius:8px;
+    padding:0 10px;
+    font-size:14px;
+    text-align:right;
+}
+
+.balcaoInput:focus,
+.balcaoSelect:focus{
+    outline:none;
+    border-color:var(--blue-500);
+}
+
+.balcaoBtnRemover{
+    width:42px;
+    height:42px;
+
+    border:none;
+    border-radius:10px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:#ffeaea;
+    color:#d92d20;
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.balcaoBtnRemover:hover{
+    background:#ffd6d6;
+}
+
+.balcaoBtnAdicionar{
+    margin-top:8px;
+
+    height:44px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    border:none;
+    border-radius:10px;
+
+    background: var(--orange);
+    color:white;
+
+    font-weight:600;
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.balcaoBtnAdicionar:hover{
+    filter:brightness(.95);
+}
+
+
 /* Responsividade */
 
 @media (max-width: 768px) {

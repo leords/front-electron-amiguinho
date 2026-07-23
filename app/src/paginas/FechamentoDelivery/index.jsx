@@ -36,7 +36,6 @@ import { editarFechamento } from "../../operadores/API/AjusteFechamento/editarFe
 import { ToastRadix } from '../../componentes/ui/notificacao/notificacao';
 import Spinner from '../../componentes/Spinner';
 import { LerInicioCaixa } from '../../operadores/API/caixa/lerInicioCaixa';
-import { usarAuth } from '../../componentes/Context/authContext';
 import { buscarFechamentoDelivery } from '../../operadores/API/fechamento/buscarFechamentoDelivery';
 import VendasDelivery from '../VendasDelivery';
 
@@ -92,6 +91,7 @@ export default function FechamentoDelivery() {
     };
     buscarVendasDia();
   }, []);
+
 
   // Buscar/Criar fechamento de caixa do delivery
   useEffect(() => {

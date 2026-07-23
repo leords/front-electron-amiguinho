@@ -589,6 +589,37 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(201, 42, 42, 0.25);
 }
+.infoCliente {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.containerInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: self-start;
+  gap: 60px;
+  padding-top: 14px;
+  margin-bottom: 20px;
+}
+
+.cardInfoPedido {
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+  justify-content: start;
+  gap: 2px;
+}
+
+.containerInforPedido {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 10px;
+}
 
 /* ============================================================
    RESPONSIVIDADE

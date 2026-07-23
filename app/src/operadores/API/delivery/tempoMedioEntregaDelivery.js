@@ -1,23 +1,17 @@
 import { api } from "../../../utils/conexaoAxios";
 
-export const buscarLocalizacaoEntregador = async ( entregadorId ) => {
+export const tempoMedioEntregaDelivery = async (params = {}) => {
   const token = localStorage.getItem("token");
 
   try {
-    const resposta = await api.post("/solicitar-localizacao",
-      {
-        entregadorId
+    const resposta = await api.get("/tempo-medio-entregas", {
+      params,
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    });
 
-    ); 
-    
     return resposta.data;
-
   } catch (error) {
 
     // ❌ sem resposta (API fora, internet, etc)
@@ -27,8 +21,8 @@ export const buscarLocalizacaoEntregador = async ( entregadorId ) => {
 
     // 🔥 erro vindo do backend (AppError)
     if (error.response) {
-      console.log("error response: ", error.response.data.erro)
-      const mensagem = error.response.data.erro || "Erro inesperado";
+      console.log("error response: ", error.response)
+      const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
       throw new Error(mensagem);
     }
 

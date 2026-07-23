@@ -44,6 +44,42 @@
   align-items: center;
 }
 
+.containerPedidos {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+}
+
+.containerContagemPedidos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.containerTempoMedio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  margin-bottom: 0;
+}
+
 .containerTituloLogo {
   display: flex;
   justify-content: space-between;
@@ -258,6 +294,12 @@
   color: #c92a2a;
 }
 
+.containerPedidosHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .label {
   display: flex;
   align-items: center;
@@ -267,6 +309,28 @@
   color: var(--gray-700);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.labelContagem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  
+}
+
+.labelTempoMedio {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  
 }
 
 .input {
@@ -639,6 +703,16 @@
   margin: 0 0 4px;
 }
 
+.TempoLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 1px 2px 1px;
+  border: #eeeff1 1px solid;
+}
+
 .cardValor {
   font-size: 18px;
   font-weight: 800;
@@ -658,6 +732,20 @@
   height: 100px;
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+}
+
+.reload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.reload:hover {
+  background: var(--green-light);
 }
 
 /*

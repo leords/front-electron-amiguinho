@@ -80,7 +80,7 @@ export default function Menu() {
 
         {/* BOTÕES */}
         <div className={styles.menuBotoes}>
-        {['ADMIN', 'BALCAO'].includes(usuario.nivelAcesso) && (
+        {['ADMIN', 'BALCAO', 'DELIVERY'].includes(usuario.nivelAcesso) && (
           <>
           <MenuButton titulo="Vendas balcão"         descricao="Registrar novos pedidos balcão"           destino="/venda"          icone={ShoppingCartIcon}          cor="orange" />
           <MenuButton titulo="Histórico balcão"      descricao="Consultar pedidos anteriores"      destino="/historico"      icone={ClockCounterClockwiseIcon} cor="orange"   />

@@ -34,7 +34,7 @@ app.on("ready", () => {
 
     //show: false, // opcional (evita "piscar" ao abrir)
 
-    //autoHideMenuBar: true, // esconde o menu (Alt ainda mostra)
+    autoHideMenuBar: true, // esconde o menu (Alt ainda mostra)
 
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),

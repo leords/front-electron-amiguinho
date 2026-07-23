@@ -41,7 +41,7 @@ function CentralizarMapa({ latitude, longitude }) {
   return null;
 }
 
-export default function Mapa({ latitude, longitude, dataCarregada, dataEntregue }) {
+export default function Mapa({ latitude, longitude, dataCarregada, dataEntregue, remetente }) {
   
   const inicio = new Date(dataCarregada);
   const fim = new Date(dataEntregue)
@@ -77,7 +77,7 @@ export default function Mapa({ latitude, longitude, dataCarregada, dataEntregue 
           opacity={1}
           className="tooltipEntrega"
           >
-        {`⏱️ tempo de entrega: ${tempo} min`}
+            {remetente === 'entrega' ? `⏱️ tempo de entrega: ${tempo} min` : '👤 Entregador'}
         </Tooltip>
         <Popup>Usuário</Popup>
       </Marker>

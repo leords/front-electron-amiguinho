@@ -15,6 +15,7 @@ export default function Localizacao() {
   const [longitude, setLongitude] = useState(null);
   const [dataCarregada, setDataCarregada] = useState(null)
   const [dataEntregue, setDataEntregue] = useState(null)
+  const [remetente, setRemetente] = useState("")
 
   return (
     <div className="container">
@@ -77,12 +78,14 @@ export default function Localizacao() {
                   setLongitude={setLongitude}
                   setDataCarregada={setDataCarregada}
                   setDataEntregue={setDataEntregue}
+                  setRemetente={setRemetente}
 
                 />
               ) : (
                 <BuscaUsuarios
                   setLatitude={setLatitude}
                   setLongitude={setLongitude}
+                  setRemetente={setRemetente}
                 />
               )}
             </div>
@@ -107,7 +110,7 @@ export default function Localizacao() {
                 longitude={longitude} 
                 dataCarregada={dataCarregada}
                 dataEntregue={dataEntregue}
-                
+                remetente={remetente}
               />
             </div>
           </div>

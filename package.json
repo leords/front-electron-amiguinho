@@ -1,7 +1,7 @@
 {
-  "name": "amiguinho-balcao",
-  "version": "1.0.0",
-  "description": "Sistema de Balcão",
+  "name": "amiguinho-controle",
+  "version": "2.0.0",
+  "description": "Sistema de controle Amigão",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -12,7 +12,7 @@
     "build": "npm run build-react && cross-env NODE_ENV=production electron-builder"
   },
   "keywords": [],
-  "author": "Seu Nome",
+  "author": "Leonardo Rodrigues",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^9.2.1",

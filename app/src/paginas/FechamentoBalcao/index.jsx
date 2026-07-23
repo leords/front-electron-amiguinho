@@ -96,7 +96,6 @@ export default function FechamentoBalcao() {
         buscarInicioCaixa()
   }, [])
 
-  console.log('Inicio de caixa: ', inicioCaixa)
 
   // Busca fechamento do balcao // quanto de venda!
   useEffect(() => {
@@ -117,7 +116,7 @@ export default function FechamentoBalcao() {
     buscarVendasDia();
   }, [balcao]);
 
-  // Buscar/Criar fechamento de caixa 
+  // Buscar/Criar fechamento de caixa.
   useEffect(() => {
 
     const buscarFechamentoBalcaoDia = async () => {
@@ -341,6 +340,18 @@ export default function FechamentoBalcao() {
                 <div>
                   <p className={styles.resumoCardLabel}>Cartão + Pix</p>
                   <strong className={styles.resumoCardValor}>{formatarMoeda(valorTotalMaquininha)}</strong>
+                </div>
+              </div>
+
+              
+              {/* PEDIDOS NO VALE INTERNO */}
+              <div className={styles.resumoCard}>
+                <div className={styles.resumoCardIcon} data-color="blue">
+                  <CreditCardIcon size={18} weight="fill" />
+                </div>
+                <div>
+                  <p className={styles.resumoCardLabel}>Vale interno</p>
+                  <strong className={styles.resumoCardValor}>{formatarMoeda(vendaBalcao.interno)}</strong>
                 </div>
               </div>
 

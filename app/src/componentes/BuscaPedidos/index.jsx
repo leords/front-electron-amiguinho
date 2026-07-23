@@ -5,7 +5,7 @@ import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { usarAuth } from "../Context/authContext.jsx";
 import { dataHoraFormatada } from "../../utils/data";
 
-export default function BuscaPedidos({ setLatitude, setLongitude, setDataCarregada, setDataEntregue }) {
+export default function BuscaPedidos({ setLatitude, setLongitude, setDataCarregada, setDataEntregue, setRemetente }) {
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [pedidos, setPedidos] = useState([]);
@@ -53,11 +53,14 @@ export default function BuscaPedidos({ setLatitude, setLongitude, setDataCarrega
       localStorage.setItem("ultimaLongitude", JSON.stringify(pedido?.longitudeEntrega));
       localStorage.setItem("ultimaBusca", JSON.stringify(dataHoraFormatada()));
 
-      setDataCarregada(pedido?.dataCarregada)
+
+      // está puxando a data de criação!!!
+      setDataCarregada(pedido?.data)
       setDataEntregue(pedido?.dataEntrega)
 
       setLatitude(pedido?.latitudeEntrega);
       setLongitude(pedido?.longitudeEntrega);
+      setRemetente("entrega")
     } catch (erro) {
       console.error(erro);
     }

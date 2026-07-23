@@ -28,6 +28,7 @@ import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 import { useFormaPagamentoExterna } from "../../hooks/useFormaPagamentoExterna";
+import { EnviarEdicaoPedidoBalcao } from "../../operadores/API/pedido/editarPedidoBalcao";
 
 
 export default function EditarPedido() {  
@@ -35,22 +36,28 @@ export default function EditarPedido() {
 const { state } = useLocation()
 const navegar = useNavigate() 
 
-  // Hooks
-  const { mensagem, setMensagem } = usarToast();
 
-  // Estado novo item
+  // Estados
   const [itens, setItens] = useState(state.itens);
   const [novaQuantidade, setNovaQuantidade] = useState(1);
   const [formaPagamento, setFormaPagamento] = useState(1);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [valorTotal, setValorTotal] = useState();
+  const [formasPagamento, setFormasPagamento] = useState(
+    state.pagamentos?.map(p => ({
+      ...p,
+      _key: crypto.randomUUID()
+    }))
+  );
 
   // Hooks
   const { listaFormaPagamento } = useFormaPagamentoExterna();
   const { produtos } = useProdutos(); 
+  const { mensagem, setMensagem } = usarToast();
 
   // Mapeando produtos para o <Select />
   const options = produtos.map((p) => ({ value: p.id, label: p.nome }));
+
 
   // Adiciona o nome referente ao id e key a todos os itens
   useEffect(() => {
@@ -91,7 +98,7 @@ const navegar = useNavigate()
     );
   };
 
-  // Remove produto
+  // Remove produto da lista
   const removerItem = (key) => {
     setItens((prev) => prev.filter((item) => item._key !== key));
     setMensagem('Item removido')
@@ -120,39 +127,123 @@ const navegar = useNavigate()
     setNovaQuantidade(1);
   };
 
-  // Envia a nova edição
-const enviarEdicao = async () => {
-    try {
+  // Envia a edição quando é DELIVERY ou EXTERNO
+  const enviarEdicao = async () => {
+      try {
 
-      if (itens.length === 0) {
-        setMensagem('Nenhum item no pedido')
-      } 
-      else if(itens.quantidade <= 0) {
-        setMensagem('Quantidade igual ou menor que zero')
+        if (itens.length === 0) {
+          setMensagem('Nenhum item no pedido')
+        } 
+        else if(itens.quantidade <= 0) {
+          setMensagem('Quantidade igual ou menor que zero')
+        }
+        else if(itens.valorUnit <= 0) {
+          setMensagem('Valor unitário igual ou menor que zero')
+        }
+
+        // Formatando o array para enviar apenas os dados que precisa para o banco
+        const payload = (itens || []).map(({id, _key, pedidoId, nomeProduto, valorTotal, ...rest}) => rest)
+
+
+        // Enviando edição de pedido
+        const retorno = await EnviarEdicaoPedido(state.tipo, state.uuid, formaPagamento, payload);
+
+        setMensagem(retorno.mensagem)
+
+        navegar('/pedidos')
+
+
+      } catch (error) {
+        setMensagem(error.message)
+        console.log(error)
       }
-      else if(itens.valorUnit <= 0) {
-        setMensagem('Valor unitário igual ou menor que zero')
+  }
+
+  // Envia a edição quando é BALCAO
+  const enviarEdicaoBalcao = async () => {
+    try {
+      
+      const validarTotalPagamento = formasPagamento.reduce(
+        (total, pagamento) => total + Number(pagamento.valor || 0),
+        0
+      )
+
+      if (validarTotalPagamento !== state.total) {
+        setMensagem("A soma das formas de pagamento deve ser igual ao total do pedido.");
+        return;
       }
 
       // Formatando o array para enviar apenas os dados que precisa para o banco
       const payload = (itens || []).map(({id, _key, pedidoId, nomeProduto, valorTotal, ...rest}) => rest)
 
-      console.log(payload)
+      const pagamentosPayload = formasPagamento.map(({ _key, formaPagamento, pedido, id, ...rest }) => rest);
 
-      // Enviando edição de pedido
-      const retorno = await EnviarEdicaoPedido(state.tipo, state.uuid, formaPagamento, payload);
+      console.log('Payload Pagamentos: ', pagamentosPayload)
+      const retorno = await EnviarEdicaoPedidoBalcao(
+          state.uuid,
+          pagamentosPayload,
+          payload
+      );
 
-      setMensagem(retorno.mensagem)
+      
 
-      navegar('/pedidos')
+        setMensagem(retorno.mensagem)
 
-
+        navegar('/pedidos')
     } catch (error) {
-      setMensagem(error.message)
-      console.log(error)
+        setMensagem(error.message)
+        console.log(error)
     }
   }
-  
+
+  // atualiza a lista de forma de pagamento
+  const atualizarFormaPagamento = (key, formaPagamentoId) => {
+    setFormasPagamento(prev =>
+      prev.map(p =>
+        p._key === key
+          ? { ...p, formaPagamentoId: Number(formaPagamentoId) }
+          : p
+      )
+    );
+  };
+  // remover forma de pagamento
+  const removerPagamento = (key) => {
+    setFormasPagamento(prev =>
+      prev.filter(p => p._key !== key)
+    );
+
+    setMensagem("Forma de pagamento removida");
+  };
+  // adicionar nova forma de pagamento
+  const adicionarPagamento = () => {
+    setFormasPagamento(prev => [
+      ...prev,
+      {
+        _key: crypto.randomUUID(),
+        formaPagamentoId: listaFormaPagamento?.[0]?.id,
+        pedidoId: state.id,
+        valor: 0
+      }
+    ]);
+  };
+
+  // atualizar valor de uma forma de pagamento
+  const atualizarValorPagamento = (key, valor) => {
+    setFormasPagamento(prev =>
+      prev.map(p =>
+        p._key === key
+          ? { ...p, valor: Number(valor) }
+          : p
+      )
+    );
+  };
+
+    // tratar setor 
+  const tratarSalvar =
+    state.tipo === "balcao"
+      ? enviarEdicaoBalcao
+      : enviarEdicao;
+
 
   return (
     <div className={styles.container}>
@@ -206,7 +297,7 @@ const enviarEdicao = async () => {
             </div>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Usuário</span>
-              <span className={styles.infoValor}>{state.nomeUsuario}</span>
+              <span className={styles.infoValor}>{state.vendedor}</span>
             </div>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Status</span>
@@ -215,48 +306,146 @@ const enviarEdicao = async () => {
               </span>
             </div>
             <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>Total</span>
+              <span className={styles.infoValor}>{formatarMoeda(state.total)}</span>
+            </div>
+            <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Forma de pagamento</span>
-              <span className={styles.infoValor}>
-                {state.formaPagamento.nome}
-            </span>
+              {state.tipo !== 'balcao'
+                ?
+                <span className={styles.infoValor}>
+                  { state.formaPagamento.nome }
+                </span>
+                :
+                <span className={styles.infoValor}>
+                  {
+                  state.pagamentos
+                    ?.map(p => p.formaPagamento?.nome)
+                    .join(" + ") || "-"
+                  }
+                </span>
+              }
+
             </div>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Cliente</span>
               <span className={styles.infoValor}>
-                {state.cliente ?? <em style={{ color: "var(--gray-300)" }}>Não informado</em>}
+                {state.cliente?.nome ?? <em style={{ color: "var(--gray-300)" }}>Não informado</em>}
               </span>
             </div> 
           </div>
         </div>
 
         {/* FORMA DE PAGAMENTO*/}
-        <div className={`${styles.card} ${styles.fadeUp}`} style={{ animationDelay: "0.06s" }}>
-          <div className={styles.cardHeader}>
-            <div className={styles.cardHeaderTitle}>
-              <CreditCard size={17} weight="fill" className={styles.cardHeaderIcon} />
-              <h2>Forma de Pagamento</h2>
+        {state.tipo === 'balcao'
+          ?
+          // APENAS BALCAO
+          <div className={`${styles.balcaoCard} ${styles.balcaoFadeUp}`} style={{ animationDelay: "0.06s" }}>
+            
+            <div className={styles.balcaoHeader}>
+              <div className={styles.balcaoHeaderTitle}>
+                <CreditCard size={17} weight="fill" className={styles.cardHeaderIcon} />
+                <h2>Forma de Pagamento</h2>
+              </div>
             </div>
+
+            <div className={styles.balcaoContainer} style={{ maxWidth: 320 }}>
+              {/* SUBTITULO */}
+              <label className={styles.balcaoLabel}>
+                <CreditCard size={12} />
+                Forma de pagamento
+              </label>
+
+
+                <div className={styles.balcaoLista}>
+                {formasPagamento.map((forma) => (
+                  <div key={forma._key} className={styles.balcaoItem}>
+                    <select
+                        value={forma.formaPagamentoId}
+                        onChange={(e) =>
+                            atualizarFormaPagamento(
+                                forma._key,
+                                e.target.value
+                            )
+                        }
+                        className={styles.balcaoSelect}
+                    >
+                        {listaFormaPagamento?.map(fp => (
+                            <option key={fp.id} value={fp.id}>
+                                {fp.nome}
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* VALOR */}
+                    <input
+                        type="number"
+                        className={styles.balcaoInput}
+                        value={forma.valor}
+                        onChange={(e) =>
+                            atualizarValorPagamento(
+                                forma._key,
+                                e.target.value
+                            )
+                        }
+                    />
+
+                    { /* REMOVER ITEM */}
+                    <button
+                      className={styles.balcaoBtnRemover}
+                      onClick={() => removerPagamento(forma._key)}
+                      title="Remover item"
+                    >
+                      <Trash size={15} weight="fill" />
+                    </button>
+                  </div>
+                  
+                ))}
+              </div>
+                <button
+                  className={styles.balcaoBtnAdicionar}
+                  onClick={adicionarPagamento}
+              >
+                  <Plus size={15} weight="bold" />
+                  Adicionar forma
+              </button>
+            </div>
+
           </div>
 
-          <div className={styles.filtroGrupo} style={{ maxWidth: 320 }}>
-            <label className={styles.filtroLabel}>
-              <CreditCard size={12} />
-              Selecione a forma
-            </label>
-              <select
-                value={formaPagamento}
-                onChange={(e) => {
-                  const id = e.target.value;
-                  setFormaPagamento(id);
-                }}
-                className={styles.selectFormaPagamento}
-              >
-                {listaFormaPagamento?.map((forma) => (
-                  <option key={forma.id} value={forma.id}>{forma.nome}</option>
-                ))}
-              </select>
+          :
+          // PEDIDOS DELIVERY E EXTERNO ...
+          <div className={`${styles.card} ${styles.fadeUp}`} style={{ animationDelay: "0.06s" }}>
+            
+            <div className={styles.cardHeader}>
+              <div className={styles.cardHeaderTitle}>
+                <CreditCard size={17} weight="fill" className={styles.cardHeaderIcon} />
+                <h2>Forma de Pagamento</h2>
+              </div>
+            </div>
+
+            <div className={styles.filtroGrupo} style={{ maxWidth: 320 }}>
+              <label className={styles.filtroLabel}>
+                <CreditCard size={12} />
+                Selecione a forma
+              </label>
+                <select
+                  value={formaPagamento}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setFormaPagamento(id);
+                  }}
+                  className={styles.selectFormaPagamento}
+                >
+                  {listaFormaPagamento?.map((forma) => (
+                    <option key={forma.id} value={forma.id}>{forma.nome}</option>
+                  ))}
+                </select>
+            </div>
+
           </div>
-        </div>
+        }
+
 
         {/* LISTA DE ITENS */}
         <div className={`${styles.card} ${styles.fadeUp}`} style={{ animationDelay: "0.12s" }}>
@@ -317,6 +506,7 @@ const enviarEdicao = async () => {
                 ))}
               </div>
             </div>
+            
           ) : (
             <div className={styles.estadoVazio}>
               <ShoppingCart size={40} className={styles.iconeVazio} />
@@ -413,7 +603,7 @@ const enviarEdicao = async () => {
           </div>
         </div>
 
-        {/* TOTAL E BOTÕES */}
+        {/* TOTAL E BOTÕES (CANCELAR E SALVAR) */}
         <div className={styles.rodape}>
           {/* TOTAL */}
           <div className={styles.totalWrapper}>
@@ -432,7 +622,7 @@ const enviarEdicao = async () => {
             <AlertaRadix
                 titulo="Salvar Alteração"
                 descricao="Você realmente deseja salvar a alteração?"
-                tratar={enviarEdicao}
+                tratar={tratarSalvar}
                 confirmarTexto="Confirmar cancelamento"
                 cancelarTexto="Sair"
                 trigger={

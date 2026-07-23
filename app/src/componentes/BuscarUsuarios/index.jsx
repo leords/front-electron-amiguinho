@@ -1,37 +1,64 @@
-import { useEffect, useState } from "react";
-import { MagnifyingGlass, User, CircleNotch, UsersThree } from "@phosphor-icons/react";
+import { useEffect, useRef, useState } from "react";
+import { MagnifyingGlass, User, CircleNotch, UsersThree, Broadcast } from "@phosphor-icons/react";
 import "./styles.css";
 import { LerUsuario } from "../../operadores/API/usuario/lerUsuario";
 import { buscarLocalizacaoEntregador } from "../../operadores/API/localizacao/buscarLocalizacaoEntregador";
 import { dataHoraFormatada } from "../../utils/data";
 import { registrarEventosSocket } from "../../socket/eventos";
 import { usarAuth } from "../Context/authContext";
+import { ToastRadix } from "../ui/notificacao/notificacao";
+import { usarToast } from "../Context/toastContext";
 
-export default function BuscaUsuarios({ setLatitude, setLongitude }) {
+export default function BuscaUsuarios({ setLatitude, setLongitude, setRemetente }) {
+  
+  //Estados
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pesquisa, setPesquisa] = useState("");
   const [selecionadoId, setSelecionadoId] = useState(null);
   const [coords, setCoords] = useState(null);
 
+  // Hook
+  const { mensagem, setMensagem } = usarToast();
   const { usuario } = usarAuth();
+
+  const selecionadoIdRef = useRef(null);
+
+  useEffect(() => {
+    selecionadoIdRef.current = selecionadoId;
+  }, [selecionadoId]);
 
   useEffect(() => {
     carregarUsuarios();
+
+    registrarEventosSocket((dados) => {
+      if (dados.entregadorId === selecionadoIdRef.current) {
+        setCoords(dados);
+      }
+    });
   }, []);
 
-  /* Carregando usuários */
+  useEffect(() => {
+    if (!coords) return;
+
+    setLatitude(coords.latitude);
+    setLongitude(coords.longitude);
+
+    localStorage.setItem("ultimoCliente", JSON.stringify(""));
+    localStorage.setItem("ultimoUsuario", JSON.stringify(usuario?.nome));
+    localStorage.setItem("ultimaLatitude", JSON.stringify(coords.latitude));
+    localStorage.setItem("ultimaLongitude", JSON.stringify(coords.longitude));
+    localStorage.setItem("ultimaBusca", JSON.stringify(dataHoraFormatada()));
+  }, [coords]);
+
   async function carregarUsuarios() {
     try {
       setLoading(true);
-
       const resposta = await LerUsuario();
-
       const niveisPermitidos = ["ENTREGADOR", "EXTERNO"];
       const usuariosFiltrados = resposta.filter((u) =>
         niveisPermitidos.includes(u.nivelAcesso)
       );
-
       setUsuarios(usuariosFiltrados);
     } catch (erro) {
       console.error(erro);
@@ -40,34 +67,28 @@ export default function BuscaUsuarios({ setLatitude, setLongitude }) {
     }
   }
 
-  /* Selecionar usuário */
   async function selecionarUsuario(usuarioSelecionado) {
     try {
       setLoading(true);
       setSelecionadoId(usuarioSelecionado.id);
+      setRemetente("entregador");
 
-      // Solicita a localização via socket.
-      await buscarLocalizacaoEntregador(usuarioSelecionado.id);
+       const localizacao = await buscarLocalizacaoEntregador(usuarioSelecionado.id);
 
-      // Buscar solicitação de coords recebida via socket.
-      registrarEventosSocket((dados) => {
-        setLatitude(dados.latitude);
-        setLongitude(dados.longitude);
-        setCoords(dados);
-      });
-
-      // setando os storage, responsáveis por popular informações.
-      localStorage.setItem("ultimoCliente", JSON.stringify(""));
-      localStorage.setItem("ultimoUsuario", JSON.stringify(usuario?.nome));
-      localStorage.setItem("ultimaLatitude", JSON.stringify(coords?.latitude));
-      localStorage.setItem("ultimaLongitude", JSON.stringify(coords?.longitude));
-      localStorage.setItem("ultimaBusca", JSON.stringify(dataHoraFormatada()));
-    } catch (erro) {
-      console.error(erro);
+          // ✅ usa a localização inicial retornada pela API
+      if (localizacao?.latitude && localizacao?.longitude) {
+        setLatitude(localizacao.latitude);
+        setLongitude(localizacao.longitude);
+      }
+      
+    } catch (error) {
+      console.error(error);
+      setMensagem(error.message);
     } finally {
       setLoading(false);
     }
   }
+
 
   const usuariosFiltrados = usuarios.filter((u) =>
     u.nome.toLowerCase().includes(pesquisa.toLowerCase())
@@ -75,7 +96,7 @@ export default function BuscaUsuarios({ setLatitude, setLongitude }) {
 
   return (
     <div className="busca-usuarios">
-      {/* Header do card */}
+      <ToastRadix mensagem={mensagem} />
       <div className="card-header">
         <div className="card-header-title">
           <UsersThree size={18} weight="bold" className="card-header-icon" />
@@ -90,7 +111,6 @@ export default function BuscaUsuarios({ setLatitude, setLongitude }) {
         )}
       </div>
 
-      {/* Input de pesquisa */}
       <div className="busca-input-wrapper">
         <MagnifyingGlass size={16} className="busca-input-icon" />
         <input
@@ -102,7 +122,6 @@ export default function BuscaUsuarios({ setLatitude, setLongitude }) {
         />
       </div>
 
-      {/* Lista de usuários */}
       <div className="lista-usuarios">
         {!loading && usuariosFiltrados.length === 0 && (
           <div className="estado-vazio">
@@ -112,25 +131,29 @@ export default function BuscaUsuarios({ setLatitude, setLongitude }) {
           </div>
         )}
 
-        {usuariosFiltrados.map((u) => (
-          <div
-            key={u.id}
-            className={`card-usuario ${selecionadoId === u.id ? "card-usuario-ativo" : ""}`}
-            onClick={() => selecionarUsuario(u)}
-          >
-            <div className="card-usuario-info">
-              <div className="avatar-usuario">
-                <User size={16} weight="bold" />
+        {usuariosFiltrados.map((u) => {
+
+          return (
+            <div
+              key={u.id}
+              className={`card-usuario ${selecionadoId === u.id ? "card-usuario-ativo" : ""}`}
+              onClick={() => selecionarUsuario(u)}
+            >
+              <div className="card-usuario-info">
+                <div className="avatar-usuario">
+                  <User size={16} weight="bold" />
+                </div>
+                <div>
+                  <strong>{u.nome}</strong>
+                  <span className={`badge ${u.nivelAcesso === "ENTREGADOR" ? "badge-orange" : "badge-blue"}`}>
+                    {u.nivelAcesso}
+                  </span>
+                </div>
               </div>
-              <div>
-                <strong>{u.nome}</strong>
-                <span className={`badge ${u.nivelAcesso === "ENTREGADOR" ? "badge-orange" : "badge-blue"}`}>
-                  {u.nivelAcesso}
-                </span>
-              </div>
+
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
