@@ -42,6 +42,7 @@ import { useFormaPagamentoExterna } from "../../hooks/useFormaPagamentoExterna";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido";
 import { dataFormatadaCalendario } from "../../utils/data";
 import { tempoMedioEntregaDelivery } from "../../operadores/API/delivery/tempoMedioEntregaDelivery";
+import { BuscarClienteDelivery } from "../../operadores/API/cliente/buscarClienteDelivery";
 
 export default function VendasDelivery() {
   
@@ -69,12 +70,29 @@ export default function VendasDelivery() {
   const [controleNovoPedido, setControleNovopedido] = useState(false)
   const [ajustePrecoProduto, setAjustePrecoProduto] = useState("")
   const [atualizarRelatorio, setAtualizarRelatorio] = useState(false)
-
+  const [carregarSincronizacaoClientes, setCarregarSincronizacaoClientes] = useState(false)
 
   
   // Valida existencia de usuário.
   if (!usuario) {
     window.location.href = "/";
+  }
+
+  const forceSincronizarClientesDelivery = async () => {
+    setCarregarSincronizacaoClientes(true)
+    try {
+      await BuscarClienteDelivery();
+
+      const agora = new Date().toLocaleString('pt-BR')
+      localStorage.setItem('clientesDeliveryForce', agora);
+
+      setMensagem('Sincronização de clientes realizada')
+
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setCarregarSincronizacaoClientes(false)
+    }
   }
 
   // Buscando a taxa de delivery salva no banco
@@ -414,92 +432,112 @@ export default function VendasDelivery() {
 
           {/* LADO ESQUERDO */}
           <div className={styles.colunaEsquerda}>
-            <div className={styles.containerCliente}>
-
-              {/* TITULO */} 
-              <div className={styles.balcaoSelector}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.cardHeaderTitle}>
-                    <PlusCircleIcon size={17} weight="bold" className={styles.cardHeaderIcon} />
-                    <h2>Adicionar cliente</h2>
-                  </div>
-                </div>
-              </div>
-
-              {/* DADOS DO CLIENTE */} 
-              <div className={styles.dadosCliente}>
-
-                {/* SELECIONAR CLIENTE */}
-                <div className={styles.campoMetade}>
-                    <label className={styles.label}>Cliente</label>
-                    {carregandoClientesDelivery 
-                    ? 
-                    (
-                      <div className={styles.carregandoProduto}>
-                        <SpinnerIcon size={16} weight="bold" className={styles.spinnerIcon} />
-                        Carregando clientes...
-                      </div>
-                    )
-                    :
-                    (
-                      <Select
-                        classNamePrefix="custom"
-                        options={listaClientesDelivery}
-                        value={listaClientesDelivery.find((cliente) => cliente.value === clienteSelecionado?.id) || null }
-                        onChange={(cliente) => {
-                          if(!cliente) { setClienteSelecionado(null); return }
-
-                          setClienteSelecionado(clientes.find((c) => c.id === cliente.value) ?? null)
-                        }}
-                        placeholder="Selecione ou digite..."
-                        isSearchable
-                        noOptionsMessage={() => "Nenhum cliente encontrado"}
-                        onKeyDown={handleEnter}
-                      />
-                    )
-                  }
-                </div>
-
-                <div className={styles.informativoCliente}>
-                  {/* ID */}
-                  <div className={styles.campoMetade}>
-                    <label className={styles.label}>ID</label>
-                    <input
-                      type="text"
-                      value={clienteSelecionado ? clienteSelecionado?.id : ""}
-                      readOnly
-                      className={`${styles.input} ${styles.inputReadonly}`}
-                    />
-                  </div>
-
-                  {/* ENDEREÇO */}
-                  <div className={styles.campoMetade}>
-                    <label className={styles.label}>Endereço</label>
-                    <input
-                      type="text"
-                      value={clienteSelecionado ? `R. ${clienteSelecionado?.endereco}, ${clienteSelecionado?.numero} - ${clienteSelecionado?.bairro}, ${clienteSelecionado?.cidade}` : ""}
-                      readOnly
-                      className={`${styles.input} ${styles.inputReadonly}`}
-                      title={clienteSelecionado?.endereco}
-                    />
-                  </div>
-
-                  {/* TELEFONE */}
-                  <div className={styles.campoMetade}>
-                    <label className={styles.label}>Telefone</label>
-                    <input
-                      type="text"
-                      value={clienteSelecionado ? clienteSelecionado?.telefone : ""}
-                      readOnly
-                      className={`${styles.input} ${styles.inputReadonly}`}
-                      title={clienteSelecionado?.telefone}
-                    />
-                  </div>
-                </div>
-
+            {carregarSincronizacaoClientes 
+            ?
+              <div className={styles.carregamento}>
+                <Spinner />
+                <p>Carregando clientes, aguarde!</p>
               </div> 
+            :
+              <div className={styles.containerCliente}>
 
-            </div>
+                {/* TITULO */} 
+                <div className={styles.balcaoSelector}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.cardHeaderTitle}>
+                      <PlusCircleIcon size={17} weight="bold" className={styles.cardHeaderIcon} />
+                      <h2>Adicionar cliente</h2>
+                    </div>
+                    <div 
+                      className={styles.reload}
+                      onClick={forceSincronizarClientesDelivery}
+                      title="Sincronizar clientes"
+                    >
+                      <ArrowClockwiseIcon 
+                        size={18} 
+                        weight="bold" 
+                        color="green" 
+                      />
+                  </div>
+                  </div>
+                </div>
+
+                {/* DADOS DO CLIENTE */} 
+                <div className={styles.dadosCliente}>
+
+                  {/* SELECIONAR CLIENTE */}
+                  <div className={styles.campoMetade}>
+                      <label className={styles.label}>Cliente</label>
+                      {carregandoClientesDelivery 
+                      ? 
+                      (
+                        <div className={styles.carregandoProduto}>
+                          <SpinnerIcon size={16} weight="bold" className={styles.spinnerIcon} />
+                          Carregando clientes...
+                        </div>
+                      )
+                      :
+                      (
+                        <Select
+                          classNamePrefix="custom"
+                          options={listaClientesDelivery}
+                          value={listaClientesDelivery.find((cliente) => cliente.value === clienteSelecionado?.id) || null }
+                          onChange={(cliente) => {
+                            if(!cliente) { setClienteSelecionado(null); return }
+
+                            setClienteSelecionado(clientes.find((c) => c.id === cliente.value) ?? null)
+                          }}
+                          placeholder="Selecione ou digite..."
+                          isSearchable
+                          noOptionsMessage={() => "Nenhum cliente encontrado"}
+                          onKeyDown={handleEnter}
+                        />
+                      )
+                    }
+                  </div>
+
+                  <div className={styles.informativoCliente}>
+                    {/* ID */}
+                    <div className={styles.campoMetade}>
+                      <label className={styles.label}>ID</label>
+                      <input
+                        type="text"
+                        value={clienteSelecionado ? clienteSelecionado?.id : ""}
+                        readOnly
+                        className={`${styles.input} ${styles.inputReadonly}`}
+                      />
+                    </div>
+
+                    {/* ENDEREÇO */}
+                    <div className={styles.campoMetade}>
+                      <label className={styles.label}>Endereço</label>
+                      <input
+                        type="text"
+                        value={clienteSelecionado ? `R. ${clienteSelecionado?.endereco}, ${clienteSelecionado?.numero} - ${clienteSelecionado?.bairro}, ${clienteSelecionado?.cidade}` : ""}
+                        readOnly
+                        className={`${styles.input} ${styles.inputReadonly}`}
+                        title={clienteSelecionado?.endereco}
+                      />
+                    </div>
+
+                    {/* TELEFONE */}
+                    <div className={styles.campoMetade}>
+                      <label className={styles.label}>Telefone</label>
+                      <input
+                        type="text"
+                        value={clienteSelecionado ? clienteSelecionado?.telefone : ""}
+                        readOnly
+                        className={`${styles.input} ${styles.inputReadonly}`}
+                        title={clienteSelecionado?.telefone}
+                      />
+                    </div>
+                  </div>
+
+                </div> 
+
+              </div>
+            }
+
         
             {/* ADICIONAR PRODUTO */}
             <div className={styles.cardAdicionar}>

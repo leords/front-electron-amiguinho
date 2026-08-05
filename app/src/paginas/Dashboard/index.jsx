@@ -194,6 +194,8 @@ export default function Dashboard() {
     (p) => String(p.produtoId) === String(produtoSelecionado)
   )?.nomeProduto ?? "";
 
+
+  console.log(intervaloTemporal);
   return (
     <div className={styles.container}>
       <ToastRadix mensagem={mensagem} />

@@ -89,6 +89,16 @@
 
 }
 
+.carregamento {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-size: 14px;
+  gap: 10px;
+}
+
 .centro {
   display: grid;
   grid-template-columns: 1fr 1fr ;

@@ -452,6 +452,7 @@
   padding-bottom: 18px;
   border-bottom: 1.5px solid #f1f3f5;
   margin-bottom: 18px;
+  margin-top: 18px;
 }
 
 .linhaTotal {
@@ -656,6 +657,14 @@
   gap: 6px;
 }
 
+.validaTotalListaPagamentoNegativo {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--red);
+  letter-spacing: -0.8px;
+  text-align: center;
+} 
+
 .trocoResult {
   display: flex;
   align-items: center;
@@ -663,6 +672,16 @@
   padding: 12px 16px;
   background: var(--green-light);
   border: 1.5px solid var(--green-mid);
+  border-radius: 10px;
+}
+
+.trocoResultNegativo {
+    display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--red-light);
+  border: 1.5px solid var(--red-mid);
   border-radius: 10px;
 }
 
@@ -675,6 +694,14 @@
   font-size: 12px;
   font-weight: 700;
   color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.trocoLabelNegativo {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--red);
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
@@ -703,6 +730,13 @@
 .totalSoma {
   font-size: 15px;
   font-weight: 500;
+}
+
+.controleTroco {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 /*

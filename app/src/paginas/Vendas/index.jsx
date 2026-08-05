@@ -52,14 +52,9 @@ export default function Vendas() {
   const [produtoSelecionado, setProdutoSelecionado] = useState("");
   const [quantidade, setQuantidade] = useState(1);
   const [cupom, setCupom] = useState([]);
-  //const [formaPagamento, setFormaPagamento] = useState(1);
   const [abrirOpcaoNome, setAbrirOpcaoNome] = useState(false);
-  //const [abrirOpcaoFormaPagamentoParcial, setAbrirOpcaoFormaPagamentoParcial] = useState(false)
-
-  const [nomeFormaPagamento, setNomeFormaPagamento] = useState("A VISTA");
   const [statusPedido, setStatusPedido] = useState(false)
   const [entradaDinheiro, setEntradaDinheiro] = useState("")
-
   const [nomeFormaPagamentoParcial, setNomeFormaPagamentoParcial] = useState("A VISTA")
   const [idFormaPagamentoParcial, setIdFormaPagamentoParcial] = useState(1)
   const [pagamentosParciais, setPagamentosParciais] = useState([])
@@ -116,6 +111,12 @@ export default function Vendas() {
     ) {
       setMensagem('Preencha valor e forma de pagamento para adicionar!')
       return
+    }
+
+    // Valida se o valor a ser adicionado é maior que o total do cupom.
+    if (valorParcialFormaPagamento > Math.abs(trocoParcial)) {
+        setMensagem(`Valor máximo a ser adicionado é de R$ ${Math.abs(trocoParcial)}`)
+        return
     }
 
     // Criando o objeto
@@ -190,16 +191,13 @@ export default function Vendas() {
   const totalPedido = cupom.reduce((acc, item) => acc + item.precoUndVenda * item.quantidade, 0).toFixed(2);
   const quantidadeTotal = cupom.reduce((acc, item) => acc + item.quantidade, 0);
 
-    useEffect(() => {
+  useEffect(() => {
     if(!totalPedido) {
       return
     }
     setValorParcialFormaPagamento(totalPedido)
   }, [totalPedido])
 
-
-  // Troco (pagamento único)
-  const trocoUnico = Number(entradaDinheiro || 0) - Number(totalPedido);
 
   // Restante/troco (pagamentos parciais)
   const trocoParcial = Number(totalListaPagamentosParcial || 0) - Number(totalPedido);
@@ -221,7 +219,15 @@ export default function Vendas() {
   // finaliza o pedido, imprime e envia para o backend
   const handleGerarPedido = async () => {
     if (cupom.length === 0) { alert("Adicione produtos ao cupom antes de gerar o pedido!"); return; }
-    //if (!formaPagamento) { alert("Selecione a forma de pagamento!"); return; }
+    
+    // fazendo a soma da lista de pagamentos adicionadas
+    const totalFormas = pagamentosParciais?.reduce((soma, forma) => {return soma + forma.valorParcialFormaPagamento}, 0)
+
+    // validando o total da lista de formas de pagamento vs total do cupom.
+    if(Number(totalFormas) !== Number(totalPedido)) {
+      setMensagem("Verifique as formas de pagamento, pois os valores não estão batendo com o total dos pedidos.")
+      return
+    }
 
     try {
       setStatusPedido(true)
@@ -284,6 +290,13 @@ export default function Vendas() {
       setMensagem(error.message)
     };
   }
+
+  // Validando a existencia de A VISTA na lista
+  const validarTroco = pagamentosParciais.some(item => item.nomeFormaPagamentoParcial === 'A VISTA')
+
+  // Variavel que soma o valor do troco
+  const valorTroco = entradaDinheiro - totalPedido
+
 
   return (
     <div className={styles.container}>
@@ -418,7 +431,7 @@ export default function Vendas() {
 
         </div>
 
-        {/* ── LADO DIREITO ── */}
+        {/* LADO DIREITO */}
         <div className={styles.colunaDireita}>
 
           {/* CUPOM */}
@@ -576,7 +589,7 @@ export default function Vendas() {
                       <div className={styles.cardHeader}>
                         <div className={styles.cardHeaderTitle}>
                           <WalletIcon size={17} weight="bold" className={styles.cardHeaderIcon} />
-                          <h2>Formas de pagamentos adicionadas</h2>
+                          <h2>Formas de pagamentos adicionadas: {pagamentosParciais.length}</h2>
                         </div>
                         <span className={styles.badge}>
                           {pagamentosParciais.length} {pagamentosParciais.length === 1 ? "item" : "formas"}
@@ -610,25 +623,53 @@ export default function Vendas() {
 
                     </div>
 
-                    {/* TOTAIS */}
+                    {/* Valida o total da lista de pagamentos VS o total do cupom */}
+                    {trocoParcial < 0 &&
+                      <span className={styles.validaTotalListaPagamentoNegativo} >
+                        Ainda faltam {formatarMoeda(Math.abs(trocoParcial))} para fechar o total do cupom. Adicione outra forma de pagamento ou ajuste o valor existente.
+                      </span>
+                    }
+
+                    {/* TOTAL */}
                     <div className={styles.totais}>
-                      <div className={styles.linhaTotal}>
-                        <span>Formas de pagamento</span>
-                        <strong>{pagamentosParciais.length} {pagamentosParciais.length === 1 ? "forma de pagamento" : "formas de pagamentos"}</strong>
-                      </div>
                       <div className={`${styles.linhaTotal} ${styles.totalFinal}`}>
                         <span>Total</span>
                         <strong className={styles.valorTotal}>{formatarMoeda(totalPedido)}</strong>
                       </div>
-                    </div>
+                    </div>   
 
-                    {/* RESTANTE / TROCO DOS PAGAMENTOS PARCIAIS */}
-                    <div className={styles.trocoResult}>
-                      <span className={styles.trocoLabel}>{trocoParcial < 0 ? "Falta" : "Troco"}</span>
-                      <span className={trocoParcial < 0 ? styles.trocoValorNegativo : styles.trocoValor}>
-                        {formatarMoeda(Math.abs(trocoParcial))}
-                      </span>
-                    </div>
+                    {/* Valido que existe apenas a forma de pagamento A VISTA na lista de formas de pagamentos */}
+                    { pagamentosParciais.length === 1 && validarTroco && (
+                      <div className={styles.controleTroco}>
+                        <label className={styles.label}>
+                          <CurrencyDollarIcon size={14} weight="bold" />
+                          Auxiliar de troco
+                        </label>
+
+                        {/* INPUT DE TROCO*/}
+                        <input
+                            type="number"
+                            value={entradaDinheiro}
+                            onChange={(e) => setEntradaDinheiro(e.target.value)}
+                            placeholder="Informe a quantia de dinheiro para calcular o troco."
+                            className={styles.input}
+                          >
+                        </input>
+
+                        {/* INFORMATIVO DE TROCO*/}
+                        {entradaDinheiro &&
+                        <div className={valorTroco >= 0 ? styles.trocoResult : styles.trocoResultNegativo}>
+                          <span className={valorTroco >= 0 ? styles.trocoLabel : styles.trocoLabelNegativo}> {valorTroco >= 0 ? "Troco" : "Falta"} </span>
+                          <span className={valorTroco >= 0 ? styles.trocoValor : styles.trocoValorNegativo}>
+                            {formatarMoeda(Math.abs(valorTroco))}
+                          </span>
+                        </div>}
+                      </div>
+                        
+                      )
+                    }
+
+
                 </div>
 
                 {/* BOTÕES */}
@@ -668,8 +709,11 @@ export default function Vendas() {
           }
 
         </div>
+
       </main>
+
       <Rodape />
+      
     </div>
   );
 }
