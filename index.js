@@ -6,6 +6,9 @@ import buscarGroq from "./backend/groq.js";
 import buscarClima from "./backend/buscarClima.js";
 import fs from "fs";
 import baixarCSV from "./backend/baixarCSVRelatorioSPT.js";
+import { buscarIA, consultaDadosIA } from "./backend/openRouter.js";
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -84,8 +87,16 @@ app.on("window-all-closed", () => {
 });
 
 // APIs
-ipcMain.handle("buscar-groq", async (_, prompt) => {
-  return await buscarGroq(prompt);
+// ipcMain.handle("buscar-groq", async (_, prompt) => {
+//   return await buscarGroq(prompt);
+// });
+
+ipcMain.handle("buscar-open-router", async (_, mensagem) => {
+  return await buscarIA(mensagem);
+});
+
+ipcMain.handle("consultar-open-router", async (_, instrucao, dados, pergunta) => {
+  return await consultaDadosIA(instrucao, dados, pergunta);
 });
 
 ipcMain.handle("buscar-clima", async (_, cidade) => {

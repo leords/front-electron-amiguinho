@@ -3,7 +3,7 @@ import axios from "axios";
 function getBaseURL() {
   const servidor = import.meta.env.VITE_API_URL
 
-  return servidor || "https://www.amigaodistribuidora.com.br"
+  return servidor || "https://api.amigaodistribuidora.com.br"
 }
 
 export const api = axios.create({

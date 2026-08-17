@@ -1,7 +1,7 @@
 {
   "name": "amiguinho-controle",
-  "version": "2.0.0",
-  "description": "Sistema de controle Amigão",
+  "version": "2.1.3",
+  "description": "Sistema de controle Amiguinho",
   "main": "index.js",
   "type": "module",
   "scripts": {

@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer, shell  } = require("electron");
 
+
 // imprimir
 contextBridge.exposeInMainWorld("IMPRESSORA", {
   imprimir: (html) => ipcRenderer.send("imprimir-cupom", html),
@@ -23,9 +24,15 @@ contextBridge.exposeInMainWorld('PDF', {
 })
 
 
-// IA Groq
+// // IA Groq
+// contextBridge.exposeInMainWorld("IA", {
+//   buscarGroq: (prompt) => ipcRenderer.invoke("buscar-groq", prompt),
+// });
+
+// IA Open Router
 contextBridge.exposeInMainWorld("IA", {
-  buscarGroq: (prompt) => ipcRenderer.invoke("buscar-groq", prompt),
+  buscarIA: (mensagem) => ipcRenderer.invoke("buscar-open-router", mensagem),
+  consultaDadosIA: (instrucao, dados, pergunta) => ipcRenderer.invoke("consultar-open-router", instrucao, dados, pergunta),
 });
 
 

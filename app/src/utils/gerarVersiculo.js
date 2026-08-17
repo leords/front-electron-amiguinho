@@ -2,7 +2,9 @@ export default async function GerarVersiculo() {
 
   const hoje = new Date().toLocaleDateString("pt-BR");
 
-  const prompt = `
+
+
+  const mensagem = `
     Para a data de hoje (${hoje}), responda exatamente nos 3 blocos abaixo:
 
     1 - Conteúdo do dia:
@@ -28,7 +30,9 @@ export default async function GerarVersiculo() {
 
     Responda de forma objetiva, sem emojis e sem textos adicionais.
 `;
+ //buscarIA
+  //const versiculo = await window.IA.buscarGroq(prompt);
+  const versiculo = await window.IA.buscarIA(mensagem);
 
-  const versiculo = await window.IA.buscarGroq(prompt);
   return versiculo;
 }

@@ -24,6 +24,7 @@ import GerarVersiculo from "../../utils/gerarVersiculo";
 import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { usarAuth } from "../../componentes/Context/authContext";
+import Spinner from "../../componentes/Spinner";
 
 export default function Menu() {
   const [saudacao, setSaudacao] = useState("");
@@ -111,7 +112,7 @@ export default function Menu() {
             <MenuButton titulo="Gestão"                descricao="Gerencie os registros do sistema"             destino="/gestao"               icone={GearIcon}                  cor="gray"  />
             <MenuButton titulo="Fechar delivery"       descricao="Finalizar operações do dia"                   destino="/fechamento-delivery"  icone={CurrencyCircleDollarIcon}  cor="gray"  />
             <MenuButton titulo="Metas"                 descricao="Criar e acompanhar metas - construção"        destino="/fechamento-delivery"  icone={ChartPolarIcon}  cor="gray"  />
-            <MenuButton titulo="Vendas diária"         descricao="Acompanhar vendas do dia - construção"        destino="/fechamento-delivery"  icone={ChartLineUpIcon}  cor="gray"  />
+            <MenuButton titulo="Vendas diária"         descricao="Acompanhar vendas do dia - construção"        destino="/buscar-relatorio-diario"  icone={ChartLineUpIcon}  cor="gray"  />
             <MenuButton titulo="Relatório vendas"         descricao="Acompanhar vendas total  - construção"        destino="/fechamento-delivery"  icone={ChartBarIcon}  cor="gray"  />
           </>
         )}
@@ -123,10 +124,21 @@ export default function Menu() {
 
           {/* MENSAGEM DO DIA */}
           <div className={styles.dicaDia}>
-            <h3>
-              <span className={styles.emojiDica}>💡</span> Mensagem do Dia
-            </h3>
-            <p>{mensagemDoDia || "Carregando mensagem..."}</p>
+          {mensagemDoDia 
+          ?
+            <>
+              <h3>
+                <span className={styles.emojiDica}>💡</span> Mensagem do Dia
+              </h3>
+              <p>{mensagemDoDia || "Carregando mensagem..."}</p>
+            </>
+          :
+            <div className={styles.spinnerMsgDia}> 
+              <span className={styles.emojiDica}></span> Carrengando mensagens do dia!
+              <Spinner />
+            </div>
+          }
+
           </div>
 
           {/* MASCOTE */}

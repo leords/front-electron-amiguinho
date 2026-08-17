@@ -140,6 +140,17 @@
   flex-shrink: 0;
 }
 
+.spinnerMsgDia {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  font-size: 15px;
+  color: var(--gray-500);
+  margin: 0;
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-10px); }

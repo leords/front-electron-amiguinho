@@ -24,6 +24,7 @@ import HistoricoDelivery from "../paginas/HistoricoDelivery/index.jsx";
 import FechamentoDeliveryUsuario from "../paginas/FechamentoDeliveryUsuario/index.jsx";
 import FechamentoDelivery from "../paginas/FechamentoDelivery/index.jsx";
 import Localizacao from "../paginas/Localizacao/index.jsx";
+import RelatorioVendas from "../paginas/RelatorioDiario/index.jsx";
 
 export function Navegador() {
   return (
@@ -54,6 +55,7 @@ export function Navegador() {
             <Route path="/fechamento-usuario-delivery" element={<FechamentoDeliveryUsuario/>} />
             <Route path="/fechamento-delivery" element={<FechamentoDelivery />} />
             <Route path="/buscar-localizacao" element={<Localizacao />} />
+            <Route path="/buscar-relatorio-diario" element={<RelatorioVendas />} />
 
 
 
