@@ -1,31 +1,31 @@
 /* ── VARIÁVEIS ──────────────────────────────────────────── */
 :root {
-  --orange:        #ff8c00;
-  --orange-light:  #fff3e0;
-  --orange-mid:    #ffd699;
-  --green:         #2f9e44;
-  --green-light:   #ebfbee;
-  --green-mid:     #8ce99a;
-  --blue:          #1971c2;
-  --blue-light:    #e7f5ff;
-  --blue-mid:      #a5d8ff;
-  --purple:        #7048e8;
-  --purple-light:  #f3f0ff;
-  --purple-mid:    #b197fc;
-  --red:           #c92a2a;
-  --red-light:     #fff5f5;
-  --red-mid:       #ffc9c9;
-  --indigo:        #3b5bdb;
-  --gray-900:      #1a1f2e;
-  --gray-700:      #495057;
-  --gray-500:      #868e96;
-  --gray-300:      #dee2e6;
-  --gray-100:      #f8f9fa;
-  --white:         #ffffff;
-  --border:        #eaecef;
-  --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
-  --shadow-md:     0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06);
-  --radius:        14px;
+  --orange: #ff8c00;
+  --orange-light: #fff3e0;
+  --orange-mid: #ffd699;
+  --green: #2f9e44;
+  --green-light: #ebfbee;
+  --green-mid: #8ce99a;
+  --blue: #1971c2;
+  --blue-light: #e7f5ff;
+  --blue-mid: #a5d8ff;
+  --purple: #7048e8;
+  --purple-light: #f3f0ff;
+  --purple-mid: #b197fc;
+  --red: #c92a2a;
+  --red-light: #fff5f5;
+  --red-mid: #ffc9c9;
+  --indigo: #3b5bdb;
+  --gray-900: #1a1f2e;
+  --gray-700: #495057;
+  --gray-500: #868e96;
+  --gray-300: #dee2e6;
+  --gray-100: #f8f9fa;
+  --white: #ffffff;
+  --border: #eaecef;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.08), 0 6px 24px rgba(0, 0, 0, 0.06);
+  --radius: 14px;
 }
 
 /* ── CONTAINER RAIZ ─────────────────────────────────────── */
@@ -34,7 +34,7 @@
   height: 100vh;
   width: 100%;
   overflow: hidden;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 /* ── LADO ESQUERDO — MASCOTE ────────────────────────────── */
@@ -63,7 +63,9 @@
   text-align: center;
 }
 
-.tagBemVindo { display: none; }
+.tagBemVindo {
+  display: none;
+}
 
 .titulo {
   font-size: 3.2rem;
@@ -82,7 +84,9 @@
   text-align: center;
 }
 
-.subTitulo strong { color: var(--gray-700); }
+.subTitulo strong {
+  color: var(--gray-700);
+}
 
 .mascoteImagemWrap {
   margin-top: 30px;
@@ -99,9 +103,13 @@
   transition: transform 0.3s ease;
 }
 
-.mascote:hover { transform: scale(1.03); }
+.mascote:hover {
+  transform: scale(1.03);
+}
 
-.rodapeEsq { display: none; }
+.rodapeEsq {
+  display: none;
+}
 
 /* ── LADO DIREITO — FORMULÁRIO ──────────────────────────── */
 .ladoForm {
@@ -187,7 +195,9 @@
   letter-spacing: -0.4px;
 }
 
-.cardTituloAlerta { color: var(--red); }
+.cardTituloAlerta {
+  color: var(--red);
+}
 
 .cardDescricao {
   font-size: 13px;
@@ -233,14 +243,18 @@
   box-sizing: border-box;
 }
 
-.input::placeholder { color: var(--gray-500); }
+.input::placeholder {
+  color: var(--gray-500);
+}
 
-.input:hover  { border-color: #adb5bd; }
+.input:hover {
+  border-color: #adb5bd;
+}
 
 .input:focus {
   outline: none;
   border-color: var(--orange);
-  box-shadow: 0 0 0 3px rgba(255,140,0,0.12);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
 }
 
 /* ── BOTÃO PRINCIPAL ────────────────────────────────────── */
@@ -258,7 +272,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(255,140,0,0.28);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.28);
   margin-top: 4px;
   width: 100%;
 }
@@ -278,7 +292,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(255,140,0,0.28);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.28);
   margin-top: 4px;
   width: 100%;
 }
@@ -286,17 +300,17 @@
 .botaoPrincipal:hover {
   background: #e07b00;
   transform: translateY(-2px);
-  box-shadow: 0 5px 16px rgba(255,140,0,0.38);
+  box-shadow: 0 5px 16px rgba(255, 140, 0, 0.38);
 }
 
 .botaoPrincipal:disabled {
   opacity: 0.3;
   cursor: not-allowed;
-
 }
 
-.botaoPrincipal:active { transform: translateY(0); }
-
+.botaoPrincipal:active {
+  transform: translateY(0);
+}
 
 .spin {
   animation: spin 1s linear infinite;
@@ -321,7 +335,9 @@
   padding: 4px 0;
 }
 
-.linkEsqueci:hover { color: var(--blue); }
+.linkEsqueci:hover {
+  color: var(--blue);
+}
 
 /* ── BOTÃO VOLTAR ───────────────────────────────────────── */
 .botaoVoltar {
@@ -376,7 +392,11 @@
   margin: 0;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* ── ANIMAÇÃO ENTRADA ───────────────────────────────────── */
 .fadeUp {
@@ -384,33 +404,54 @@
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── RESPONSIVIDADE ─────────────────────────────────────── */
 @media (max-width: 968px) {
-  .container { flex-direction: column; }
+  .container {
+    flex-direction: column;
+  }
 
   .ladoMascote {
     flex: none;
     padding: 30px 20px;
   }
 
-  .titulo        { font-size: 2.5rem; }
-  .subTitulo     { display: none; }
+  .titulo {
+    font-size: 2.5rem;
+  }
+  .subTitulo {
+    display: none;
+  }
 
   .ladoForm {
     flex: 1;
     padding: 24px 20px;
   }
 
-  .rodape { position: static; margin-top: 24px; }
+  .rodape {
+    position: static;
+    margin-top: 24px;
+  }
 
-  .card { padding: 32px 24px; }
+  .card {
+    padding: 32px 24px;
+  }
 }
 
 @media (max-width: 480px) {
-  .card    { padding: 28px 18px; }
-  .titulo  { font-size: 2rem; }
+  .card {
+    padding: 28px 18px;
+  }
+  .titulo {
+    font-size: 2rem;
+  }
 }

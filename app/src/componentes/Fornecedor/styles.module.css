@@ -1,27 +1,27 @@
 /* ─── Variáveis ────────────────────────────────────────────────────────────── */
 :root {
-  --orange:        #ff8c00;
-  --orange-light:  #fff3e0;
-  --orange-mid:    #ffd699;
-  --green:         #2f9e44;
-  --green-light:   #ebfbee;
-  --green-mid:     #8ce99a;
-  --blue:          #1971c2;
-  --blue-light:    #e7f5ff;
-  --blue-mid:      #a5d8ff;
-  --red:           #c92a2a;
-  --red-light:     #d33939;
-  --red-light:     #fff5f5;
-  --red-mid:       #ffc9c9;
-  --gray-900:      #1a1f2e;
-  --gray-700:      #495057;
-  --gray-500:      #868e96;
-  --gray-300:      #dee2e6;
-  --gray-100:      #f8f9fa;
-  --white:         #ffffff;
-  --border:        #eaecef;
-  --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
-  --radius:        14px;
+  --orange: #ff8c00;
+  --orange-light: #fff3e0;
+  --orange-mid: #ffd699;
+  --green: #2f9e44;
+  --green-light: #ebfbee;
+  --green-mid: #8ce99a;
+  --blue: #1971c2;
+  --blue-light: #e7f5ff;
+  --blue-mid: #a5d8ff;
+  --red: #c92a2a;
+  --red-light: #d33939;
+  --red-light: #fff5f5;
+  --red-mid: #ffc9c9;
+  --gray-900: #1a1f2e;
+  --gray-700: #495057;
+  --gray-500: #868e96;
+  --gray-300: #dee2e6;
+  --gray-100: #f8f9fa;
+  --white: #ffffff;
+  --border: #eaecef;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 8px rgba(0, 0, 0, 0.04);
+  --radius: 14px;
 }
 
 /* Card */
@@ -38,8 +38,14 @@
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Header */
@@ -65,7 +71,9 @@
   margin: 0;
 }
 
-.cardHeaderIcon { color: var(--orange); }
+.cardHeaderIcon {
+  color: var(--orange);
+}
 
 /* Botão voltar */
 .botaoVoltar {
@@ -115,7 +123,9 @@
   letter-spacing: 0.8px;
 }
 
-.filtroIcone { color: var(--orange); }
+.filtroIcone {
+  color: var(--orange);
+}
 
 .filtrosGrid {
   display: grid;
@@ -152,12 +162,14 @@
   box-sizing: border-box;
 }
 
-.input:hover { border-color: #adb5bd; }
+.input:hover {
+  border-color: #adb5bd;
+}
 
 .input:focus {
   outline: none;
   border-color: var(--orange);
-  box-shadow: 0 0 0 3px rgba(255,140,0,0.12);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
 }
 
 /* Botões */
@@ -182,7 +194,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(255,140,0,0.25);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.25);
 }
 
 .botaoPrincipal:hover:not(:disabled) {
@@ -310,7 +322,9 @@
   gap: 8px;
 }
 
-.iconeVazio { color: var(--gray-300); }
+.iconeVazio {
+  color: var(--gray-300);
+}
 
 .estadoVazio p {
   font-size: 15px;
@@ -318,7 +332,6 @@
   color: var(--gray-500);
   margin: 0;
 }
-
 
 /* Selects */
 .selectInput {

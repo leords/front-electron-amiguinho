@@ -6,9 +6,7 @@ export default function ItemListaPagamentosParcial({
   pagamento,
   onRemover,
   botaoRemover = true,
-
 }) {
-
   return (
     <div className={styles.container}>
       <table className={styles.tabela}>
@@ -25,12 +23,12 @@ export default function ItemListaPagamentosParcial({
 
             {botaoRemover ? (
               <td>
-                  <TrashIcon
-                    onClick={() => {
-                      onRemover(pagamento.idFormaPagamentoParcial);
-                    }}
-                    size={19}
-                  />
+                <TrashIcon
+                  onClick={() => {
+                    onRemover(pagamento.idFormaPagamentoParcial);
+                  }}
+                  size={19}
+                />
               </td>
             ) : (
               <td></td>

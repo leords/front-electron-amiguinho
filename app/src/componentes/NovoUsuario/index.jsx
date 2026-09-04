@@ -1,47 +1,63 @@
-import { useState } from 'react';
-import { AlertaRadix } from '../ui/alerta/alerta';
-import styles from './styles.module.css';
-import { UserPlusIcon, WhatsappLogoIcon, IdentificationCardIcon, EnvelopeIcon, AtIcon, LockIcon, LockKeyIcon, ShieldIcon, InfoIcon, XIcon, FloppyDiskIcon, ListChecksIcon } from '@phosphor-icons/react';
-import { CriarUsuario } from '../../operadores/API/usuario/criarUsuario';
-import { ToastRadix } from '../ui/notificacao/notificacao';
-import { usarToast } from '../Context/toastContext';
-import Spinner from '../Spinner';
+import { useState } from "react";
+import { AlertaRadix } from "../ui/alerta/alerta";
+import styles from "./styles.module.css";
+import {
+  UserPlusIcon,
+  WhatsappLogoIcon,
+  IdentificationCardIcon,
+  EnvelopeIcon,
+  AtIcon,
+  LockIcon,
+  LockKeyIcon,
+  ShieldIcon,
+  InfoIcon,
+  XIcon,
+  FloppyDiskIcon,
+  ListChecksIcon,
+} from "@phosphor-icons/react";
+import { CriarUsuario } from "../../operadores/API/usuario/criarUsuario";
+import { ToastRadix } from "../ui/notificacao/notificacao";
+import { usarToast } from "../Context/toastContext";
+import Spinner from "../Spinner";
 
-
-export default function NovoUsuario({setRender}) {
-
+export default function NovoUsuario({ setRender }) {
   // Estados
-  const [nome, setNome] = useState("")
-  const [email, setEmail] = useState("")
-  const [usuario, setUsuario] = useState("")
-  const [whatsapp, setWhatsapp] = useState("")
-  const [nivelAcesso, setNivelAcesso] = useState("")
-  const [senha, setSenha] = useState("")
-  const [confirmaSenha, setConfirmarSenha] = useState("")
-  const [validaDados, setValidaDados] = useState(false)
-  const [validaSenha, setValidaSenha] = useState(false)
-  const [carregando, setCarregando] = useState(false)
-
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [nivelAcesso, setNivelAcesso] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmaSenha, setConfirmarSenha] = useState("");
+  const [validaDados, setValidaDados] = useState(false);
+  const [validaSenha, setValidaSenha] = useState(false);
+  const [carregando, setCarregando] = useState(false);
 
   // Hook
   const { setMensagem } = usarToast();
 
-    
   // Enviar novo cadastro de usuário
   const EnviarNovoCadastro = async () => {
     // Valida o preenchimento de todos os campos
-    if(!nome || !usuario || !email || !nivelAcesso || !senha || !confirmaSenha) {
-      setValidaDados(true)
-      return
+    if (
+      !nome ||
+      !usuario ||
+      !email ||
+      !nivelAcesso ||
+      !senha ||
+      !confirmaSenha
+    ) {
+      setValidaDados(true);
+      return;
     }
-    // Valida se as senhas se coincidem 
-    if(senha !== confirmaSenha) {
-      setValidaSenha(true)
-      return
+    // Valida se as senhas se coincidem
+    if (senha !== confirmaSenha) {
+      setValidaSenha(true);
+      return;
     }
 
     try {
-      setCarregando(true)
+      setCarregando(true);
       // Criando objeto do novo cadastro
       const novoUsuarioData = {
         nome: nome,
@@ -49,233 +65,250 @@ export default function NovoUsuario({setRender}) {
         usuario: usuario,
         senha: senha,
         nivelAcesso: nivelAcesso,
-        whatsapp: whatsapp
-      }
+        whatsapp: whatsapp,
+      };
 
       // Chamando a função novo usuário
-      const novoUsuario = await CriarUsuario(novoUsuarioData)
+      const novoUsuario = await CriarUsuario(novoUsuarioData);
 
-      if(novoUsuario.usuario) {
-        setMensagem(`Usuário ${novoUsuario.usuario.nome} cadastrado com sucesso!`)
+      if (novoUsuario.usuario) {
+        setMensagem(
+          `Usuário ${novoUsuario.usuario.nome} cadastrado com sucesso!`,
+        );
 
         // limpar os campos
         LimparNovoCadastro();
 
         // voltar para lista
-        setRender('lista')
-
+        setRender("lista");
       }
     } catch (error) {
-      console.log(error)
-      alert(`Error: ${error.message}, tente novamente`)
+      console.log(error);
+      alert(`Error: ${error.message}, tente novamente`);
     } finally {
-      setCarregando(false)
+      setCarregando(false);
     }
-  }
+  };
 
   // Limpar estados
   const LimparNovoCadastro = async () => {
-    setNome("")
-    setEmail("")
-    setUsuario("")
-    setWhatsapp("")
-    setNivelAcesso("")
-    setSenha("")
-    setConfirmarSenha("")
-    setValidaDados(false)
-    setValidaSenha(false)
-  }
-
-
+    setNome("");
+    setEmail("");
+    setUsuario("");
+    setWhatsapp("");
+    setNivelAcesso("");
+    setSenha("");
+    setConfirmarSenha("");
+    setValidaDados(false);
+    setValidaSenha(false);
+  };
 
   return (
     <div className={styles.container}>
-      
       {/* FORMULÁRIO */}
       <div className={styles.card}>
-
         {/* SUBTÍTULOS */}
         <div className={styles.cardHeader}>
           <div className={styles.cardHeaderTitle}>
-            <ListChecksIcon size={17} weight="fill" className={styles.cardHeaderIcon} />
+            <ListChecksIcon
+              size={17}
+              weight="fill"
+              className={styles.cardHeaderIcon}
+            />
             <h2>Dados do usuário</h2>
           </div>
         </div>
 
-        
-        {carregando ? 
-          <div className={styles.enviandoPedido}> 
+        {carregando ? (
+          <div className={styles.enviandoPedido}>
             <Spinner />
             <p>Enviando novo cadastro, aguarde um instante...</p>
             <span>Estabelecendo conexão com o banco de dados...</span>
           </div>
-        : 
-        <>
-          {/* INPUTS */}
-          <div className={styles.containerInputs}>
-
-            {/* NOME */}
-            <div className={styles.divInput}>
-              <label className={`
+        ) : (
+          <>
+            {/* INPUTS */}
+            <div className={styles.containerInputs}>
+              {/* NOME */}
+              <div className={styles.divInput}>
+                <label
+                  className={`
                   ${styles.filtroLabel}
-                  ${!nome && validaDados ? styles.filtroLabelErro : ''}
-                `}>
-
-                <IdentificationCardIcon size={13} />
-                { !nome && validaDados === true ? 'Nome é obrigatório *' : 'Nome' }
-              </label>
-              <input 
-                className={styles.input} 
-                type="text" 
-                placeholder="Nome completo" 
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
+                  ${!nome && validaDados ? styles.filtroLabelErro : ""}
+                `}
+                >
+                  <IdentificationCardIcon size={13} />
+                  {!nome && validaDados === true
+                    ? "Nome é obrigatório *"
+                    : "Nome"}
+                </label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  placeholder="Nome completo"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
                 />
-            </div>
+              </div>
 
-            {/* EMAIL */}
-            <div className={styles.divInput}>
-              <label className={`
+              {/* EMAIL */}
+              <div className={styles.divInput}>
+                <label
+                  className={`
                   ${styles.filtroLabel}
-                  ${!email && validaDados ? styles.filtroLabelErro : ''}
-                `}>
-
-                <EnvelopeIcon size={13} />
-                { !email && validaDados === true ? 'Email é obrigatório *' : 'Email' }
-              </label>
-              <input 
-                className={styles.input} 
-                type="email" 
-                placeholder="email@empresa.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                
+                  ${!email && validaDados ? styles.filtroLabelErro : ""}
+                `}
+                >
+                  <EnvelopeIcon size={13} />
+                  {!email && validaDados === true
+                    ? "Email é obrigatório *"
+                    : "Email"}
+                </label>
+                <input
+                  className={styles.input}
+                  type="email"
+                  placeholder="email@empresa.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
-            </div>
+              </div>
 
-            {/* USUARIO */}
-            <div className={styles.divInput}>
-              <label className={`
+              {/* USUARIO */}
+              <div className={styles.divInput}>
+                <label
+                  className={`
                   ${styles.filtroLabel}
-                  ${!usuario && validaDados ? styles.filtroLabelErro : ''}
-                `}>
-
-                <AtIcon size={13} />
-                { !usuario && validaDados === true ? 'Usuário é obrigatório *' : 'USUÁRIO' }
-              </label>
-              <input 
-                className={styles.input} 
-                type="text" 
-                placeholder="nome.usuario"
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
+                  ${!usuario && validaDados ? styles.filtroLabelErro : ""}
+                `}
+                >
+                  <AtIcon size={13} />
+                  {!usuario && validaDados === true
+                    ? "Usuário é obrigatório *"
+                    : "USUÁRIO"}
+                </label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  placeholder="nome.usuario"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
                 />
-            </div>
+              </div>
 
-            {/* WHATSAPP */}
-            <div className={styles.divInput}>
-              <label className={`
+              {/* WHATSAPP */}
+              <div className={styles.divInput}>
+                <label
+                  className={`
                   ${styles.filtroLabel}
-                  ${!whatsapp && validaDados ? styles.filtroLabelErro : ''}
-                `}>
-                <WhatsappLogoIcon size={13} />
-                { !whatsapp && validaDados === true ? 'Whatsapp é obrigatório *' : 'WHATSAPP' }
-              </label>
-              <input 
-                className={styles.input} 
-                type="number" 
-                placeholder="47911223344"
-                value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
+                  ${!whatsapp && validaDados ? styles.filtroLabelErro : ""}
+                `}
+                >
+                  <WhatsappLogoIcon size={13} />
+                  {!whatsapp && validaDados === true
+                    ? "Whatsapp é obrigatório *"
+                    : "WHATSAPP"}
+                </label>
+                <input
+                  className={styles.input}
+                  type="number"
+                  placeholder="47911223344"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
                 />
-            </div>
+              </div>
 
-            {/* SENHA */}
-            <div className={styles.divInput}>
-              <label className={`
+              {/* SENHA */}
+              <div className={styles.divInput}>
+                <label
+                  className={`
                   ${styles.filtroLabel}
-                  ${validaDados ? styles.filtroLabelErro : ''}
-                `}>
-
-                <LockIcon size={13} />
-                { !senha && validaDados === true ? 'Senha é obrigatório *' : 'SENHA' }
-              </label>
-              <input 
-                className={styles.input} 
-                type="password" 
-                placeholder="••••••••" 
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
+                  ${validaDados ? styles.filtroLabelErro : ""}
+                `}
+                >
+                  <LockIcon size={13} />
+                  {!senha && validaDados === true
+                    ? "Senha é obrigatório *"
+                    : "SENHA"}
+                </label>
+                <input
+                  className={styles.input}
+                  type="password"
+                  placeholder="••••••••"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
                 />
-            </div>
+              </div>
 
-            {/* CONFIRMAR SENHA */}
-            <div className={styles.divInput}>
-              <label className={`
+              {/* CONFIRMAR SENHA */}
+              <div className={styles.divInput}>
+                <label
+                  className={`
                   ${styles.filtroLabel}
-                  ${validaDados ? styles.filtroLabelErro : ''}
-                `}>
-
-                <LockKeyIcon size={13} />
-                { !confirmaSenha && validaDados === true ? 'Confirmação de senha é obrigatório *' : 'CONFIRME A SENHA' }
-              </label>
-              <input 
-                className={styles.input} 
-                type="password" 
-                placeholder="••••••••" 
-                value={confirmaSenha}
-                onChange={(e) => setConfirmarSenha(e.target.value)}
+                  ${validaDados ? styles.filtroLabelErro : ""}
+                `}
+                >
+                  <LockKeyIcon size={13} />
+                  {!confirmaSenha && validaDados === true
+                    ? "Confirmação de senha é obrigatório *"
+                    : "CONFIRME A SENHA"}
+                </label>
+                <input
+                  className={styles.input}
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmaSenha}
+                  onChange={(e) => setConfirmarSenha(e.target.value)}
                 />
+              </div>
 
-            </div>
-
-            
-            {/* NIVEL DE ACESSO */}
-            <div className={styles.divInput}>
-              <label className={`
+              {/* NIVEL DE ACESSO */}
+              <div className={styles.divInput}>
+                <label
+                  className={`
                   ${styles.filtroLabel}
-                  ${validaDados ? styles.filtroLabelErro : ''}
-                `}>
-
-                <ShieldIcon size={13} />
-                { !nivelAcesso && validaDados === true ? 'Nível de acesso é obrigatório *' : 'NÍVEL DE ACESSO' }
-              </label>
-              <div className={styles.nivelWrapper}>
-
-                <select 
-                  className={styles.input} 
-                  placeholder="ex: vendas, balcao, delivery…"
-                  value={nivelAcesso}
-                  onChange={(e) => setNivelAcesso(e.target.value)}
-                  
+                  ${validaDados ? styles.filtroLabelErro : ""}
+                `}
+                >
+                  <ShieldIcon size={13} />
+                  {!nivelAcesso && validaDados === true
+                    ? "Nível de acesso é obrigatório *"
+                    : "NÍVEL DE ACESSO"}
+                </label>
+                <div className={styles.nivelWrapper}>
+                  <select
+                    className={styles.input}
+                    placeholder="ex: vendas, balcao, delivery…"
+                    value={nivelAcesso}
+                    onChange={(e) => setNivelAcesso(e.target.value)}
                   >
-                  <option value="" disabled>Selecione</option>
-                  <option value={'ADMIN'}>admin</option>
-                  <option value={'VENDAS'}>vendas</option>
-                  <option value={'BALCAO'}>balcão</option>
-                  <option value={'DELIVERY'}>delivery</option>
-                  <option value={'EXTERNO'}>externo</option>
-                  <option value={'USUARIO'}>usuário</option>
-                  <option value={'ENTREGADOR'}>entregador</option>
-                </select>
-
+                    <option value="" disabled>
+                      Selecione
+                    </option>
+                    <option value={"ADMIN"}>admin</option>
+                    <option value={"VENDAS"}>vendas</option>
+                    <option value={"BALCAO"}>balcão</option>
+                    <option value={"DELIVERY"}>delivery</option>
+                    <option value={"EXTERNO"}>externo</option>
+                    <option value={"USUARIO"}>usuário</option>
+                    <option value={"ENTREGADOR"}>entregador</option>
+                  </select>
+                </div>
               </div>
             </div>
-    
-          </div>
-          {/* RETORNO DE ERRO DE COMPARAÇÃO DE SENHAS */} 
-          { validaSenha && 
-            <div className={styles.containerRetornoSenha}>
-              <p className={styles.retornoSenha}> As senhas não coincidem, tente novamente!</p>
-            </div> 
-          }
-        </>
-        }
-
+            {/* RETORNO DE ERRO DE COMPARAÇÃO DE SENHAS */}
+            {validaSenha && (
+              <div className={styles.containerRetornoSenha}>
+                <p className={styles.retornoSenha}>
+                  {" "}
+                  As senhas não coincidem, tente novamente!
+                </p>
+              </div>
+            )}
+          </>
+        )}
 
         {/* BOTÕES */}
         <div className={styles.acoes}>
-
           {/* BOTÃO DE CANCELAR */}
           <AlertaRadix
             titulo="Cancelar cadastro"
@@ -290,7 +323,7 @@ export default function NovoUsuario({setRender}) {
               </button>
             }
           />
-          
+
           {/* BOTÃO DE SALVAR */}
           <AlertaRadix
             titulo="Confirmar novo cadastro"
@@ -299,17 +332,14 @@ export default function NovoUsuario({setRender}) {
             confirmarTexto="Confirmar"
             cancelarTexto="Sair"
             trigger={
-            <button className={styles.botaoPrincipal} type="button">
-              <FloppyDiskIcon size={15} weight="fill" />
-              Salvar usuário
-            </button>
+              <button className={styles.botaoPrincipal} type="button">
+                <FloppyDiskIcon size={15} weight="fill" />
+                Salvar usuário
+              </button>
             }
           />
-
         </div>
-
       </div>
-
     </div>
   );
 }

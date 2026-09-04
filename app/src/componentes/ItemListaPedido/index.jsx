@@ -5,14 +5,9 @@ export default function ItemListaPedido({
   produto,
   onRemover,
   botaoRemover = true,
-
 }) {
-
-  const precoUnitario = parseFloat(
-    produto.precoUndVenda.replace(",", ".")
-  )
-  const preco = precoUnitario * produto.quantidade
-
+  const precoUnitario = parseFloat(produto.precoUndVenda.replace(",", "."));
+  const preco = precoUnitario * produto.quantidade;
 
   return (
     <div className={styles.container}>
@@ -35,22 +30,20 @@ export default function ItemListaPedido({
             </td>
             {botaoRemover ? (
               <td>
-                {produto?.nome !== 'TAXA ENTREGA'
-                  ?
+                {produto?.nome !== "TAXA ENTREGA" ? (
                   <TrashIcon
                     onClick={() => {
                       onRemover(produto.id);
                     }}
                     size={20}
                   />
-                  : 
+                ) : (
                   <WarningCircleIcon
                     color="orange"
                     size={20}
                     weight="duotone"
                   />
-                }
-
+                )}
               </td>
             ) : (
               <td></td>

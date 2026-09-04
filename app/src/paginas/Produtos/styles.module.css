@@ -3,7 +3,7 @@
   flex-direction: column;
   min-height: 100vh;
   background: #f2f4f7;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 .principal {
@@ -39,7 +39,7 @@
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 4px 14px rgba(25,113,194,0.35);
+  box-shadow: 0 4px 14px rgba(25, 113, 194, 0.35);
   flex-shrink: 0;
 }
 
@@ -59,7 +59,6 @@
   margin: 0;
   letter-spacing: -0.5px;
 }
-
 
 /* Botão voltar */
 .botaoVoltar {

@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState } from "react";
 import {
   Package,
   Plus,
@@ -36,23 +36,19 @@ import { Fornecedor } from "../../componentes/Fornecedor";
 import Estoque from "../../componentes/SaldoEstoque";
 import RelatorioSaidaProduto from "../../componentes/RelatorioSaidaProduto";
 
-
 export default function EstoquePage() {
-
   //Hooks
-    const { mensagem, setMensagem } = usarToast();
+  const { mensagem, setMensagem } = usarToast();
 
   // Estados
   const [view, setView] = useState("lista"); // "lista" | "novaOrdem" | "editarOrdem" | "fornecedores" | "saldoEstoque"
   const [ordemSelecionada, setOrdemSelecionada] = useState(null);
 
- 
   return (
     <div className={styles.container}>
       <ToastRadix mensagem={mensagem} />
       <Cabecalho />
       <main className={styles.principal}>
-
         {/* CABEÇALHO */}
         <div className={styles.cabecalhoPage}>
           <div className={styles.tituloSection}>
@@ -64,82 +60,85 @@ export default function EstoquePage() {
               <h1 className={styles.pageTitulo}>Ordens de Compra</h1>
             </div>
           </div>
-          
-          { /* BOTÕES */ }
+
+          {/* BOTÕES */}
           <div className={styles.cabecalhoAcoes}>
-            {view !== 'novaOrdem' && 
-            <button className={styles.botaoPrincipal} onClick={() => { setView("novaOrdem") }}>
-              <Plus size={16} weight="bold" />
-              Nova Ordem
-            </button>
-            }
-            {view !== 'fornecedores' &&
-              <button className={styles.botaoSecundario} onClick={() => setView("fornecedores")}>
-              <Buildings size={16} weight="bold" />
-              Fornecedores
-            </button>
-            }
-            {view !== 'saldoEstoque' &&
-              <button className={styles.botaoSaldoEstoque} onClick={() => { setView("saldoEstoque") }}>
+            {view !== "novaOrdem" && (
+              <button
+                className={styles.botaoPrincipal}
+                onClick={() => {
+                  setView("novaOrdem");
+                }}
+              >
+                <Plus size={16} weight="bold" />
+                Nova Ordem
+              </button>
+            )}
+            {view !== "fornecedores" && (
+              <button
+                className={styles.botaoSecundario}
+                onClick={() => setView("fornecedores")}
+              >
+                <Buildings size={16} weight="bold" />
+                Fornecedores
+              </button>
+            )}
+            {view !== "saldoEstoque" && (
+              <button
+                className={styles.botaoSaldoEstoque}
+                onClick={() => {
+                  setView("saldoEstoque");
+                }}
+              >
                 <PackageIcon size={16} weight="bold" />
                 Saldo do estoque
               </button>
-            }
-            {view !== 'relatorioSaida' &&
-              <button className={styles.botaoRelatorioSaida} onClick={() => { setView("relatorioSaida") }}>
+            )}
+            {view !== "relatorioSaida" && (
+              <button
+                className={styles.botaoRelatorioSaida}
+                onClick={() => {
+                  setView("relatorioSaida");
+                }}
+              >
                 <PackageIcon size={16} weight="bold" />
                 Relatório de saídas
               </button>
-            }
-
+            )}
           </div>
         </div>
 
-        {/* SALDO ESTOQUE */} 
-        {view === "saldoEstoque" && (
-          <Estoque 
-            setView={setView}
-          />  
-        )}
+        {/* SALDO ESTOQUE */}
+        {view === "saldoEstoque" && <Estoque setView={setView} />}
 
         {/* COMPONENTE RELATÓRIO DE SAÍDA DE PRODUTO */}
         {view === "relatorioSaida" && (
-          <RelatorioSaidaProduto
-              setView={setView}
-          />
+          <RelatorioSaidaProduto setView={setView} />
         )}
 
         {/* COMPONENTE LISTA */}
         {view === "lista" && (
           <ListaOrdemCompra
-              setView={setView}
-              setOrdemSelecionada={setOrdemSelecionada}
+            setView={setView}
+            setOrdemSelecionada={setOrdemSelecionada}
           />
         )}
 
         {/* COMPONENTE NOVA ORDEM */}
         {view === "novaOrdem" && (
-          <NovaOrdemCompra 
-            setView={setView}
-            setMensagem={setMensagem}
-          />
+          <NovaOrdemCompra setView={setView} setMensagem={setMensagem} />
         )}
 
         {/* COMPONENTE EDITAR STATUS */}
         {view === "editarOrdem" && ordemSelecionada && (
-          <EditarStatusOrdem 
-            ordemSelecionada = { ordemSelecionada }
-            setView = { setView }
+          <EditarStatusOrdem
+            ordemSelecionada={ordemSelecionada}
+            setView={setView}
           />
         )}
 
         {/* FORNECEDORES */}
-        {view === "fornecedores" && (
-          <Fornecedor 
-          setView = {setView}
-          />
-        )}
-        
+        {view === "fornecedores" && <Fornecedor setView={setView} />}
       </main>
 
       <Rodape />

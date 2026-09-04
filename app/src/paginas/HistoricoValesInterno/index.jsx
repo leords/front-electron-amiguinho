@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import Cabecalho from "../../componentes/Cabecalho/index.jsx";
 import Rodape from "../../componentes/Rodape/index.jsx";
-import logo from "../../assets/logo.jpg";
 import ItemListaHistorico from "../../componentes/ItemListaHistorico/index.jsx";
 import { dataFormatadaCalendario } from "../../utils/data.js";
 import {
@@ -19,8 +18,6 @@ import { buscarValeInterno } from "../../operadores/API/pedido/buscarValeInterno
 import { useFormaPagamentoBalcao } from "../../hooks/useFormaPagamentoBalcao";
 
 export default function HistoricoValesInterno() {
-
-
   // Hook
   const { listaFormaPagamento } = useFormaPagamentoBalcao();
   const { setMensagem } = usarToast();
@@ -33,13 +30,20 @@ export default function HistoricoValesInterno() {
   const [totalVendas, setTotalVendas] = useState(0);
   const [nomeFormaPagamento, setNomeFormaPagamento] = useState("");
   const [formaPagamento, setFormaPagamento] = useState("");
-  
+
   // Lista à ser ignoradas
-  const ignorarItensLista = ["A VISTA", "PIX", "CARTÃO", "CHEQUE", "ORÇAMENTO", "BOLETO"];
+  const ignorarItensLista = [
+    "A VISTA",
+    "PIX",
+    "CARTÃO",
+    "CHEQUE",
+    "ORÇAMENTO",
+    "BOLETO",
+  ];
 
   // Filtrando formas de pagamento, ignorando a lista ácima
   const listaFormasPagamentoFiltrada = listaFormaPagamento?.filter(
-    (forma) => !ignorarItensLista.includes(forma.nome)
+    (forma) => !ignorarItensLista.includes(forma.nome),
   );
 
   // Setando datas de inicio e fim com a data atual
@@ -56,18 +60,16 @@ export default function HistoricoValesInterno() {
     const filtrarPedidos = async () => {
       setCarregando(true);
       try {
-          const resultado = await buscarValeInterno({
-            setor: "balcao",
-            dataInicio,
-            dataFim,
-            formaPagamento: formaPagamento 
-          });
+        const resultado = await buscarValeInterno({
+          setor: "balcao",
+          dataInicio,
+          dataFim,
+          formaPagamento: formaPagamento,
+        });
 
-          setPedidosFiltrados(resultado);
-          
-
+        setPedidosFiltrados(resultado);
       } catch (error) {
-        setMensagem(error.message)
+        setMensagem(error.message);
         console.error(error.message);
       } finally {
         setCarregando(false);
@@ -80,19 +82,18 @@ export default function HistoricoValesInterno() {
   useEffect(() => {
     const total = pedidosFiltrados.reduce(
       (acc, pedido) =>
-        acc + pedido.itens.reduce((soma, item) => soma + item.valorTotal || 0, 0),
-      0
+        acc +
+        pedido.itens.reduce((soma, item) => soma + item.valorTotal || 0, 0),
+      0,
     );
     setTotalVendas(total);
   }, [pedidosFiltrados]);
-
 
   return (
     <div className={styles.container}>
       <Cabecalho />
 
       <main className={styles.principal}>
-
         {/* CABEÇALHO */}
         <div className={styles.cabecalhoPage}>
           <div className={styles.tituloSection}>
@@ -114,7 +115,6 @@ export default function HistoricoValesInterno() {
           </div>
 
           <div className={styles.filtrosGrid}>
-
             {/* COLABORADOR */}
             <div className={styles.filtroGrupo}>
               <label className={styles.filtroLabel}>Colaborador</label>
@@ -170,7 +170,6 @@ export default function HistoricoValesInterno() {
                 </button>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -182,9 +181,13 @@ export default function HistoricoValesInterno() {
             </div>
             <div>
               <p className={styles.cardLabel}>Total de pedidos</p>
-              <strong className={styles.cardValor}>{pedidosFiltrados.length}</strong>
+              <strong className={styles.cardValor}>
+                {pedidosFiltrados.length}
+              </strong>
               <p className={styles.cardSub}>
-                {pedidosFiltrados.length === 1 ? "pedido no período" : "pedidos no período"}
+                {pedidosFiltrados.length === 1
+                  ? "pedido no período"
+                  : "pedidos no período"}
               </p>
             </div>
           </div>
@@ -195,7 +198,9 @@ export default function HistoricoValesInterno() {
             </div>
             <div>
               <p className={styles.cardLabel}>Total em vales</p>
-              <strong className={styles.cardValor}>{formatarMoeda(totalVendas)}</strong>
+              <strong className={styles.cardValor}>
+                {formatarMoeda(totalVendas)}
+              </strong>
               <p className={styles.cardSub}>valor total no período</p>
             </div>
           </div>
@@ -203,18 +208,24 @@ export default function HistoricoValesInterno() {
 
         {/* CONTEUDO PRINCIPAL */}
         <div className={styles.main}>
-
           <section className={styles.containerLista}>
             <div className={styles.cabecalhoLista}>
               <div className={styles.cabecalhoListaEsq}>
-                <MagnifyingGlassIcon size={18} weight="bold" className={styles.cabecalhoIcone} />
+                <MagnifyingGlassIcon
+                  size={18}
+                  weight="bold"
+                  className={styles.cabecalhoIcone}
+                />
                 <h2>Pedidos encontrados</h2>
                 {nomeFormaPagamento && (
-                  <span className={styles.badgeColaborador}>{nomeFormaPagamento}</span>
+                  <span className={styles.badgeColaborador}>
+                    {nomeFormaPagamento}
+                  </span>
                 )}
                 {!carregando && pedidosFiltrados.length > 0 && (
                   <span className={styles.contador}>
-                    {pedidosFiltrados.length} {pedidosFiltrados.length === 1 ? "resultado" : "resultados"}
+                    {pedidosFiltrados.length}{" "}
+                    {pedidosFiltrados.length === 1 ? "resultado" : "resultados"}
                   </span>
                 )}
               </div>
@@ -243,7 +254,11 @@ export default function HistoricoValesInterno() {
                   </div>
                 ) : pedidosFiltrados.length === 0 ? (
                   <div className={styles.estadoVazio}>
-                    <FileTextIcon size={44} weight="duotone" className={styles.iconeVazio} />
+                    <FileTextIcon
+                      size={44}
+                      weight="duotone"
+                      className={styles.iconeVazio}
+                    />
                     <p>Nenhum vale encontrado</p>
                     <span>Não há vales registrados para este período</span>
                   </div>
@@ -253,17 +268,6 @@ export default function HistoricoValesInterno() {
               </div>
             </div>
           </section>
-
-          {/* Mascote */}
-          <aside className={styles.containerMascote}>
-            <div className={styles.mascoteCard}>
-              <img src={logo} alt="Logo" className={styles.logo} />
-              <p className={styles.mascoteTexto}>
-                Consulte o histórico de pedidos como vale interno.
-              </p>
-            </div>
-          </aside>
-
         </div>
       </main>
 

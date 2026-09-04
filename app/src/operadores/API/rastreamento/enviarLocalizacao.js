@@ -7,7 +7,7 @@ export const enviarLocalizacao = async (entregadorId, latitude, longitude) => {
     const resposta = await api.post(
       `/rastreamento/localizacao`,
       { entregadorId, latitude, longitude }, // body correto aqui
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
     return resposta.data;
   } catch (error) {

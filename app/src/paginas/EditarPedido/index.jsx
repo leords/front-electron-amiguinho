@@ -30,12 +30,9 @@ import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 import { useFormaPagamentoExterna } from "../../hooks/useFormaPagamentoExterna";
 import { EnviarEdicaoPedidoBalcao } from "../../operadores/API/pedido/editarPedidoBalcao";
 
-
-export default function EditarPedido() {  
-
-const { state } = useLocation()
-const navegar = useNavigate() 
-
+export default function EditarPedido() {
+  const { state } = useLocation();
+  const navegar = useNavigate();
 
   // Estados
   const [itens, setItens] = useState(state.itens);
@@ -44,20 +41,19 @@ const navegar = useNavigate()
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [valorTotal, setValorTotal] = useState();
   const [formasPagamento, setFormasPagamento] = useState(
-    state.pagamentos?.map(p => ({
+    state.pagamentos?.map((p) => ({
       ...p,
-      _key: crypto.randomUUID()
-    }))
+      _key: crypto.randomUUID(),
+    })),
   );
 
   // Hooks
   const { listaFormaPagamento } = useFormaPagamentoExterna();
-  const { produtos } = useProdutos(); 
+  const { produtos } = useProdutos();
   const { mensagem, setMensagem } = usarToast();
 
   // Mapeando produtos para o <Select />
   const options = produtos.map((p) => ({ value: p.id, label: p.nome }));
-
 
   // Adiciona o nome referente ao id e key a todos os itens
   useEffect(() => {
@@ -68,9 +64,10 @@ const navegar = useNavigate()
     setItens((prev) =>
       prev.map((item) => ({
         ...item,
-        nomeProduto: map.get(Number(item.produtoId)) || "Produto nao encontrado",
+        nomeProduto:
+          map.get(Number(item.produtoId)) || "Produto nao encontrado",
         _key: crypto.randomUUID(),
-      }))
+      })),
     );
   }, [produtos]);
 
@@ -78,34 +75,40 @@ const navegar = useNavigate()
   useEffect(() => {
     if (!itens.length) return;
 
-    const total = itens.reduce((s, item) => s + item.quantidade * item.valorUnit, 0);
+    const total = itens.reduce(
+      (s, item) => s + item.quantidade * item.valorUnit,
+      0,
+    );
     setValorTotal(total);
-
   }, [itens]);
 
   // Funções p/ lista de produtos
   const atualizarQuantidade = (key, valor) => {
     setItens((prev) =>
-      prev.map((item) => (item._key === key ? { ...item, quantidade: Number(valor) } : item))
+      prev.map((item) =>
+        item._key === key ? { ...item, quantidade: Number(valor) } : item,
+      ),
     );
-    setMensagem('Quantidade alterada')
+    setMensagem("Quantidade alterada");
   };
 
   // Atualiza o valor total
   const atualizarValor = (key, valor) => {
     setItens((prev) =>
-      prev.map((item) => (item._key === key ? { ...item, valorUnit: valor } : item))
+      prev.map((item) =>
+        item._key === key ? { ...item, valorUnit: valor } : item,
+      ),
     );
   };
 
   // Remove produto da lista
   const removerItem = (key) => {
     setItens((prev) => prev.filter((item) => item._key !== key));
-    setMensagem('Item removido')
+    setMensagem("Item removido");
   };
 
   // Adiciona produto
-  const adicionarItem = () => { 
+  const adicionarItem = () => {
     if (!produtoSelecionado) return;
 
     setItens((prev) => [
@@ -122,135 +125,135 @@ const navegar = useNavigate()
       },
     ]);
 
-    setMensagem('Novo item adicionado')
+    setMensagem("Novo item adicionado");
     setProdutoSelecionado(null);
     setNovaQuantidade(1);
   };
 
   // Envia a edição quando é DELIVERY ou EXTERNO
   const enviarEdicao = async () => {
-      try {
-
-        if (itens.length === 0) {
-          setMensagem('Nenhum item no pedido')
-        } 
-        else if(itens.quantidade <= 0) {
-          setMensagem('Quantidade igual ou menor que zero')
-        }
-        else if(itens.valorUnit <= 0) {
-          setMensagem('Valor unitário igual ou menor que zero')
-        }
-
-        // Formatando o array para enviar apenas os dados que precisa para o banco
-        const payload = (itens || []).map(({id, _key, pedidoId, nomeProduto, valorTotal, ...rest}) => rest)
-
-
-        // Enviando edição de pedido
-        const retorno = await EnviarEdicaoPedido(state.tipo, state.uuid, formaPagamento, payload);
-
-        setMensagem(retorno.mensagem)
-
-        navegar('/pedidos')
-
-
-      } catch (error) {
-        setMensagem(error.message)
-        console.log(error)
+    console.log("Enviando Edição Delivery");
+    try {
+      if (itens.length === 0) {
+        setMensagem("Nenhum item no pedido");
+      } else if (itens.quantidade <= 0) {
+        setMensagem("Quantidade igual ou menor que zero");
+      } else if (itens.valorUnit <= 0) {
+        setMensagem("Valor unitário igual ou menor que zero");
       }
-  }
+
+      // Formatando o array para enviar apenas os dados que precisa para o banco
+      const payload = (itens || []).map(
+        ({ id, _key, pedidoId, nomeProduto, valorTotal, ...rest }) => rest,
+      );
+
+      // Enviando edição de pedido
+      const retorno = await EnviarEdicaoPedido(
+        state.tipo,
+        state.uuid,
+        formaPagamento,
+        payload,
+      );
+
+      setMensagem(retorno.mensagem);
+
+      navegar("/pedidos");
+    } catch (error) {
+      setMensagem(error.message);
+      console.log(error);
+    }
+  };
 
   // Envia a edição quando é BALCAO
   const enviarEdicaoBalcao = async () => {
     try {
-      
       const validarTotalPagamento = formasPagamento.reduce(
         (total, pagamento) => total + Number(pagamento.valor || 0),
-        0
-      )
+        0,
+      );
 
-      if (validarTotalPagamento !== state.total) {
-        setMensagem("A soma das formas de pagamento deve ser igual ao total do pedido.");
+      const valorComparado1 = Number(validarTotalPagamento.toFixed(2));
+      const valorComparado2 = Number(state.total.toFixed(2));
+
+      if (valorComparado1 !== valorComparado2) {
+        setMensagem(
+          "A soma das formas de pagamento deve ser igual ao total do pedido.",
+        );
         return;
       }
 
       // Formatando o array para enviar apenas os dados que precisa para o banco
-      const payload = (itens || []).map(({id, _key, pedidoId, nomeProduto, valorTotal, ...rest}) => rest)
-
-      const pagamentosPayload = formasPagamento.map(({ _key, formaPagamento, pedido, id, ...rest }) => rest);
-
-      console.log('Payload Pagamentos: ', pagamentosPayload)
-      const retorno = await EnviarEdicaoPedidoBalcao(
-          state.uuid,
-          pagamentosPayload,
-          payload
+      const payload = (itens || []).map(
+        ({ id, _key, pedidoId, nomeProduto, valorTotal, ...rest }) => rest,
       );
 
-      
+      const pagamentosPayload = formasPagamento.map(
+        ({ _key, formaPagamento, pedido, id, ...rest }) => rest,
+      );
 
-        setMensagem(retorno.mensagem)
+      console.log("Payload Pagamentos: ", pagamentosPayload);
+      const retorno = await EnviarEdicaoPedidoBalcao(
+        state.uuid,
+        pagamentosPayload,
+        payload,
+      );
 
-        navegar('/pedidos')
+      setMensagem(retorno.mensagem);
+
+      navegar("/pedidos");
     } catch (error) {
-        setMensagem(error.message)
-        console.log(error)
+      setMensagem(error.message);
+      console.log(error);
     }
-  }
+  };
 
   // atualiza a lista de forma de pagamento
   const atualizarFormaPagamento = (key, formaPagamentoId) => {
-    setFormasPagamento(prev =>
-      prev.map(p =>
+    setFormasPagamento((prev) =>
+      prev.map((p) =>
         p._key === key
           ? { ...p, formaPagamentoId: Number(formaPagamentoId) }
-          : p
-      )
+          : p,
+      ),
     );
   };
+
   // remover forma de pagamento
   const removerPagamento = (key) => {
-    setFormasPagamento(prev =>
-      prev.filter(p => p._key !== key)
-    );
+    setFormasPagamento((prev) => prev.filter((p) => p._key !== key));
 
     setMensagem("Forma de pagamento removida");
   };
+
   // adicionar nova forma de pagamento
   const adicionarPagamento = () => {
-    setFormasPagamento(prev => [
+    setFormasPagamento((prev) => [
       ...prev,
       {
         _key: crypto.randomUUID(),
         formaPagamentoId: listaFormaPagamento?.[0]?.id,
         pedidoId: state.id,
-        valor: 0
-      }
+        valor: 0,
+      },
     ]);
   };
 
   // atualizar valor de uma forma de pagamento
   const atualizarValorPagamento = (key, valor) => {
-    setFormasPagamento(prev =>
-      prev.map(p =>
-        p._key === key
-          ? { ...p, valor: Number(valor) }
-          : p
-      )
+    setFormasPagamento((prev) =>
+      prev.map((p) => (p._key === key ? { ...p, valor: Number(valor) } : p)),
     );
   };
 
-    // tratar setor 
+  // tratar setor
   const tratarSalvar =
-    state.tipo === "balcao"
-      ? enviarEdicaoBalcao
-      : enviarEdicao;
-
+    state.tipo === "balcao" ? enviarEdicaoBalcao : enviarEdicao;
 
   return (
     <div className={styles.container}>
-    <ToastRadix mensagem={mensagem} />
-    <Cabecalho />
+      <ToastRadix mensagem={mensagem} />
+      <Cabecalho />
       <main className={styles.principal}>
-
         {/* CABEÇALHO */}
         <div className={styles.cabecalhoPage}>
           {/* TÍTULO */}
@@ -264,7 +267,12 @@ const navegar = useNavigate()
             </div>
           </div>
           {/* BOTÃO VOLTAR */}
-          <button className={styles.botaoVoltar} onClick={() => {navegar(-1)}}>
+          <button
+            className={styles.botaoVoltar}
+            onClick={() => {
+              navegar(-1);
+            }}
+          >
             <ArrowLeft size={15} weight="bold" />
             Voltar
           </button>
@@ -275,7 +283,11 @@ const navegar = useNavigate()
           {/* SUBTÍTULO */}
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderTitle}>
-              <Receipt size={17} weight="fill" className={styles.cardHeaderIcon} />
+              <Receipt
+                size={17}
+                weight="fill"
+                className={styles.cardHeaderIcon}
+              />
               <h2>Informações do Pedido</h2>
             </div>
             <span className={styles.badge}>{state.tipo.toUpperCase()}</span>
@@ -289,7 +301,9 @@ const navegar = useNavigate()
             </div>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Data</span>
-              <span className={styles.infoValor}>{dataHoraFormatada(state.data)}</span>
+              <span className={styles.infoValor}>
+                {dataHoraFormatada(state.data)}
+              </span>
             </div>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Vendedor</span>
@@ -307,44 +321,49 @@ const navegar = useNavigate()
             </div>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Total</span>
-              <span className={styles.infoValor}>{formatarMoeda(state.total)}</span>
+              <span className={styles.infoValor}>
+                {formatarMoeda(state.total)}
+              </span>
             </div>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Forma de pagamento</span>
-              {state.tipo !== 'balcao'
-                ?
+              {state.tipo !== "balcao" ? (
                 <span className={styles.infoValor}>
-                  { state.formaPagamento.nome }
+                  {state.formaPagamento.nome}
                 </span>
-                :
+              ) : (
                 <span className={styles.infoValor}>
-                  {
-                  state.pagamentos
-                    ?.map(p => p.formaPagamento?.nome)
-                    .join(" + ") || "-"
-                  }
+                  {state.pagamentos
+                    ?.map((p) => p.formaPagamento?.nome)
+                    .join(" + ") || "-"}
                 </span>
-              }
-
+              )}
             </div>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Cliente</span>
               <span className={styles.infoValor}>
-                {state.cliente?.nome ?? <em style={{ color: "var(--gray-300)" }}>Não informado</em>}
+                {state.cliente?.nome ?? (
+                  <em style={{ color: "var(--gray-300)" }}>Não informado</em>
+                )}
               </span>
-            </div> 
+            </div>
           </div>
         </div>
 
         {/* FORMA DE PAGAMENTO*/}
-        {state.tipo === 'balcao'
-          ?
+        {state.tipo === "balcao" ? (
           // APENAS BALCAO
-          <div className={`${styles.balcaoCard} ${styles.balcaoFadeUp}`} style={{ animationDelay: "0.06s" }}>
-            
+          <div
+            className={`${styles.balcaoCard} ${styles.balcaoFadeUp}`}
+            style={{ animationDelay: "0.06s" }}
+          >
             <div className={styles.balcaoHeader}>
               <div className={styles.balcaoHeaderTitle}>
-                <CreditCard size={17} weight="fill" className={styles.cardHeaderIcon} />
+                <CreditCard
+                  size={17}
+                  weight="fill"
+                  className={styles.cardHeaderIcon}
+                />
                 <h2>Forma de Pagamento</h2>
               </div>
             </div>
@@ -356,41 +375,34 @@ const navegar = useNavigate()
                 Forma de pagamento
               </label>
 
-
-                <div className={styles.balcaoLista}>
+              <div className={styles.balcaoLista}>
                 {formasPagamento.map((forma) => (
                   <div key={forma._key} className={styles.balcaoItem}>
                     <select
-                        value={forma.formaPagamentoId}
-                        onChange={(e) =>
-                            atualizarFormaPagamento(
-                                forma._key,
-                                e.target.value
-                            )
-                        }
-                        className={styles.balcaoSelect}
+                      value={forma.formaPagamentoId}
+                      onChange={(e) =>
+                        atualizarFormaPagamento(forma._key, e.target.value)
+                      }
+                      className={styles.balcaoSelect}
                     >
-                        {listaFormaPagamento?.map(fp => (
-                            <option key={fp.id} value={fp.id}>
-                                {fp.nome}
-                            </option>
-                        ))}
+                      {listaFormaPagamento?.map((fp) => (
+                        <option key={fp.id} value={fp.id}>
+                          {fp.nome}
+                        </option>
+                      ))}
                     </select>
 
                     {/* VALOR */}
                     <input
-                        type="number"
-                        className={styles.balcaoInput}
-                        value={forma.valor}
-                        onChange={(e) =>
-                            atualizarValorPagamento(
-                                forma._key,
-                                e.target.value
-                            )
-                        }
+                      type="number"
+                      className={styles.balcaoInput}
+                      value={forma.valor}
+                      onChange={(e) =>
+                        atualizarValorPagamento(forma._key, e.target.value)
+                      }
                     />
 
-                    { /* REMOVER ITEM */}
+                    {/* REMOVER ITEM */}
                     <button
                       className={styles.balcaoBtnRemover}
                       onClick={() => removerPagamento(forma._key)}
@@ -399,27 +411,30 @@ const navegar = useNavigate()
                       <Trash size={15} weight="fill" />
                     </button>
                   </div>
-                  
                 ))}
               </div>
-                <button
-                  className={styles.balcaoBtnAdicionar}
-                  onClick={adicionarPagamento}
+              <button
+                className={styles.balcaoBtnAdicionar}
+                onClick={adicionarPagamento}
               >
-                  <Plus size={15} weight="bold" />
-                  Adicionar forma
+                <Plus size={15} weight="bold" />
+                Adicionar forma
               </button>
             </div>
-
           </div>
-
-          :
+        ) : (
           // PEDIDOS DELIVERY E EXTERNO ...
-          <div className={`${styles.card} ${styles.fadeUp}`} style={{ animationDelay: "0.06s" }}>
-            
+          <div
+            className={`${styles.card} ${styles.fadeUp}`}
+            style={{ animationDelay: "0.06s" }}
+          >
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
-                <CreditCard size={17} weight="fill" className={styles.cardHeaderIcon} />
+                <CreditCard
+                  size={17}
+                  weight="fill"
+                  className={styles.cardHeaderIcon}
+                />
                 <h2>Forma de Pagamento</h2>
               </div>
             </div>
@@ -429,32 +444,41 @@ const navegar = useNavigate()
                 <CreditCard size={12} />
                 Selecione a forma
               </label>
-                <select
-                  value={formaPagamento}
-                  onChange={(e) => {
-                    const id = e.target.value;
-                    setFormaPagamento(id);
-                  }}
-                  className={styles.selectFormaPagamento}
-                >
-                  {listaFormaPagamento?.map((forma) => (
-                    <option key={forma.id} value={forma.id}>{forma.nome}</option>
-                  ))}
-                </select>
+              <select
+                value={formaPagamento}
+                onChange={(e) => {
+                  const id = e.target.value;
+                  setFormaPagamento(id);
+                }}
+                className={styles.selectFormaPagamento}
+              >
+                {listaFormaPagamento?.map((forma) => (
+                  <option key={forma.id} value={forma.id}>
+                    {forma.nome}
+                  </option>
+                ))}
+              </select>
             </div>
-
           </div>
-        }
-
+        )}
 
         {/* LISTA DE ITENS */}
-        <div className={`${styles.card} ${styles.fadeUp}`} style={{ animationDelay: "0.12s" }}>
+        <div
+          className={`${styles.card} ${styles.fadeUp}`}
+          style={{ animationDelay: "0.12s" }}
+        >
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderTitle}>
-              <Package size={17} weight="fill" className={styles.cardHeaderIcon} />
+              <Package
+                size={17}
+                weight="fill"
+                className={styles.cardHeaderIcon}
+              />
               <h2>Itens do Pedido</h2>
             </div>
-            <span className={styles.badge}>{itens.length} {itens.length === 1 ? "item" : "itens"}</span>
+            <span className={styles.badge}>
+              {itens.length} {itens.length === 1 ? "item" : "itens"}
+            </span>
           </div>
 
           {/* TABELA DE ITENS */}
@@ -474,18 +498,21 @@ const navegar = useNavigate()
                     <span className={styles.itemNome}>{it.nomeProduto}</span>
 
                     {/* QUANTIDADE JA NA LISTA */}
-                      <input
-                        type="number"
-                        className={styles.input}
-                        value={it.quantidade ?? ""}
-                        onChange={(e) => atualizarQuantidade(it._key, e.target.value)}
-                      />
+                    <input
+                      type="number"
+                      className={styles.input}
+                      value={it.quantidade ?? ""}
+                      onChange={(e) =>
+                        atualizarQuantidade(it._key, e.target.value)
+                      }
+                    />
 
                     {/* VALOR UNITARIO */}
                     <span
                       className={styles.itemSubtotal}
-                      value={it.valorUnit}
-                      onChange={(e) => atualizarValor(it._key, e.target.value)}>
+                      value={it.valorUnit} //state.tipo === "balcao"
+                      onChange={(e) => atualizarValor(it._key, e.target.value)}
+                    >
                       {formatarMoeda(it.valorUnit)}
                     </span>
 
@@ -494,7 +521,7 @@ const navegar = useNavigate()
                       {formatarMoeda(it.quantidade * it.valorUnit)}
                     </span>
 
-                    { /* REMOVER ITEM */}
+                    {/* REMOVER ITEM */}
                     <button
                       className={styles.btnRemover}
                       onClick={() => removerItem(it._key)}
@@ -506,7 +533,6 @@ const navegar = useNavigate()
                 ))}
               </div>
             </div>
-            
           ) : (
             <div className={styles.estadoVazio}>
               <ShoppingCart size={40} className={styles.iconeVazio} />
@@ -523,37 +549,47 @@ const navegar = useNavigate()
             </p>
             {/* GRID ADICIONAR NOVO PRODUTO */}
             <div className={styles.adicionarGrid}>
-
               {/* SELECIONAR PRODUTO */}
-              <div className={styles.filtroGrupo} style={{ gridColumn: "1 / 2" }}>
+              <div
+                className={styles.filtroGrupo}
+                style={{ gridColumn: "1 / 2" }}
+              >
                 <label className={styles.filtroLabel}>
                   <Package size={12} />
                   Produto
                 </label>
-                  <Select
-                    classNamePrefix="custom"
-                    options={options}
-                    value={options.find((opt) => opt.value === produtoSelecionado?.id) || null}
-                    onChange={(opt) => setProdutoSelecionado(produtos.find((p) => p.id === opt.value))}
-                    placeholder="Selecione..."
-                    isSearchable
-                    noOptionsMessage={() => "Nenhum produto encontrado"}
-                  />
+                <Select
+                  classNamePrefix="custom"
+                  options={options}
+                  value={
+                    options.find(
+                      (opt) => opt.value === produtoSelecionado?.id,
+                    ) || null
+                  }
+                  onChange={(opt) =>
+                    setProdutoSelecionado(
+                      produtos.find((p) => p.id === opt.value),
+                    )
+                  }
+                  placeholder="Selecione..."
+                  isSearchable
+                  noOptionsMessage={() => "Nenhum produto encontrado"}
+                />
               </div>
 
-              {/* QUANTIDADE */} 
+              {/* QUANTIDADE */}
               <div className={styles.filtroGrupo}>
                 <label className={styles.filtroLabel}>
                   <Hash size={12} />
                   Quantidade
                 </label>
-                  <input
-                    type="number"
-                    className={styles.input}
-                    value={novaQuantidade}
-                    min={1}
-                    onChange={(e) => setNovaQuantidade(e.target.value)}
-                  />
+                <input
+                  type="number"
+                  className={styles.input}
+                  value={novaQuantidade}
+                  min={1}
+                  onChange={(e) => setNovaQuantidade(e.target.value)}
+                />
               </div>
 
               {/* VALOR UNITARIO */}
@@ -566,7 +602,11 @@ const navegar = useNavigate()
                   type="number"
                   className={styles.input}
                   placeholder="0,00"
-                  value={produtoSelecionado?.precoUndVenda}
+                  value={
+                    state.tipo === "balcao"
+                      ? produtoSelecionado?.precoUndVenda
+                      : produtoSelecionado?.precoVenda
+                  }
                   disabled={true}
                 />
               </div>
@@ -581,25 +621,33 @@ const navegar = useNavigate()
                   type="number"
                   className={styles.input}
                   placeholder="0,00"
-                  value={produtoSelecionado?.precoUndVenda * novaQuantidade}
+                  value={
+                    state.tipo === "balcao"
+                      ? produtoSelecionado?.precoUndVenda * novaQuantidade
+                      : produtoSelecionado?.precoVenda * novaQuantidade
+                  }
                   readOnly
                 />
               </div>
-
             </div>
 
             {/* BOTÃO ADICIONAR NOVO PRODUTO */}
             <div className={styles.filtroGrupoBotao}>
-              <label className={styles.filtroLabel} style={{ visibility: "hidden" }}>.</label>
+              <label
+                className={styles.filtroLabel}
+                style={{ visibility: "hidden" }}
+              >
+                .
+              </label>
               <button
                 className={styles.botaoSalvarNovoItem}
                 onClick={adicionarItem}
-                disabled={!produtoSelecionado?.precoUndVenda}>
-                  <Plus size={15} weight="bold" />
-                  Adicionar
+                disabled={!produtoSelecionado?.precoUndVenda}
+              >
+                <Plus size={15} weight="bold" />
+                Adicionar
               </button>
             </div>
-
           </div>
         </div>
 
@@ -608,35 +656,42 @@ const navegar = useNavigate()
           {/* TOTAL */}
           <div className={styles.totalWrapper}>
             <span className={styles.totalLabel}>Total do Pedido</span>
-            <span className={styles.totalValor}>{formatarMoeda(valorTotal)}</span>
+            <span className={styles.totalValor}>
+              {formatarMoeda(valorTotal)}
+            </span>
           </div>
 
           {/* BOTÕES */}
           <div className={styles.acoesWrapper}>
             {/* CANCELAR */}
-            <button className={styles.botaoCancelar} onClick={() => {navegar(-1)}}>
+            <button
+              className={styles.botaoCancelar}
+              onClick={() => {
+                navegar(-1);
+              }}
+            >
               <ArrowLeft size={15} weight="bold" />
               Cancelar
             </button>
+
             {/* SALVAR */}
             <AlertaRadix
-                titulo="Salvar Alteração"
-                descricao="Você realmente deseja salvar a alteração?"
-                tratar={tratarSalvar}
-                confirmarTexto="Confirmar cancelamento"
-                cancelarTexto="Sair"
-                trigger={
-                  <button className={styles.botaoPrincipal}>
-                    <CheckCircle size={16} weight="fill" />
-                    Salvar Alterações
-                  </button>
-                }
-              />
+              titulo="Salvar Alteração"
+              descricao="Você realmente deseja salvar a alteração?"
+              tratar={tratarSalvar}
+              confirmarTexto="Confirmar cancelamento"
+              cancelarTexto="Sair"
+              trigger={
+                <button className={styles.botaoPrincipal}>
+                  <CheckCircle size={16} weight="fill" />
+                  Salvar Alterações
+                </button>
+              }
+            />
           </div>
         </div>
-
       </main>
-    <Rodape />
+      <Rodape />
     </div>
   );
 }

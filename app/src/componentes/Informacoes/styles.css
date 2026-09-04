@@ -27,7 +27,9 @@
   margin: 0;
 }
 
-.card-header-icon { color: var(--orange); }
+.card-header-icon {
+  color: var(--orange);
+}
 
 /* Lista de informações */
 .lista-informacoes {
@@ -58,7 +60,10 @@
   color: var(--gray-500);
 }
 
-.titulo-icone { color: var(--gray-300); flex-shrink: 0; }
+.titulo-icone {
+  color: var(--gray-300);
+  flex-shrink: 0;
+}
 
 .valor {
   font-size: 13px;

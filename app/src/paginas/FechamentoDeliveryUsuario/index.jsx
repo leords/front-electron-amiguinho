@@ -24,8 +24,6 @@ import Spinner from "../../componentes/Spinner";
 import { buscarFechamentoDelivery } from "../../operadores/API/fechamento/buscarFechamentoDelivery";
 
 export default function FechamentoDeliveryUsuario() {
-
-
   // Estados
   const [duzentos, setDuzentos] = useState(0);
   const [cem, setCem] = useState(0);
@@ -34,13 +32,11 @@ export default function FechamentoDeliveryUsuario() {
   const [dez, setDez] = useState(0);
   const [cinco, setCinco] = useState(0);
   const [dois, setDois] = useState(0);
-  const [carregando, setCarregando] = useState(false)
+  const [carregando, setCarregando] = useState(false);
 
   // Hooks
   const { setMensagem } = usarToast();
 
-
-  
   const [vendaDia, setVendaDia] = useState({
     total: 0,
     interno: 0,
@@ -58,44 +54,53 @@ export default function FechamentoDeliveryUsuario() {
   // Busca fechamento balcão setado ou selecionado pelo adm ...
   useEffect(() => {
     try {
-      setCarregando(true) 
+      setCarregando(true);
       const dataFormatada = dataFormatadaCalendario();
       const buscarVendasDia = async () => {
         // Pega nome do balcão cadastrado na máquina, se não pega o que o admin escolher
         const dados = await buscarFechamentoDelivery({ data: dataFormatada });
         setVendaDia(dados);
       };
-      buscarVendasDia();  
-      setCarregando(false)    
+      buscarVendasDia();
+      setCarregando(false);
     } catch (error) {
-      console.log(error.message)
-      setMensagem(error.message)
-      setCarregando(false)  
+      console.log(error.message);
+      setMensagem(error.message);
+      setCarregando(false);
     }
-
   }, []);
 
   // Limpar os estados dos campos de notas
   const limpar = () => {
-    setDuzentos(0); setCem(0); setCinquenta(0);
-    setVinte(0); setDez(0); setCinco(0); setDois(0);
+    setDuzentos(0);
+    setCem(0);
+    setCinquenta(0);
+    setVinte(0);
+    setDez(0);
+    setCinco(0);
+    setDois(0);
   };
 
   const totalContado =
-    duzentos * 200 + cem * 100 + cinquenta * 50 +
-    vinte * 20 + dez * 10 + cinco * 5 + dois * 2;
+    duzentos * 200 +
+    cem * 100 +
+    cinquenta * 50 +
+    vinte * 20 +
+    dez * 10 +
+    cinco * 5 +
+    dois * 2;
 
   const totalNotas = duzentos + cem + cinquenta + vinte + dez + cinco + dois;
   const diferenca = totalContado - vendaDia.resultado.a_vista;
 
-  const diferencaStatus = diferenca === 0 ? "ok" : diferenca > 0 ? "sobra" : "falta";
+  const diferencaStatus =
+    diferenca === 0 ? "ok" : diferenca > 0 ? "sobra" : "falta";
 
   return (
     <div className={styles.container}>
       <Cabecalho />
 
       <main className={styles.main}>
-
         {/* CABEÇALHO*/}
         <div className={styles.pageHeader}>
           <div className={styles.pageHeaderLeft}>
@@ -110,27 +115,44 @@ export default function FechamentoDeliveryUsuario() {
 
           <div className={styles.relogio}>
             <div className={styles.relogioItem}>
-              <CalendarIcon size={14} weight="bold" className={styles.relogioIcone} />
-              <span>{horaAtual.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" })}</span>
+              <CalendarIcon
+                size={14}
+                weight="bold"
+                className={styles.relogioIcone}
+              />
+              <span>
+                {horaAtual.toLocaleDateString("pt-BR", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                })}
+              </span>
             </div>
             <div className={styles.relogioDivider} />
             <div className={styles.relogioItem}>
-              <ClockIcon size={14} weight="bold" className={styles.relogioIcone} />
-              <span className={styles.relogioHora}>{horaAtual.toLocaleTimeString("pt-BR")}</span>
+              <ClockIcon
+                size={14}
+                weight="bold"
+                className={styles.relogioIcone}
+              />
+              <span className={styles.relogioHora}>
+                {horaAtual.toLocaleTimeString("pt-BR")}
+              </span>
             </div>
           </div>
         </div>
 
-
         <div className={styles.layout}>
-        
           {/* COLUNA ESQUERDA CONTADOR */}
           <div className={styles.colunaContador}>
             <div className={styles.card}>
-
               <div className={styles.cardHeader}>
                 <div className={styles.cardHeaderTitle}>
-                  <CurrencyDollarIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                  <CurrencyDollarIcon
+                    size={20}
+                    weight="bold"
+                    className={styles.cardHeaderIcon}
+                  />
                   <h2>Contador de Notas</h2>
                 </div>
                 <span className={styles.badgeNotas}>
@@ -145,13 +167,48 @@ export default function FechamentoDeliveryUsuario() {
               </div>
 
               <div className={styles.listaNotas}>
-                <ItemContador quantidade={duzentos} nota={200} alterarQuantidade={setDuzentos} navegavel={true} />
-                <ItemContador quantidade={cem}      nota={100} alterarQuantidade={setCem}      navegavel={true} />
-                <ItemContador quantidade={cinquenta} nota={50} alterarQuantidade={setCinquenta} navegavel={true} />
-                <ItemContador quantidade={vinte}    nota={20}  alterarQuantidade={setVinte}    navegavel={true} />
-                <ItemContador quantidade={dez}      nota={10}  alterarQuantidade={setDez}      navegavel={true} />
-                <ItemContador quantidade={cinco}    nota={5}   alterarQuantidade={setCinco}    navegavel={true} />
-                <ItemContador quantidade={dois}     nota={2}   alterarQuantidade={setDois}     navegavel={true} />
+                <ItemContador
+                  quantidade={duzentos}
+                  nota={200}
+                  alterarQuantidade={setDuzentos}
+                  navegavel={true}
+                />
+                <ItemContador
+                  quantidade={cem}
+                  nota={100}
+                  alterarQuantidade={setCem}
+                  navegavel={true}
+                />
+                <ItemContador
+                  quantidade={cinquenta}
+                  nota={50}
+                  alterarQuantidade={setCinquenta}
+                  navegavel={true}
+                />
+                <ItemContador
+                  quantidade={vinte}
+                  nota={20}
+                  alterarQuantidade={setVinte}
+                  navegavel={true}
+                />
+                <ItemContador
+                  quantidade={dez}
+                  nota={10}
+                  alterarQuantidade={setDez}
+                  navegavel={true}
+                />
+                <ItemContador
+                  quantidade={cinco}
+                  nota={5}
+                  alterarQuantidade={setCinco}
+                  navegavel={true}
+                />
+                <ItemContador
+                  quantidade={dois}
+                  nota={2}
+                  alterarQuantidade={setDois}
+                  navegavel={true}
+                />
               </div>
 
               <div className={styles.rodapeContador}>
@@ -176,12 +233,26 @@ export default function FechamentoDeliveryUsuario() {
 
               {/* ── Conferência ── */}
               {totalContado > 0 && (
-                <div className={`${styles.conferencia} ${styles[`conferencia_${diferencaStatus}`]}`}>
+                <div
+                  className={`${styles.conferencia} ${styles[`conferencia_${diferencaStatus}`]}`}
+                >
                   <div className={styles.conferenciaHeader}>
-                    {diferencaStatus === "ok"
-                      ? <CheckCircleIcon size={16} weight="fill" className={styles.conferenciaIconeOk} />
-                      : <WarningCircleIcon size={16} weight="fill" className={styles.conferenciaIconeAviso} />}
-                    <span className={styles.conferenciaTitulo}>Conferência</span>
+                    {diferencaStatus === "ok" ? (
+                      <CheckCircleIcon
+                        size={16}
+                        weight="fill"
+                        className={styles.conferenciaIconeOk}
+                      />
+                    ) : (
+                      <WarningCircleIcon
+                        size={16}
+                        weight="fill"
+                        className={styles.conferenciaIconeAviso}
+                      />
+                    )}
+                    <span className={styles.conferenciaTitulo}>
+                      Conferência
+                    </span>
                   </div>
 
                   <div className={styles.conferenciaLinha}>
@@ -206,21 +277,24 @@ export default function FechamentoDeliveryUsuario() {
           </div>
 
           {/* COLUNA DIREITA RESUMO */}
-          {carregando ? 
-            <div className={styles.enviandoPedido}> 
+          {carregando ? (
+            <div className={styles.enviandoPedido}>
               <Spinner />
               <p>Enviando pedido, aguarde um instante...</p>
               <span>Estabelecendo conexão com o banco de dados...</span>
             </div>
-            :
+          ) : (
             <>
               <div className={styles.colunaResumo}>
-
                 {/* Card total geral */}
                 <div className={styles.card}>
                   <div className={styles.cardHeader}>
                     <div className={styles.cardHeaderTitle}>
-                      <ChartPieSliceIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                      <ChartPieSliceIcon
+                        size={20}
+                        weight="bold"
+                        className={styles.cardHeaderIcon}
+                      />
                       <h2>Resumo do Dia</h2>
                     </div>
                   </div>
@@ -233,14 +307,32 @@ export default function FechamentoDeliveryUsuario() {
                 <div className={styles.card}>
                   <div className={styles.cardHeader}>
                     <div className={styles.cardHeaderTitle}>
-                      <span className={styles.formasPagLabel}>Formas de pagamento</span>
+                      <span className={styles.formasPagLabel}>
+                        Formas de pagamento
+                      </span>
                     </div>
                   </div>
                   <div className={styles.gridCartoes}>
-                    <CartaoContador valor={vendaDia.resultado.a_vista} metodo="Dinheiro" total={vendaDia.total} />
-                    <CartaoContador valor={vendaDia.resultado.cartão}  metodo="Cartão"   total={vendaDia.total} />
-                    <CartaoContador valor={vendaDia.resultado.pix}     metodo="PIX"      total={vendaDia.total} />
-                    <CartaoContador valor={vendaDia.interno}           metodo="Interno"  total={vendaDia.total} />
+                    <CartaoContador
+                      valor={vendaDia.resultado.a_vista}
+                      metodo="Dinheiro"
+                      total={vendaDia.total}
+                    />
+                    <CartaoContador
+                      valor={vendaDia.resultado.cartão}
+                      metodo="Cartão"
+                      total={vendaDia.total}
+                    />
+                    <CartaoContador
+                      valor={vendaDia.resultado.pix}
+                      metodo="PIX"
+                      total={vendaDia.total}
+                    />
+                    <CartaoContador
+                      valor={vendaDia.interno}
+                      metodo="Interno"
+                      total={vendaDia.total}
+                    />
                   </div>
                 </div>
 
@@ -248,16 +340,13 @@ export default function FechamentoDeliveryUsuario() {
                 <div className={styles.mascoteCard}>
                   <img src={logo} alt="Logo" className={styles.logo} />
                   <p className={styles.textoMascote}>
-                    Confira o fechamento do caixa e garanta que tudo está correto!
+                    Confira o fechamento do caixa e garanta que tudo está
+                    correto!
                   </p>
                 </div>
-
               </div>
             </>
-            
-        }
-
-
+          )}
         </div>
       </main>
 

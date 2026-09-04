@@ -5,7 +5,16 @@ import styles from "./styles.module.css";
 import { authAPI } from "../../operadores/API/autenticacaoUsuario.js";
 import { usarAuth } from "../../componentes/Context/authContext.jsx";
 import { useRef, useState } from "react";
-import { ArrowLeft, SignIn, Key, EnvelopeSimple, LockKey, User, ArrowClockwise, SpinnerGapIcon } from "@phosphor-icons/react";
+import {
+  ArrowLeft,
+  SignIn,
+  Key,
+  EnvelopeSimple,
+  LockKey,
+  User,
+  ArrowClockwise,
+  SpinnerGapIcon,
+} from "@phosphor-icons/react";
 import ConectarServidor from "../ConectarServidor";
 import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
@@ -13,7 +22,6 @@ import { ResetarSenhaUsuario } from "../../operadores/API/usuario/resetarSenhaUs
 import { EsqueciSenhaUsuario } from "../../operadores/API/usuario/esqueciSenhaUsuario";
 
 export default function Login() {
-
   // Estados
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
@@ -28,7 +36,6 @@ export default function Login() {
   const { login } = usarAuth();
   const { mensagem, setMensagem } = usarToast();
 
-
   // Função de autenticar
   async function iniciarLogin(event) {
     event.preventDefault();
@@ -40,6 +47,8 @@ export default function Login() {
     try {
       const dadosUsuario = await authAPI({ usuario, senha });
 
+      console.log("Dados Usuário: ", dadosUsuario);
+
       const tempoPassado = Date.now() - inicio;
       const restante = tempoMinimo - tempoPassado;
 
@@ -49,66 +58,27 @@ export default function Login() {
 
       login(dadosUsuario);
     } catch (error) {
-      setMensagem(error.message)
-      console.log(error.message)
-
+      setMensagem(error.message);
+      console.log(error.message);
     } finally {
-      setCarregamento(false)
+      setCarregamento(false);
     }
   }
 
   async function esqueciSenha() {
-        
-      // Valida email
-      if(!email) {
-        alert('Preencha o e-mail. Lembre-se de que você precisa ter acesso a ele.')
-        return
-      }
-
-      // Valida formato de email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(email)) {
-        setMensagem('Digite um e-mail válido. Exemplo: usuario@provedor.com')
-        return
-      }
-
-      const tempoMinimo = 2000;
-      const inicio = Date.now();
-      setCarregamento(true);
-
-      try {
-      const retorno = await EsqueciSenhaUsuario ( {email} );
-
-      // Aguarda tempo mínimo antes de qualquer transição
-      const tempoPassado = Date.now() - inicio;
-      const restante = tempoMinimo - tempoPassado;
-      if (restante > 0) {
-        await new Promise((resolve) => setTimeout(resolve, restante));
-      }
-      
-      // Valida o retorno da API que é boleano
-      if(retorno) {
-        setMensagem(retorno.mensagem)
-        setRender('novaSenha')
-      } else {
-        setMensagem('E-mail não encontrado. Verifique e tente novamente.')
-      }
-
-    } catch (error) {
-      setMensagem(error.message)
-      console.log(error.message)
-
-    } finally {
-      setEmail("")
-      setCarregamento(false)
+    // Valida email
+    if (!email) {
+      alert(
+        "Preencha o e-mail. Lembre-se de que você precisa ter acesso a ele.",
+      );
+      return;
     }
-  }
 
-  async function resetarSenha() {
-
-    if(!token || !novaSenha) {
-      alert('Por favor informe token enviado por email e nova senha')
-      return
+    // Valida formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMensagem("Digite um e-mail válido. Exemplo: usuario@provedor.com");
+      return;
     }
 
     const tempoMinimo = 2000;
@@ -116,48 +86,82 @@ export default function Login() {
     setCarregamento(true);
 
     try {
+      const retorno = await EsqueciSenhaUsuario({ email });
+
+      // Aguarda tempo mínimo antes de qualquer transição
+      const tempoPassado = Date.now() - inicio;
+      const restante = tempoMinimo - tempoPassado;
+      if (restante > 0) {
+        await new Promise((resolve) => setTimeout(resolve, restante));
+      }
+
+      // Valida o retorno da API que é boleano
+      if (retorno) {
+        setMensagem(retorno.mensagem);
+        setRender("novaSenha");
+      } else {
+        setMensagem("E-mail não encontrado. Verifique e tente novamente.");
+      }
+    } catch (error) {
+      setMensagem(error.message);
+      console.log(error.message);
+    } finally {
+      setEmail("");
+      setCarregamento(false);
+    }
+  }
+
+  async function resetarSenha() {
+    if (!token || !novaSenha) {
+      alert("Por favor informe token enviado por email e nova senha");
+      return;
+    }
+
+    setCarregamento(true);
+
+    const tempoMinimo = 2000;
+    const inicio = Date.now();
+
+    try {
       const retorno = await ResetarSenhaUsuario({ token, novaSenha });
+
+      // Garante que o carregamento fique visível por pelo menos 2 segundos
+      const tempoPassado = Date.now() - inicio;
+      const restante = tempoMinimo - tempoPassado;
 
       if (restante > 0) {
         await new Promise((resolve) => setTimeout(resolve, restante));
       }
 
-      if(retorno) {
-        setMensagem('Senha resetada com sucesso!')
-        setRender('login')
-        return
+      if (retorno) {
+        setMensagem(`Senha do usuario ${retorno.nome} resetada com sucesso!`);
+        setRender("login");
+        return;
       }
-
-      const tempoPassado = Date.now() - inicio;
-      const restante = tempoMinimo - tempoPassado;
-
-
     } catch (error) {
-      setMensagem(error.message)
-      console.log(error.message)
-
+      setMensagem(error.message);
+      console.log(error.message);
     } finally {
-      setCarregamento(false)
-      setToken("")
-      setNovaSenha("")
+      setCarregamento(false);
+      setToken("");
+      setNovaSenha("");
     }
   }
 
   const clicks = useRef(0);
   // 5 clicks seguidos para abrir a opção de configurar o servidor
-    function multiLogoClick() {
-      clicks.current++;
+  function multiLogoClick() {
+    clicks.current++;
 
-      if (clicks.current >= 5) {
-        setAcessoMultiClick(true);
-        clicks.current = 0;
-      }
-
-      setTimeout(() => {
-        clicks.current = 0;
-      }, 2000);
-
+    if (clicks.current >= 5) {
+      setAcessoMultiClick(true);
+      clicks.current = 0;
     }
+
+    setTimeout(() => {
+      clicks.current = 0;
+    }, 2000);
+  }
 
   return (
     <div className={styles.container}>
@@ -174,10 +178,13 @@ export default function Login() {
           <div className={styles.mascoteTextoTopo}>
             <span className={styles.tagBemVindo}>Sistema de Vendas</span>
             <h1 className={styles.titulo}>
-              Olá,<br />bem‑vindo!
+              Olá,
+              <br />
+              bem‑vindo!
             </h1>
             <p className={styles.subTitulo}>
-               Você está acessando o sistema de controle de vendas.<br />
+              Você está acessando o sistema de controle de vendas.
+              <br />
             </p>
           </div>
 
@@ -198,12 +205,18 @@ export default function Login() {
 
       {/* LADO DIREITO — FORMULÁRIOS */}
       <div className={styles.ladoForm}>
-        <p className={styles.rodape}>Distribuidora de bebidas Amigão 2026 · @Leords</p>
+        <p className={styles.rodape}>
+          Distribuidora de bebidas Amigão 2026 · @Leords
+        </p>
 
         {render === "login" && (
           <div className={`${styles.card} ${styles.fadeUp}`}>
             <div className={styles.logoWrap}>
-              <img src={logo} alt="Amigão Distribuidora" className={styles.logo} />
+              <img
+                src={logo}
+                alt="Amigão Distribuidora"
+                className={styles.logo}
+              />
             </div>
 
             <div className={styles.cardCabecalho}>
@@ -266,7 +279,11 @@ export default function Login() {
         {render === "email" && (
           <div className={`${styles.card} ${styles.fadeUp}`}>
             <div className={styles.logoSustoWrap}>
-              <img src={logoSusto} alt="Redefinir senha" className={styles.logoSusto} />
+              <img
+                src={logoSusto}
+                alt="Redefinir senha"
+                className={styles.logoSusto}
+              />
             </div>
 
             <div className={styles.cardCabecalho}>
@@ -277,11 +294,11 @@ export default function Login() {
             </div>
 
             <p className={styles.cardDescricao}>
-              Informe o email associado à sua conta para receber o token de redefinição.
+              Informe o email associado à sua conta para receber o token de
+              redefinição.
             </p>
 
             <div className={styles.formulario}>
-
               {/* EMAIL */}
               <div className={styles.campo}>
                 <label className={styles.label}>
@@ -302,14 +319,20 @@ export default function Login() {
                 disabled={!email}
                 onClick={esqueciSenha}
               >
-                {carregamento ?
-                <SpinnerGapIcon size={24} className={styles.spin} weight="duotone" />
-              :
-              <>
-              <EnvelopeSimple size={18} weight="bold" />
-                {email ? 'Enviar token' : 'Preencha com o e-mail do usuário.'}</>
-              }
-
+                {carregamento ? (
+                  <SpinnerGapIcon
+                    size={24}
+                    className={styles.spin}
+                    weight="duotone"
+                  />
+                ) : (
+                  <>
+                    <EnvelopeSimple size={18} weight="bold" />
+                    {email
+                      ? "Enviar token"
+                      : "Preencha com o e-mail do usuário."}
+                  </>
+                )}
               </button>
 
               {/* VOLTAR PARA O LOGIN */}
@@ -327,10 +350,13 @@ export default function Login() {
 
         {render === "novaSenha" && (
           <div className={`${styles.card} ${styles.fadeUp}`}>
-
             {/* LOGO + TÍTULO */}
             <div className={styles.logoSustoWrap}>
-              <img src={logoSusto} alt="Nova senha" className={styles.logoSusto} />
+              <img
+                src={logoSusto}
+                alt="Nova senha"
+                className={styles.logoSusto}
+              />
             </div>
 
             <div className={styles.cardCabecalho}>
@@ -346,7 +372,6 @@ export default function Login() {
 
             {/* FORMULÁRIO */}
             <div className={styles.formulario}>
-
               {/* TOKEN */}
               <div className={styles.campo}>
                 <label className={styles.label}>
@@ -379,17 +404,23 @@ export default function Login() {
 
               <button
                 className={styles.botaoPrincipal}
-                disabled={!token || !novaSenha }
+                disabled={!token || !novaSenha}
                 onClick={resetarSenha}
               >
-                {carregamento ?
-                <SpinnerGapIcon size={24} className={styles.spin} weight="duotone" />
-              :
-              <>
-              <ArrowClockwise size={18} weight="bold" />
-                {!token || !novaSenha ? 'Preencha token e nova senha.' : 'Salvar nova senha'}</>
-              }
-
+                {carregamento ? (
+                  <SpinnerGapIcon
+                    size={24}
+                    className={styles.spin}
+                    weight="duotone"
+                  />
+                ) : (
+                  <>
+                    <ArrowClockwise size={18} weight="bold" />
+                    {!token || !novaSenha
+                      ? "Preencha token e nova senha."
+                      : "Salvar nova senha"}
+                  </>
+                )}
               </button>
 
               {/* BOTÃO VOLTAR */}
@@ -405,7 +436,6 @@ export default function Login() {
           </div>
         )}
       </div>
-
     </div>
   );
 }

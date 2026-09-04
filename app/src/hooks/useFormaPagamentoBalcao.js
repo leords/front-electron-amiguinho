@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { lerFormaPagamentoBalcao } from "../operadores/API/formaPagamento/lerFormaPagamentoBalcao.js";
 
 export function useFormaPagamentoBalcao() {
-
   // Estados
   const [listaFormaPagamento, setListaFormasPagamento] = useState();
-  const [carregandoFormasPagamento, setCarregandoFormasPagamento] = useState(true);
+  const [carregandoFormasPagamento, setCarregandoFormasPagamento] =
+    useState(true);
   const [erroHookFormaPagamento, setErroHookFormaPagamento] = useState(null);
-
-
 
   useEffect(() => {
     const carregar = async () => {
@@ -30,5 +28,4 @@ export function useFormaPagamentoBalcao() {
     carregandoFormasPagamento,
     erroHookFormaPagamento,
   };
-  
 }

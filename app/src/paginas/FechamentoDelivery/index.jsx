@@ -24,6 +24,8 @@ import {
   DeviceMobileIcon,
   LockKeyIcon,
   TrendUpIcon,
+  MoneyWavyIcon,
+  InfoIcon
 } from '@phosphor-icons/react';
 import ItemContador from '../../componentes/ItemContador';
 import { AlertaRadix } from '../../componentes/ui/alerta/alerta';
@@ -38,17 +40,26 @@ import Spinner from '../../componentes/Spinner';
 import { LerInicioCaixa } from '../../operadores/API/caixa/lerInicioCaixa';
 import { buscarFechamentoDelivery } from '../../operadores/API/fechamento/buscarFechamentoDelivery';
 import VendasDelivery from '../VendasDelivery';
+import { buscarMovimentacaoPagamentoEletronico } from '../../operadores/API/movimentacaoPagamentosEletronicos/buscarMovimentacao';
+import { deletarMovimentacaoPagamentoEletronico } from '../../operadores/API/movimentacaoPagamentosEletronicos/deletarMovimentacao';
+import { criarMovimentacaoPagamentoEletronico } from '../../operadores/API/movimentacaoPagamentosEletronicos/criarMovimentacao';
 
 const tiposMovimentacao = [
-  { value: 'saida', label: '🔻 Saída', tipo: 'saida' },
-  { value: 'entrada', label: '🔺 Entrada', tipo: 'entrada' },
+  { value: 'saida', label: '🔻 Saída de dinheiro', tipo: 'saida' },
+  { value: 'entrada', label: '🔺 Entrada de dinheiro', tipo: 'entrada' },
+];
+
+const tiposMovimentacaoPagamentoEletronico = [
+  { value: 'saida', label: '🔻 Saída eletrônica', tipo: 'saida' },
+  { value: 'entrada', label: '🔺 Entrada eletrônica', tipo: 'entrada' },
 ];
 
 
 
 export default function FechamentoDelivery() {
   // Estados para opções
-  const [tipoMovimentacao, setTipoMovimentacao] = useState(tiposMovimentacao[0]);
+  const [tipoMovimentacao, setTipoMovimentacao] = useState(tiposMovimentacao[1]);
+  const [tipoMovimentacaoPagamentosEletronicos, setTipoMovimentacaoPagamentosEletronicos] = useState(tiposMovimentacaoPagamentoEletronico[1]);
 
   // Estados para contador de notas
   const [duzentos, setDuzentos] = useState(0);
@@ -69,9 +80,14 @@ export default function FechamentoDelivery() {
   const [valorManutencao, setValorManutencao] = useState('');
   const [descricaoManutencao, setDescricaoManutencao] = useState('');
   const [erroFormulario, setErroFormulario] = useState('');
+  const [erroFormularioPagamentoEletronico, setErroFormularioPagamentoEletronico] = useState('');
   const [statusFechamento, setStatusFechamento] = useState(false);
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [valorManutencaoPagamentosEletronicos, setValorManutencaoPagamentosEletronicos] = useState('');
+  const [descricaoManutencaoPagamentosEletronicos, setDescricaoManutencaoPagamentosEletronicos] = useState('');
+  const [movimentacoesPagamentosEletronicos, setMovimentacoesPagamentosEletronicos] = useState([]);
 
 
   // Busca fechamento de venda do dia do delivery
@@ -126,6 +142,10 @@ export default function FechamentoDelivery() {
       if(fechamentoAtual) {
         const listaMovimentacoes = await buscarMovimentacao(fechamentoAtual.id);
         setMovimentacoes(listaMovimentacoes);
+
+        // movimentações de pagamentos eletronicos
+        const listaMovimentacoesPagamentosEletronicos = await buscarMovimentacaoPagamentoEletronico(fechamentoAtual.id)
+        setMovimentacoesPagamentosEletronicos(listaMovimentacoesPagamentosEletronicos);
       }
 
     } catch (error) {
@@ -155,25 +175,125 @@ export default function FechamentoDelivery() {
       descricao: descricaoManutencao.trim(),
       valor: valorManutencao,
     };
-      try {
+
+    try {
         const movimentacao = await criarMovimentacao(novaManutencao);
-        if (movimentacao) setMensagem('Movimentação cadastrada com sucesso!');
+        if (movimentacao) {
+          setMensagem('Movimentação cadastrada com sucesso!');
+          // se for parcial, cria automatico a movimentação oposta. 
+          gerarParcialAutomatico();
+        }
         setValorManutencao('');
         setDescricaoManutencao('');
         setTipoMovimentacao(tiposMovimentacao[0]);
+        await buscarMovimentacoes();
+    } catch (error) {
+        console.log(error.message)
+        setMensagem(error.message)
+    }
+  };
+
+  // Criar movimentação para pagamentos eletronicos
+  const novaMovimentacaoPagamentoEletronico = async () => {
+
+    if (!descricaoManutencaoPagamentosEletronicos || typeof descricaoManutencaoPagamentosEletronicos !== 'string') {
+      setErroFormularioPagamentoEletronico('Informe uma descrição para a movimentação.');
+      return;
+    }
+    if (!valorManutencaoPagamentosEletronicos || typeof valorManutencaoPagamentosEletronicos !== 'number' || valorManutencaoPagamentosEletronicos <= 0) {
+      setErroFormularioPagamentoEletronico('Informe um valor válido.');
+      return;
+    }
+
+    const novaManutencaoPagamentosEletronicos = {
+      fechamentoId: fechamentoAtual.id,
+      tipo: tipoMovimentacaoPagamentosEletronicos.value,
+      descricao: descricaoManutencaoPagamentosEletronicos.trim(),
+      valor: valorManutencaoPagamentosEletronicos,
+    };
+
+    try {
+      const movimentacao = await criarMovimentacaoPagamentoEletronico(novaManutencaoPagamentosEletronicos);
+      
+      if (movimentacao) {
+        setMensagem('Movimentação cadastrada com sucesso!');
+        // se for parcial, cria automatico a movimentação oposta. 
+        gerarParcialAutomatico();
+      }
+
+      setValorManutencaoPagamentosEletronicos('');
+      setDescricaoManutencaoPagamentosEletronicos('');
+      setTipoMovimentacao(tiposMovimentacaoPagamentoEletronico[0]);
+      await buscarMovimentacoes();
+    } catch (error) {
+      console.log(error.message)
+      setMensagem(error.message)
+    }
+  };
+
+  // Criar parcial automatico
+  const gerarParcialAutomatico = async () => {
+
+    // gera a parcial automática de dinheiro para cartão.
+    if( tipoMovimentacao.value === 'entrada' && descricaoManutencao === 'parcial') {
+      console.log('Entrei')
+
+      const manutencaoParcial = {
+        fechamentoId: fechamentoAtual.id,
+        tipo: 'saida',
+        descricao: 'parcial automática',
+        valor: valorManutencao,
+      };
+
+      try {
+        const movimentacao = await criarMovimentacaoPagamentoEletronico(manutencaoParcial);
+        if (movimentacao) setMensagem('Parcial automática criada com sucesso!');
+
+
+        //atualiza as listas.
         await buscarMovimentacoes();
       } catch (error) {
         console.log(error.message)
         setMensagem(error.message)
       }
-  };
+    }
+    // gera a parcial automática de cartão para dinheiro.
+    else if (tipoMovimentacaoPagamentosEletronicos.value === 'entrada' && descricaoManutencaoPagamentosEletronicos === 'parcial') {
+      
+      const manutencaoParcial = {
+        fechamentoId: fechamentoAtual.id,
+        tipo: 'saida',
+        descricao: 'parcial automática',
+        valor: valorManutencaoPagamentosEletronicos,
+      };
+
+      try {
+        const movimentacao = await criarMovimentacao(manutencaoParcial);
+        if (movimentacao) setMensagem('Parcial automática criada com sucesso!');
+
+
+        //atualiza as listas
+        await buscarMovimentacoes();
+      } catch (error) {
+        console.log(error.message)
+        setMensagem(error.message)
+      }
+    }
+
+    else return
+
+  }
 
   // Cancela/Limpa formulario 
   const cancelarFormulario = () => {
     setValorManutencao('');
+    setValorManutencaoPagamentosEletronicos('');
     setDescricaoManutencao('');
+    setDescricaoManutencaoPagamentosEletronicos('');
     setTipoMovimentacao(tiposMovimentacao[0]);
+    setTipoMovimentacaoPagamentosEletronicos(tipoMovimentacaoPagamentosEletronicos[0]);
     setErroFormulario('');
+    setErroFormularioPagamentoEletronico('');
   };
 
   // Limpar contador de notas
@@ -187,17 +307,30 @@ export default function FechamentoDelivery() {
   }, [])
 
   
-  // Remover manutenção de caixa
+  // Remover manutenção de caixa.
   const removerManutencao = async (id) => {
     try {
       await deletarMovimentacao(id);
       setMensagem('Movimentação excluída com sucesso!')
       await buscarMovimentacoes();
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
       setMensagem(error.message);
     }
   };
+
+    // Remover manutenção de caixa.
+  const removerManutencaoPagamentoEletronico = async (id) => {
+    try {
+      await deletarMovimentacaoPagamentoEletronico(id)
+      setMensagem('Movimentação excluída com sucesso!')
+      await buscarMovimentacoes()
+    } catch (error) {
+      console.log(error.message);
+      setMensagem(error.message);
+    }
+  };
+
 
   // Finaliza fechamento
   const finalizarFechamento = async () => {
@@ -224,10 +357,13 @@ export default function FechamentoDelivery() {
   const totalSaidas = movimentacoes.filter(m => m.tipo === 'saida').reduce((acc, m) => acc + m.valor, 0);
   const valorFinalFechamentoAvista = valorEsperado + totalEntradas - totalSaidas;
   const diferenca = totalContado - valorFinalFechamentoAvista;
-  //const totalFechamentoCaixa = totalContado + totalEntradas - totalSaidas
+
+  const totalEntradasAjustesEletronicos = movimentacoesPagamentosEletronicos.filter(m => m.tipo === 'entrada').reduce((acc, m) => acc + m.valor, 0);
+  const totalSaidasAjustesEletronicos = movimentacoesPagamentosEletronicos.filter(m => m.tipo === 'saida').reduce((acc, m) => acc + m.valor, 0);
 
   // formantando data
   const dataHoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+  const valorFinalEletronico = valorTotalMaquininha + totalEntradasAjustesEletronicos - totalSaidasAjustesEletronicos;
 
 
   return (
@@ -437,7 +573,7 @@ export default function FechamentoDelivery() {
                       <CreditCardIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
                       <h2>Vendas na Maquininha</h2>
                     </div>
-                    <strong className={styles.valorDestaque}>{formatarMoeda(valorTotalMaquininha)}</strong>
+                    <strong className={styles.valorDestaque}>Total: {formatarMoeda(valorFinalEletronico)}</strong>
                   </div>
                   <div className={styles.maquininhaGrid}>
                     <div className={styles.maquininhaItem}>
@@ -456,20 +592,188 @@ export default function FechamentoDelivery() {
                       </div>
                     </div>
                   </div>
+
+                  {valorTotalMaquininha > 0 && 
+                    <>
+                      <div className={styles.conferenciaLinha}>
+                        <span>Ajustes eletrônicos positivos</span>
+                        <span className={styles.valorPositivo}>+{formatarMoeda(totalEntradasAjustesEletronicos)}</span>
+                      </div>
+
+                      <div className={styles.conferenciaLinha}>
+                        <span>Ajustes eletrônicos negativos</span>
+                        <span className={styles.valorNegativo}>−{formatarMoeda(totalSaidasAjustesEletronicos)}</span>
+                      </div>
+                    </>                  
+                  }
+
+
                 </div>
 
-                {/* FORMULARIO DE MOVIMENTAÇÃO */}
+                {/* FORMULARIO DE MOVIMENTAÇÃO PAGAMENTOS ELETRÔNICOS */}
                 <div className={styles.card}>
-                  <div className={styles.cardHeader}>
+                  <div className={styles.cardHeaderMovimentacao}>
                     <div className={styles.cardHeaderTitle}>
-                      <ReceiptIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
-                      <h2>Movimentação de Caixa</h2>
+                      <CreditCardIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                      <h2>Ajustes Eletrônicos</h2>          
+                      <div title='
+                          ENTRADA ELETRÔNICA: Nota no dinheiro com parcial no cartão! 
+                          Obs: digitar entrada no valor pago em cartão, com descrição: "parcial" que vai lançar automático a soma no total do cartão'>
+                        <InfoIcon size={20} color="grey" weight="duotone" />
+                      </div>                 
                     </div>
-                    <span className={styles.balcaoBadge}>Delivery</span>
+                    <span className={styles.conferenciaLinha}>Ajuste valores recebidos via Pix, cartão ou vendas diretas no CNPJ.</span>
+                  </div>
+                    
+                  {/* TIPO */}
+                  <div className={styles.campoForm}>
+                    <label className={styles.labelForm}>Tipo</label>
+                    <Select
+                      classNamePrefix="custom"
+                      options={tiposMovimentacaoPagamentoEletronico}
+                      value={tipoMovimentacaoPagamentosEletronicos}
+                      onChange={setTipoMovimentacaoPagamentosEletronicos}
+                      isSearchable={false}
+                    />
+                  </div>
+                  {/* VALOR */}
+                  <div className={styles.campoForm}>
+                    <label className={styles.labelForm}>Valor (R$)</label>
+                    <input
+                      className={styles.inputValor}
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="0,00"
+                      value={valorManutencaoPagamentosEletronicos}
+                      onChange={(e) => setValorManutencaoPagamentosEletronicos(Number(e.target.value))}
+                    />
+                  </div>
+                  {/* DESCRIÇÃO */}
+                  <div className={styles.campoForm}>
+                    <label className={styles.labelForm}>Descrição</label>
+                    <textarea
+                      className={styles.inputDescricao}
+                      placeholder="Descreva o motivo da movimentação..."
+                      value={descricaoManutencaoPagamentosEletronicos}
+                      onChange={(e) => setDescricaoManutencaoPagamentosEletronicos(e.target.value)}
+                      rows={3}
+                    />
                   </div>
 
+                  {erroFormularioPagamentoEletronico && (
+                    <div className={styles.msgErro}>{erroFormularioPagamentoEletronico}</div>
+                  )}
+
+                  {/* BOTÕES */}
+                  <div className={styles.containerBotoes}>
+                    <button className={styles.botaoCancelar} onClick={cancelarFormulario}>
+                      Cancelar
+                    </button>
+                    <AlertaRadix
+                      titulo="Salvar movimentação"
+                      descricao={`Deseja adicionar um novo ajuste eletronico no Delivery?`}
+                      tratar={novaMovimentacaoPagamentoEletronico}
+                      confirmarTexto="Adicionar"
+                      cancelarTexto="Cancelar"
+                      trigger={
+                        <button className={styles.botaoSalvar}>
+                          <PlusCircleIcon size={18} weight="bold" />
+                          Salvar ajuste eletronico
+                        </button>
+                      }
+                    />
+                  </div>
+
+                </div>
+
+                {/* LISTA DE MOVIMENTAÇÕES PAGAMENTOS ELETRÔNICOS */}
+                {movimentacoesPagamentosEletronicos.length > 0 && 
+                  <div className={styles.card}>
+
+                    <div className={styles.cardHeader}>
+                      <div className={styles.cardHeaderTitle}>  
+                        <ClockIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                        <h2>Ajustes eletrônicos do dia</h2>
+                      </div>
+                      {movimentacoesPagamentosEletronicos.length > 0 && (
+                        <div className={styles.resumoMovimentacoes}>
+                          <span className={styles.resumoEntrada}>
+                            <ArrowUpIcon size={12} weight="bold" />
+                            {formatarMoeda(totalEntradasAjustesEletronicos)}
+                          </span>
+                          <span className={styles.resumoSaida}>
+                            <ArrowDownIcon size={12} weight="bold" />
+                            {formatarMoeda(totalSaidasAjustesEletronicos)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {movimentacoesPagamentosEletronicos.length === 0 ? (
+                      <div className={styles.listaVazia}>
+                        <ReceiptIcon size={36} weight="duotone" className={styles.iconeVazio} />
+                        <p>Nenhuma movimentação registrada</p>
+                      </div>
+                    ) : (
+                      <div className={styles.itensMovimentacao}>
+                        {movimentacoesPagamentosEletronicos.map((m) => (
+                          <div key={m.id} className={`${styles.itemMovimentacao} ${styles[`item_${m.tipo}`]}`}>
+                            <div className={`${styles.itemIconeTipo} ${styles[`icone_${m.tipo}`]}`}>
+                              {m.tipo === 'entrada'
+                                ? <ArrowUpIcon size={14} weight="bold" />
+                                : <ArrowDownIcon size={14} weight="bold" />}
+                            </div>
+                            <div className={styles.itemInfo}>
+                              <p className={styles.itemDescricao}>{m.descricao}</p>
+                              <span className={styles.itemHora}>
+                                <ClockIcon size={11} />
+                                {dataHoraFormatada(m.data)}
+                              </span>
+                            </div>
+                            <strong className={`${styles.itemValor} ${styles[`valor_${m.tipo}`]}`}>
+                              {m.tipo === 'saida' ? '−' : '+'} {formatarMoeda(m.valor)}
+                            </strong>
+                            <AlertaRadix
+                              titulo="Remover movimentação"
+                              descricao={`Deseja remover "${m.descricao}"?`}
+                              tratar={() => removerManutencaoPagamentoEletronico(m.id)}
+                              confirmarTexto="Remover"
+                              cancelarTexto="Cancelar"
+                              trigger={
+                                <button className={styles.botaoRemover}>
+                                  <TrashIcon size={14} weight="bold" />
+                                </button>
+                              }
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                  </div>
+                }
+
+                {/* ------- */}
+
+                {/* FORMULARIO DE MOVIMENTAÇÃO DINHEIRO */}
+                <div className={styles.card}>
+                  <div className={styles.cardHeaderMovimentacao}>
+                    <div className={styles.cardHeaderTitle}>
+                      <MoneyWavyIcon size={20} weight="bold" className={styles.cardHeaderIcon} />
+                      <h2>Ajustes Dinheiro</h2>
+                      <div title='
+                        ENTRADA ELETRÔNICA: Nota no cartão com parcial no dinheiro! 
+                      Obs: digitar entrada no valor pago em dinheiro, com descrição: "parcial" que vai lançar automático a soma no total de dinheiro'>
+                        <InfoIcon size={20} color="grey" weight="duotone" />
+                      </div>
+                    </div>
+                    <span className={styles.conferenciaLinha}>Registre entradas ou saídas de dinheiro físico do caixa.</span>
+
+                  </div>
+                  {/* TIPO */}
                   <div className={styles.campoForm}>
-                    <label className={styles.labelForm}>Tipo de movimentação</label>
+                    <label className={styles.labelForm}>Tipo</label>
                     <Select
                       classNamePrefix="custom"
                       options={tiposMovimentacao}
@@ -478,7 +782,7 @@ export default function FechamentoDelivery() {
                       isSearchable={false}
                     />
                   </div>
-
+                  {/* VALOR */}
                   <div className={styles.campoForm}>
                     <label className={styles.labelForm}>Valor (R$)</label>
                     <input
@@ -491,12 +795,12 @@ export default function FechamentoDelivery() {
                       onChange={(e) => setValorManutencao(Number(e.target.value))}
                     />
                   </div>
-
+                  {/* DESCRIÇÃO */}
                   <div className={styles.campoForm}>
                     <label className={styles.labelForm}>Descrição</label>
                     <textarea
                       className={styles.inputDescricao}
-                      placeholder="Descreva o motivo da movimentação..."
+                      placeholder="Descreva o motivo do ajuste..."
                       value={descricaoManutencao}
                       onChange={(e) => setDescricaoManutencao(e.target.value)}
                       rows={3}
@@ -507,27 +811,30 @@ export default function FechamentoDelivery() {
                     <div className={styles.msgErro}>{erroFormulario}</div>
                   )}
 
+                  {/* BOTÕES */}
                   <div className={styles.containerBotoes}>
                     <button className={styles.botaoCancelar} onClick={cancelarFormulario}>
                       Cancelar
                     </button>
                     <AlertaRadix
-                      titulo="Salvar movimentação"
-                      descricao={`Deseja adicionar nova movimentação no caixa do delivery?`}
+                      titulo="Adicionar novo ajuste"
+                      descricao={`Deseja adicionar um novo ajuste de dinheiro no  Delivery?`}
                       tratar={novaMovimentacao}
                       confirmarTexto="Adicionar"
                       cancelarTexto="Cancelar"
                       trigger={
                         <button className={styles.botaoSalvar}>
                           <PlusCircleIcon size={18} weight="bold" />
-                          Salvar movimentação
+                          Salvar ajuste de dinheiro
                         </button>
                       }
                     />
                   </div>
+
                 </div>
 
-                {/* LISTA DE MOVIMENTAÇÕES */}
+                {/* LISTA DE MOVIMENTAÇÕES DINHEIRO */}
+                {movimentacoes.length > 0 &&
                 <div className={styles.card}>
 
                   <div className={styles.cardHeader}>
@@ -591,6 +898,8 @@ export default function FechamentoDelivery() {
                   )}
 
                 </div>
+                }
+
 
               </div>
             </div>

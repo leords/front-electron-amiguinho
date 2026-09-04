@@ -1,11 +1,22 @@
 import { useEffect, useState } from "react";
-import { Package, CalendarBlank, CircleNotch, MagnifyingGlass } from "@phosphor-icons/react";
+import {
+  Package,
+  CalendarBlank,
+  CircleNotch,
+  MagnifyingGlass,
+} from "@phosphor-icons/react";
 import "./styles.css";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { usarAuth } from "../Context/authContext.jsx";
 import { dataHoraFormatada } from "../../utils/data";
 
-export default function BuscaPedidos({ setLatitude, setLongitude, setDataCarregada, setDataEntregue, setRemetente }) {
+export default function BuscaPedidos({
+  setLatitude,
+  setLongitude,
+  setDataCarregada,
+  setDataEntregue,
+  setRemetente,
+}) {
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [pedidos, setPedidos] = useState([]);
@@ -47,20 +58,28 @@ export default function BuscaPedidos({ setLatitude, setLongitude, setDataCarrega
 
       setPedidoAtual(pedido.id);
 
-      localStorage.setItem("ultimoCliente", JSON.stringify(pedido?.cliente.nome));
+      localStorage.setItem(
+        "ultimoCliente",
+        JSON.stringify(pedido?.cliente.nome),
+      );
       localStorage.setItem("ultimoUsuario", JSON.stringify(usuario?.nome));
-      localStorage.setItem("ultimaLatitude", JSON.stringify(pedido?.latitudeEntrega));
-      localStorage.setItem("ultimaLongitude", JSON.stringify(pedido?.longitudeEntrega));
+      localStorage.setItem(
+        "ultimaLatitude",
+        JSON.stringify(pedido?.latitudeEntrega),
+      );
+      localStorage.setItem(
+        "ultimaLongitude",
+        JSON.stringify(pedido?.longitudeEntrega),
+      );
       localStorage.setItem("ultimaBusca", JSON.stringify(dataHoraFormatada()));
 
-
       // está puxando a data de criação!!!
-      setDataCarregada(pedido?.data)
-      setDataEntregue(pedido?.dataEntrega)
+      setDataCarregada(pedido?.data);
+      setDataEntregue(pedido?.dataEntrega);
 
       setLatitude(pedido?.latitudeEntrega);
       setLongitude(pedido?.longitudeEntrega);
-      setRemetente("entrega")
+      setRemetente("entrega");
     } catch (erro) {
       console.error(erro);
     }
@@ -113,7 +132,11 @@ export default function BuscaPedidos({ setLatitude, setLongitude, setDataCarrega
       </div>
 
       {/* BOTÃO BUSCAR */}
-      <button className="botao-principal" onClick={pesquisarPedidos} disabled={loading}>
+      <button
+        className="botao-principal"
+        onClick={pesquisarPedidos}
+        disabled={loading}
+      >
         <MagnifyingGlass size={16} weight="bold" />
         Buscar
       </button>

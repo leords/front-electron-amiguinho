@@ -1,52 +1,48 @@
-import { CloudCheckIcon, CloudXIcon, HouseLineIcon, SignOutIcon, UserCircleCheckIcon } from "@phosphor-icons/react";
+import {
+  CalendarBlankIcon,
+  CloudCheckIcon,
+  CloudXIcon,
+  HouseLineIcon,
+  SignOutIcon,
+  UserCircleCheckIcon,
+} from "@phosphor-icons/react";
 import styles from "./styles.module.css";
 import { useNavigate } from "react-router-dom";
 import { usarAuth } from "../Context/authContext";
 import { useEffect, useState } from "react";
 import { AlertaRadix } from "../ui/alerta/alerta.jsx";
-
+import mascote from "../../assets/logo-unico.png";
 
 export default function Cabecalho() {
   const navegar = useNavigate();
   const { sair, usuario } = usarAuth();
-  const [climaAtual, setClimaAtual] = useState({});
   const [diaSemana, setDiaSemana] = useState("");
-
-
+  const [online, setOnline] = useState(navigator.onLine);
 
   // Gera o nome da semana em extenso
   useEffect(() => {
-    const diaDaSemana = async () => {
-      const hojeDiaSeamana = new Date().toLocaleDateString("pt-BR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
+    const hojeDiaSemana = new Date().toLocaleDateString("pt-BR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
 
-      setDiaSemana(hojeDiaSeamana);
-    };
-
-    diaDaSemana();
+    setDiaSemana(hojeDiaSemana);
   }, []);
 
-  // Chama a API do clima
+  // Monitora status de conexão
   useEffect(() => {
-    const buscarClimaAtual = async () => {
-      const clima = await window.API.buscarClima("Canoinhas");
-      setClimaAtual({
-        temperatura: clima.main.temp,
-        condicao: clima.weather[0].description,
-      });
+    const marcarOnline = () => setOnline(true);
+    const marcarOffline = () => setOnline(false);
+
+    window.addEventListener("online", marcarOnline);
+    window.addEventListener("offline", marcarOffline);
+
+    return () => {
+      window.removeEventListener("online", marcarOnline);
+      window.removeEventListener("offline", marcarOffline);
     };
-    buscarClimaAtual();
-
-  // ATUALIZA A CADA 5 MINUTOS.  (1 minuto é igual a 60000 ms)
-    const intervalo = setInterval(() => {
-      buscarClimaAtual();
-    }, 300000);
-
-    return () => clearInterval(intervalo);
   }, []);
 
   // Voltar ao menu
@@ -56,7 +52,6 @@ export default function Cabecalho() {
 
   // Deslogar o usuário.
   const tratarSair = async () => {
-    console.log("Deslogar");
     try {
       await sair();
     } catch (error) {
@@ -68,21 +63,46 @@ export default function Cabecalho() {
   return (
     <header className={styles.cabecalho}>
       <div className={styles.container}>
-
         {/* TÍTULO, USUÁRIO E STATUS DE SERVIDOR */}
         <div className={styles.containerTitulos}>
-          <h1 className={styles.titulo}>Sistema de vendas Amiguinho</h1>
-          <p> 
-            <UserCircleCheckIcon size={24} color="gray" weight="duotone" alt="Servidor conectado!"/> 
-            Usuário conectado: {usuario?.nome || "Carregando..."} 
-          </p>
+          {/* MASCOTE */}
+          <div className={styles.mascoteMoldura}>
+            <img
+              src={mascote}
+              alt="Mascote Amigão Distribuidora"
+              className={styles.mascote}
+            />
+          </div>
 
+          <div className={styles.textoTitulos}>
+            <h1 className={styles.titulo}>Sistema de Controle Amiguinho</h1>
+
+            <div className={styles.linhaInfo}>
+              <span className={styles.pilha}>
+                <UserCircleCheckIcon size={16} weight="duotone" />
+                {usuario?.nome || "Carregando..."}
+              </span>
+
+              <span
+                className={`${styles.pilha} ${
+                  online ? styles.pilhaOnline : styles.pilhaOffline
+                }`}
+                title={online ? "Servidor conectado" : "Sem conexão"}
+              >
+                {online ? (
+                  <CloudCheckIcon size={16} weight="duotone" />
+                ) : (
+                  <CloudXIcon size={16} weight="duotone" />
+                )}
+                {online ? "Conectado" : "Offline"}
+              </span>
+            </div>
+          </div>
         </div>
- 
+
         {/* BOTÕES */}
         <div className={styles.botoescabecalho}>
           <div className={styles.botoes}>
-
             {/* BOTÃO HOME */}
             <button
               title="Menu inicial"
@@ -110,22 +130,14 @@ export default function Cabecalho() {
                 </button>
               }
             />
-
           </div>
 
-          {/* DIA E CLIMA  */}
-          <p>📅 {diaSemana}</p>
-          <p>  
-            {climaAtual.temperatura < 14 ? (
-              <span className={styles.iconeClima}>🌥️</span>
-            ) : (
-              <span className={styles.iconeClima}>☀️</span>
-            )}
-            {Math.round(climaAtual.temperatura)}°, {climaAtual.condicao} 
-          </p>
-
+          {/* DIA */}
+          <span className={styles.pilhaData}>
+            <CalendarBlankIcon size={16} weight="duotone" />
+            {diaSemana}
+          </span>
         </div>
-
       </div>
     </header>
   );

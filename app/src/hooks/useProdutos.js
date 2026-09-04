@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { LerProduto } from "../operadores/API/produto/lerProduto.js";
 
 export function useProdutos() {
-
   // Estados
   const [produtos, setProduto] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -13,7 +12,6 @@ export function useProdutos() {
       try {
         const lista = await LerProduto();
         setProduto(lista);
-
       } catch (error) {
         setErro(error);
       } finally {

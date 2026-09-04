@@ -6,9 +6,7 @@ export default function ItemListaPedidoDelivery({
   produto,
   onRemover,
   botaoRemover = true,
-
 }) {
-
   return (
     <div className={styles.container}>
       <table className={styles.tabela}>
@@ -16,30 +14,26 @@ export default function ItemListaPedidoDelivery({
           <tr>
             <td>{produto.quantidade}</td>
             <td>{produto.nome}</td>
+            <td>{formatarMoeda(produto?.precoVenda)}</td>
             <td>
-              {formatarMoeda(produto?.precoVenda)}
-            </td>
-            <td>
-              {formatarMoeda( (Number(produto.precoVenda) * produto.quantidade)) }
+              {formatarMoeda(Number(produto.precoVenda) * produto.quantidade)}
             </td>
             {botaoRemover ? (
               <td>
-                {produto?.nome !== 'TAXA ENTREGA'
-                  ?
+                {produto?.nome !== "TAXA ENTREGA" ? (
                   <TrashIcon
                     onClick={() => {
                       onRemover(produto.id);
                     }}
                     size={20}
                   />
-                  : 
+                ) : (
                   <WarningCircleIcon
                     color="orange"
                     size={20}
                     weight="duotone"
                   />
-                }
-
+                )}
               </td>
             ) : (
               <td></td>

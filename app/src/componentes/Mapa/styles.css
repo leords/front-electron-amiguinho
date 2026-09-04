@@ -1,14 +1,14 @@
 .mapa {
   width: 100%;
-  height: 100%;      /* preenche o .mapa-card inteiro */
+  height: 100%; /* preenche o .mapa-card inteiro */
   border-radius: var(--radius);
-  border: none;       /* o .mapa-card já tem border */
+  border: none; /* o .mapa-card já tem border */
   z-index: 1;
 }
 
 .mapa-vazio {
   width: 100%;
-  height: 100%;   /* em vez de 500px */
+  height: 100%; /* em vez de 500px */
   display: flex;
   flex-direction: column;
   align-items: center;

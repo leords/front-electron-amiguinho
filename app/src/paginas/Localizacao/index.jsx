@@ -13,9 +13,9 @@ export default function Localizacao() {
   const [tipoBusca, setTipoBusca] = useState("pedido");
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-  const [dataCarregada, setDataCarregada] = useState(null)
-  const [dataEntregue, setDataEntregue] = useState(null)
-  const [remetente, setRemetente] = useState("")
+  const [dataCarregada, setDataCarregada] = useState(null);
+  const [dataEntregue, setDataEntregue] = useState(null);
+  const [remetente, setRemetente] = useState("");
 
   return (
     <div className="container">
@@ -79,7 +79,6 @@ export default function Localizacao() {
                   setDataCarregada={setDataCarregada}
                   setDataEntregue={setDataEntregue}
                   setRemetente={setRemetente}
-
                 />
               ) : (
                 <BuscaUsuarios
@@ -105,9 +104,9 @@ export default function Localizacao() {
           {/* Painel direito - mapa */}
           <div className="painel-direito">
             <div className="mapa-card">
-              <Mapa 
-                latitude={latitude} 
-                longitude={longitude} 
+              <Mapa
+                latitude={latitude}
+                longitude={longitude}
                 dataCarregada={dataCarregada}
                 dataEntregue={dataEntregue}
                 remetente={remetente}

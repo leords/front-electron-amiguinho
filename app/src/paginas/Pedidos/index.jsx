@@ -23,7 +23,6 @@ import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { LerUsuario } from "../../operadores/API/usuario/lerUsuario";
 
 export default function Pedidos() {
-
   // Estados
   const [carregando, setCarregando] = useState(false);
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
@@ -35,10 +34,10 @@ export default function Pedidos() {
   const [cliente, setCliente] = useState(null);
   const [setor, setSetor] = useState("");
   const [status, setStatus] = useState([]);
-  const [statusSelecionado, setStatusSelecionado] = useState("")
-  const [vendedorSelecionado, setVendedorSelecionado] = useState("")
-  const [opcaoVendedorExterno, setOpcaoVendedorExterno] = useState([])
-  const [usuarios, setUsuarios] = useState([])
+  const [statusSelecionado, setStatusSelecionado] = useState("");
+  const [vendedorSelecionado, setVendedorSelecionado] = useState("");
+  const [opcaoVendedorExterno, setOpcaoVendedorExterno] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
 
   // state de rota (passando parametro por rota)
   const { state } = useLocation();
@@ -47,7 +46,7 @@ export default function Pedidos() {
   const { listaFormaPagamento } = useFormaPagamentoExterna();
   const { mensagem, setMensagem } = usarToast();
 
-   // Lista manual de setores
+  // Lista manual de setores
   const opcaoSetor = [
     { id: 1, nome: "balcao", label: "Balcão" },
     { id: 2, nome: "delivery", label: "Delivery" },
@@ -56,83 +55,97 @@ export default function Pedidos() {
 
   // Lista manual de vendedores setor balcão
   const opcaoVendedorBalcao = [
-    { id:1, nome: "b1", label:"Balcão 01" },
-    { id:2, nome: "b2", label:"Balcão 02" }
+    { id: 1, nome: "b1", label: "Balcão 01" },
+    { id: 2, nome: "b2", label: "Balcão 02" },
   ];
 
   // Lista manual de vendedores setor delivery
   const opcaoVendedorDelivery = [
-    { id:1, nome: "delivery", label: "Delivery" }
-  ]
- 
+    { id: 1, nome: "delivery", label: "Delivery" },
+  ];
+
   // Função que busca usuários e filtra apenas os vendedores externos.
   useEffect(() => {
     const buscarUsuarios = async () => {
       setCarregando(true);
       try {
-          const listaUsuarios = await LerUsuario();
-          if(listaUsuarios) {
-            const externos = (listaUsuarios.filter((usuario) => {['EXTERNO', 'VENDAS'].includes(usuario.nivelAcesso)}) ?? []);   
-            setOpcaoVendedorExterno( externos.map((v) => ({id: v.id, nome: v.nome, label: v.nome })) )
-          }
-
-        } catch {
-          setOpcaoVendedorExterno([]);
-      }   finally {
+        const listaUsuarios = await LerUsuario();
+        if (listaUsuarios) {
+          const externos =
+            listaUsuarios.filter((usuario) => {
+              ["EXTERNO", "VENDAS"].includes(usuario.nivelAcesso);
+            }) ?? [];
+          setOpcaoVendedorExterno(
+            externos.map((v) => ({ id: v.id, nome: v.nome, label: v.nome })),
+          );
+        }
+      } catch {
+        setOpcaoVendedorExterno([]);
+      } finally {
         setCarregando(false);
       }
     };
-  
+
     buscarUsuarios();
   }, []);
 
   // Função que seta lista de usuários conforme o setor escolhido.
   useEffect(() => {
-
     const opcoes = {
       externo: opcaoVendedorExterno,
       balcao: opcaoVendedorBalcao,
       delivery: opcaoVendedorDelivery,
-    }
+    };
 
-    setUsuarios(opcoes[setor] || [])
+    setUsuarios(opcoes[setor] || []);
 
-    setVendedorSelecionado("")
-  }, [setor])
+    setVendedorSelecionado("");
+  }, [setor]);
 
   // Setando o status de pedido disponiveis conforme o setor
   useEffect(() => {
-    if(setor === 'balcao') {
-      setStatus(['finalizado', 'cancelado'])
+    if (setor === "balcao") {
+      setStatus(["finalizado", "cancelado"]);
+    } else if (setor === "delivery") {
+      setStatus(["carregado", "entregue", "devolvido", "cancelado"]);
+    } else if (setor === "externo") {
+      setStatus([
+        "pendente",
+        "carregado",
+        "entregue",
+        "devolvido",
+        "cancelado",
+      ]);
+    } else {
+      setStatus([
+        "carregado",
+        "cancelado",
+        "pendente",
+        "entregue",
+        "devolvido",
+      ]);
     }
-    else if(setor === 'delivery') {
-      setStatus(['carregado', 'entregue', 'devolvido', 'cancelado'])
-    }
-    else if(setor === 'externo') {
-      setStatus(['pendente','carregado', 'entregue', 'devolvido', 'cancelado'])
-    }
-    else { 
-      setStatus(['carregado', 'cancelado', 'pendente', 'entregue', 'devolvido',])
-    }
-  }, [setor])
+  }, [setor]);
 
   // Fica ouvindo o state que vem de reimprimir para soltar o alerta.
-  useEffect(() => { 
-    if(state) {
-      setMensagem(state)
+  useEffect(() => {
+    if (state) {
+      setMensagem(state);
     }
-  },[])
+  }, []);
 
   // Seta a data final do filtro no dia atual e inicio no primeiro dia do mes atual.
   useEffect(() => {
     const inicializarData = async () => {
-      const mesInicio = new Date();
-      const primeiroDiaMes = new Date(
-        mesInicio.getFullYear(),
-        mesInicio.getMonth(),
-        1
-      );
-      setDataInicio(dataFormatadaCalendario(primeiroDiaMes));
+      // Estava sendo usado quando buscavamos o intervalo de data para inicio do mês.
+      // const mesInicio = new Date();
+      // const primeiroDiaMes = new Date(
+      //   mesInicio.getFullYear(),
+      //   mesInicio.getMonth(),
+      //   1,
+      // );
+
+      setDataInicio(dataFormatadaCalendario());
       setDataFim(dataFormatadaCalendario());
     };
     inicializarData();
@@ -148,12 +161,13 @@ export default function Pedidos() {
         const resultado = await buscarPedido({
           setor,
           vendedor: vendedorSelecionado,
-          cliente: cliente?.value ?? "",
+          //cliente: cliente?.value ?? "",
           dataInicio,
           dataFim,
           formaPagamentoId: formaPagamento,
-          status: statusSelecionado
+          status: statusSelecionado,
         });
+
         setPedidosFiltrados(resultado);
       } catch (error) {
         console.error("Erro ao filtrar pedidos:", error);
@@ -163,9 +177,16 @@ export default function Pedidos() {
       }
     };
 
-
     filtrarPedidos();
-  }, [dataInicio, dataFim, formaPagamento, setor, cliente, statusSelecionado, vendedorSelecionado]);
+  }, [
+    dataInicio,
+    dataFim,
+    formaPagamento,
+    setor,
+    cliente,
+    statusSelecionado,
+    vendedorSelecionado,
+  ]);
 
   // Filtra clientes se não for balcao.
   useEffect(() => {
@@ -233,12 +254,15 @@ export default function Pedidos() {
         <div className={styles.painelFiltros}>
           {/* Subtitulo */}
           <div className={styles.filtrosHeader}>
-            <FunnelIcon size={16} weight="bold" className={styles.filtroIcone} />
+            <FunnelIcon
+              size={16}
+              weight="bold"
+              className={styles.filtroIcone}
+            />
             <span>Filtros</span>
           </div>
 
           <div className={styles.filtrosGrid}>
-            
             {/* Data Inicial */}
             <div className={styles.filtroGrupo}>
               <label className={styles.filtroLabel}>
@@ -325,7 +349,8 @@ export default function Pedidos() {
                   const id = e.target.value;
                   setFormaPagamento(id);
                   setNomeFormaPagamento(
-                    listaFormaPagamento.find((f) => f.id === Number(id))?.nome || ""
+                    listaFormaPagamento.find((f) => f.id === Number(id))
+                      ?.nome || "",
                   );
                 }}
                 className={styles.selectInput}
@@ -346,8 +371,8 @@ export default function Pedidos() {
                 value={vendedorSelecionado}
                 onChange={(e) => setVendedorSelecionado(e.target.value)}
                 className={styles.selectInput}
-              > 
-              <option value="">Todos os usuários</option>
+              >
+                <option value="">Todos os usuários</option>
                 {usuarios?.map((s, index) => (
                   <option key={index} value={s.nome}>
                     {s.label}
@@ -371,7 +396,6 @@ export default function Pedidos() {
                 ))}
               </select>
             </div>
-
           </div>
         </div>
 
@@ -404,12 +428,13 @@ export default function Pedidos() {
           <div className={styles.tabelaWrapper}>
             <div className={styles.tituloLista}>
               <h3 className={styles.itemLista1}>ID</h3>
-              <h3 className={styles.itemLista2}>Setor</h3>
+
               <h3 className={styles.itemLista3}>Data / Hora</h3>
-              {setor === 'balcao' 
-                ? <></> 
-                : <h3 className={styles.itemLista4}>Cliente</h3>
-              }
+              {setor === "balcao" ? (
+                <></>
+              ) : (
+                <h3 className={styles.itemLista4}>Cliente</h3>
+              )}
               <h3 className={styles.itemLista5}>Vendedor</h3>
               <h3 className={styles.itemLista6}>Total</h3>
               <h3 className={styles.itemLista7}>Pagamento</h3>

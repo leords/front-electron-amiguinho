@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { socket } from "../../utils/socket";
-import { registrarEventosSocket } from "../../socket/eventos";
+//import { socket } from "../../utils/socket";
+//import { registrarEventosSocket } from "../../socket/eventos";
 
 const AuthContext = createContext();
 
@@ -28,12 +28,10 @@ export const AuthProvedor = ({ children }) => {
         nivelAcesso: nivel,
       });
     }
-
   }, []);
 
   // Função login
   const login = (credenciais) => {
-
     // Armazenando os dados do usuário e token no Storaged.
     localStorage.setItem("token", credenciais.token);
     localStorage.setItem("nomeUsuario", credenciais.usuario.nome);
@@ -62,33 +60,32 @@ export const AuthProvedor = ({ children }) => {
     navegar("/");
   };
 
-
   // Valida a abertura da conexão socket
-useEffect(() => {
-  if (!usuario) return;
+  // useEffect(() => {
+  //   if (!usuario) return;
 
-  const registrar = () => {
-    socket.emit("registrar", {
-      tipo: "painel",
-      usuarioId: usuario.id,
-    });
+  //   const registrar = () => {
+  //     socket.emit("registrar", {
+  //       tipo: "painel",
+  //       usuarioId: usuario.id,
+  //     });
 
-    registrarEventosSocket();
-  };
+  //     registrarEventosSocket();
+  //   };
 
-  socket.connect();
+  //   socket.connect();
 
-  if (socket.connected) {
-    registrar();
-  } else {
-    socket.once("connect", registrar);
-  }
+  //   if (socket.connected) {
+  //     registrar();
+  //   } else {
+  //     socket.once("connect", registrar);
+  //   }
 
-  return () => {
-    socket.off("connect", registrar);
-    socket.disconnect();
-  };
-}, [usuario]);
+  //   return () => {
+  //     socket.off("connect", registrar);
+  //     socket.disconnect();
+  //   };
+  // }, [usuario]);
 
   return (
     <AuthContext.Provider value={{ usuario, login, sair }}>

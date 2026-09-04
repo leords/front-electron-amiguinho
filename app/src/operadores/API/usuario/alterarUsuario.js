@@ -3,15 +3,13 @@ import { api } from "../../../utils/conexaoAxios";
 export const AlterarUsuario = async (id, status, nivelAcesso) => {
   const token = localStorage.getItem("token");
   try {
-    
     const resposta = await api.patch(
       `/alterar-usuario/${id}`,
-        {status, nivelAcesso},
-        {headers: { Authorization: `Bearer ${token}`} }
+      { status, nivelAcesso },
+      { headers: { Authorization: `Bearer ${token}` } },
     );
     return resposta.data;
   } catch (error) {
-
     // ❌ sem resposta (API fora, internet, etc)
     if (error.request && !error.response) {
       throw new Error("Servidor não respondeu, tente novamente");
@@ -19,7 +17,7 @@ export const AlterarUsuario = async (id, status, nivelAcesso) => {
 
     // 🔥 erro vindo do backend (AppError)
     if (error.response) {
-      console.log("error response: ", error.response)
+      console.log("error response: ", error.response);
       const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
       throw new Error(mensagem);
     }
@@ -27,5 +25,4 @@ export const AlterarUsuario = async (id, status, nivelAcesso) => {
     // fallback
     throw new Error("Erro inesperado na requisição");
   }
-
 };

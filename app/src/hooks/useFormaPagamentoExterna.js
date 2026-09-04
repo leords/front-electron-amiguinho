@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { lerFormaPagamentoExterna } from "../operadores/API/formaPagamento/lerFormaPagamentoExterna.js";
 
 export function useFormaPagamentoExterna() {
-
   // Estados
   const [listaFormaPagamento, setListaFormasPagamento] = useState();
-  const [carregandoFormasPagamento, setCarregandoFormasPagamento] = useState(true);
+  const [carregandoFormasPagamento, setCarregandoFormasPagamento] =
+    useState(true);
   const [erroHookFormaPagamento, setErroHookFormaPagamento] = useState(null);
-
-
 
   useEffect(() => {
     const carregar = async () => {
@@ -30,5 +28,4 @@ export function useFormaPagamentoExterna() {
     carregandoFormasPagamento,
     erroHookFormaPagamento,
   };
-  
 }

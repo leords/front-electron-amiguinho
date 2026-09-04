@@ -1,5 +1,4 @@
-const { contextBridge, ipcRenderer, shell  } = require("electron");
-
+const { contextBridge, ipcRenderer, shell } = require("electron");
 
 // imprimir
 contextBridge.exposeInMainWorld("IMPRESSORA", {
@@ -17,12 +16,12 @@ contextBridge.exposeInMainWorld("API", {
 });
 
 // Gerar pdf saldo de estoque e saida de produtos
-contextBridge.exposeInMainWorld('PDF', {
-  gerarPDFEstoque: (dados) => ipcRenderer.invoke('gerar-pdf-estoque', dados),
-  gerarPDFSaidaProdutos: (setor, dados) => ipcRenderer.invoke('gerar-pdf-saida-produto', setor, dados),
-  baixarCSV: (dados) => ipcRenderer.invoke('gerar-csv-saida-produto', dados),
-})
-
+contextBridge.exposeInMainWorld("PDF", {
+  gerarPDFEstoque: (dados) => ipcRenderer.invoke("gerar-pdf-estoque", dados),
+  gerarPDFSaidaProdutos: (setor, dados) =>
+    ipcRenderer.invoke("gerar-pdf-saida-produto", setor, dados),
+  baixarCSV: (dados) => ipcRenderer.invoke("gerar-csv-saida-produto", dados),
+});
 
 // // IA Groq
 // contextBridge.exposeInMainWorld("IA", {
@@ -32,9 +31,9 @@ contextBridge.exposeInMainWorld('PDF', {
 // IA Open Router
 contextBridge.exposeInMainWorld("IA", {
   buscarIA: (mensagem) => ipcRenderer.invoke("buscar-open-router", mensagem),
-  consultaDadosIA: (instrucao, dados, pergunta) => ipcRenderer.invoke("consultar-open-router", instrucao, dados, pergunta),
+  consultaDadosIA: (instrucao, dados, pergunta) =>
+    ipcRenderer.invoke("consultar-open-router", instrucao, dados, pergunta),
 });
-
 
 contextBridge.exposeInMainWorld("electronAPI", {
   fecharJanela: () => ipcRenderer.send("fechar-janela"),
@@ -42,10 +41,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
 });
 
 // Abrir links em explorer externos.
-contextBridge.exposeInMainWorld('LINK', {
-  abrirLinkExterno: (url) => ipcRenderer.invoke('abrir-link', url)
+contextBridge.exposeInMainWorld("LINK", {
+  abrirLinkExterno: (url) => ipcRenderer.invoke("abrir-link", url),
 });
-
-
-
-

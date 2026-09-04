@@ -50,11 +50,9 @@
 }
 .tabela td:nth-child(4) {
   width: 120px;
-
 }
 .tabela td:nth-child(5) {
   width: 50px;
-
 }
 
 .tabela tr:nth-child(even) {
@@ -73,5 +71,3 @@
   flex-direction: column;
   color: red;
 }
-
-

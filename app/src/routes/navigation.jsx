@@ -50,15 +50,24 @@ export function Navegador() {
             <Route path="/produtos" element={<Produtos />} />
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/caixa" element={<Caixa />} />
-            <Route path="/venda-delivery" element={<VendasDelivery/>} />
-            <Route path="/historico-pedidos-delivery" element={<HistoricoDelivery/>} />
-            <Route path="/fechamento-usuario-delivery" element={<FechamentoDeliveryUsuario/>} />
-            <Route path="/fechamento-delivery" element={<FechamentoDelivery />} />
+            <Route path="/venda-delivery" element={<VendasDelivery />} />
+            <Route
+              path="/historico-pedidos-delivery"
+              element={<HistoricoDelivery />}
+            />
+            <Route
+              path="/fechamento-usuario-delivery"
+              element={<FechamentoDeliveryUsuario />}
+            />
+            <Route
+              path="/fechamento-delivery"
+              element={<FechamentoDelivery />}
+            />
             <Route path="/buscar-localizacao" element={<Localizacao />} />
-            <Route path="/buscar-relatorio-diario" element={<RelatorioVendas />} />
-
-
-
+            <Route
+              path="/buscar-relatorio-diario"
+              element={<RelatorioVendas />}
+            />
           </Routes>
         </ToastProvedor>
       </AuthProvedor>

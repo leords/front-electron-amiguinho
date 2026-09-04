@@ -13,7 +13,6 @@ export const buscarValeInterno = async (params = {}) => {
 
     return resposta.data;
   } catch (error) {
-
     // Sem resposta (API fora, internet, etc)
     if (error.request && !error.response) {
       throw new Error("Servidor não respondeu, tente novamente");
@@ -21,7 +20,7 @@ export const buscarValeInterno = async (params = {}) => {
 
     // Erro vindo do backend (AppError)
     if (error.response) {
-      console.log("error response: ", error.response)
+      console.log("error response: ", error.response);
       const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
       throw new Error(mensagem);
     }
@@ -29,5 +28,4 @@ export const buscarValeInterno = async (params = {}) => {
     // Fallback
     throw new Error("Erro inesperado na requisição");
   }
-
 };

@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { MagnifyingGlass, User, CircleNotch, UsersThree, Broadcast } from "@phosphor-icons/react";
+import {
+  MagnifyingGlass,
+  User,
+  CircleNotch,
+  UsersThree,
+  Broadcast,
+} from "@phosphor-icons/react";
 import "./styles.css";
 import { LerUsuario } from "../../operadores/API/usuario/lerUsuario";
 import { buscarLocalizacaoEntregador } from "../../operadores/API/localizacao/buscarLocalizacaoEntregador";
@@ -9,8 +15,11 @@ import { usarAuth } from "../Context/authContext";
 import { ToastRadix } from "../ui/notificacao/notificacao";
 import { usarToast } from "../Context/toastContext";
 
-export default function BuscaUsuarios({ setLatitude, setLongitude, setRemetente }) {
-  
+export default function BuscaUsuarios({
+  setLatitude,
+  setLongitude,
+  setRemetente,
+}) {
   //Estados
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -57,7 +66,7 @@ export default function BuscaUsuarios({ setLatitude, setLongitude, setRemetente 
       const resposta = await LerUsuario();
       const niveisPermitidos = ["ENTREGADOR", "EXTERNO"];
       const usuariosFiltrados = resposta.filter((u) =>
-        niveisPermitidos.includes(u.nivelAcesso)
+        niveisPermitidos.includes(u.nivelAcesso),
       );
       setUsuarios(usuariosFiltrados);
     } catch (erro) {
@@ -73,14 +82,15 @@ export default function BuscaUsuarios({ setLatitude, setLongitude, setRemetente 
       setSelecionadoId(usuarioSelecionado.id);
       setRemetente("entregador");
 
-       const localizacao = await buscarLocalizacaoEntregador(usuarioSelecionado.id);
+      const localizacao = await buscarLocalizacaoEntregador(
+        usuarioSelecionado.id,
+      );
 
-          // ✅ usa a localização inicial retornada pela API
+      // ✅ usa a localização inicial retornada pela API
       if (localizacao?.latitude && localizacao?.longitude) {
         setLatitude(localizacao.latitude);
         setLongitude(localizacao.longitude);
       }
-      
     } catch (error) {
       console.error(error);
       setMensagem(error.message);
@@ -89,9 +99,8 @@ export default function BuscaUsuarios({ setLatitude, setLongitude, setRemetente 
     }
   }
 
-
   const usuariosFiltrados = usuarios.filter((u) =>
-    u.nome.toLowerCase().includes(pesquisa.toLowerCase())
+    u.nome.toLowerCase().includes(pesquisa.toLowerCase()),
   );
 
   return (
@@ -132,7 +141,6 @@ export default function BuscaUsuarios({ setLatitude, setLongitude, setRemetente 
         )}
 
         {usuariosFiltrados.map((u) => {
-
           return (
             <div
               key={u.id}
@@ -145,12 +153,13 @@ export default function BuscaUsuarios({ setLatitude, setLongitude, setRemetente 
                 </div>
                 <div>
                   <strong>{u.nome}</strong>
-                  <span className={`badge ${u.nivelAcesso === "ENTREGADOR" ? "badge-orange" : "badge-blue"}`}>
+                  <span
+                    className={`badge ${u.nivelAcesso === "ENTREGADOR" ? "badge-orange" : "badge-blue"}`}
+                  >
                     {u.nivelAcesso}
                   </span>
                 </div>
               </div>
-
             </div>
           );
         })}

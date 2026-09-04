@@ -19,18 +19,21 @@ export const apiLong = axios.create({
 
 // Aqui é interceptado todos os responses que passarem por esta instância api
 
-api.interceptors.response.use((response) => response, (error) => {
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
 
-    if(error.response?.status === 401) {
-
-      localStorage.removeItem('token')
-
-      window.location.href = '/'
+    if (
+      error.response?.status === 401 &&
+      error.config?.url !== "/login"
+    ) {
+      localStorage.removeItem("token");
+      window.location.href = "/";
     }
 
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
 apiLong.interceptors.response.use((response) => response, (error) => {
 

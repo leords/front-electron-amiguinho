@@ -8,8 +8,6 @@ import fs from "fs";
 import baixarCSV from "./backend/baixarCSVRelatorioSPT.js";
 import { buscarIA, consultaDadosIA } from "./backend/openRouter.js";
 
-
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -33,7 +31,7 @@ app.on("ready", () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    icon: path.join(__dirname, 'public', 'mascote.png'),
+    icon: path.join(__dirname, "public", "mascote.png"),
 
     //show: false, // opcional (evita "piscar" ao abrir)
 
@@ -44,10 +42,7 @@ app.on("ready", () => {
       contextIsolation: true,
       nodeIntegration: false,
     },
-
-    
   });
-
 
   // abre maximizado (tipo clicar no botão maximizar)
   mainWindow.maximize();
@@ -60,7 +55,6 @@ app.on("ready", () => {
   // mainWindow.show();
   //});
 
-  
   if (!process.env.GROQ_API_KEY) {
     dialog.showErrorBox(
       "Erro de Configuração",
@@ -68,7 +62,7 @@ app.on("ready", () => {
 
         Verifique o .env no diretório:
         DEV: ${envDevPath}
-        BUILD: ${path.join(process.resourcesPath, ".env")}`
+        BUILD: ${path.join(process.resourcesPath, ".env")}`,
     );
   }
 
@@ -95,9 +89,12 @@ ipcMain.handle("buscar-open-router", async (_, mensagem) => {
   return await buscarIA(mensagem);
 });
 
-ipcMain.handle("consultar-open-router", async (_, instrucao, dados, pergunta) => {
-  return await consultaDadosIA(instrucao, dados, pergunta);
-});
+ipcMain.handle(
+  "consultar-open-router",
+  async (_, instrucao, dados, pergunta) => {
+    return await consultaDadosIA(instrucao, dados, pergunta);
+  },
+);
 
 ipcMain.handle("buscar-clima", async (_, cidade) => {
   return await buscarClima(cidade);
@@ -146,23 +143,22 @@ ipcMain.on("imprimir-cupom", async (event, htmlContent) => {
 
         // Fecha a janela invisível após finalizar a impressão
         printWindow.close();
-      }
+      },
     );
   });
 });
 
 // Abrir link externo
-ipcMain.handle('abrir-link', (_, url) => {
+ipcMain.handle("abrir-link", (_, url) => {
   return shell.openExternal(url);
 });
 
 // PDF ESTOQUE ATUAL
-ipcMain.handle('gerar-pdf-estoque', async (event, itens) => {
-
+ipcMain.handle("gerar-pdf-estoque", async (event, itens) => {
   try {
-        const win = new BrowserWindow({
-      show: false // não precisa aparecer
-    })
+    const win = new BrowserWindow({
+      show: false, // não precisa aparecer
+    });
 
     // 🧾 Monta HTML na mão
     const html = `
@@ -210,69 +206,73 @@ ipcMain.handle('gerar-pdf-estoque', async (event, itens) => {
             </thead>
 
             <tbody>
-              ${itens.map(item => 
-                `
+              ${itens
+                .map(
+                  (item) =>
+                    `
                 <tr>
                   <td>${item.id}</td>
                   <td>${item.nome}</td>
                   <td>${Math.floor(item.estoque)}</td>
                   <td>${Math.round((item.estoque % 1) * item.quantidade)}</td>
                 </tr>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </tbody>
           </table>
 
         </body>
       </html>
-    `
+    `;
 
-    await win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`)
+    await win.loadURL(
+      `data:text/html;charset=utf-8,${encodeURIComponent(html)}`,
+    );
 
     const pdf = await win.webContents.printToPDF({
       printBackground: true,
-      pageSize: 'A4'
-    })
+      pageSize: "A4",
+    });
 
     // ABRE A CAIXA DE DIALOGO
     const { filePath } = await dialog.showSaveDialog({
-      title: 'Salvar PDF do estoque',
-      defaultPath: `estoque-${new Date().toISOString().slice(0,10)}.pdf`,
-      filters: [{ name: 'PDF', extensions: ['pdf'] }]
-    })
+      title: "Salvar PDF do estoque",
+      defaultPath: `estoque-${new Date().toISOString().slice(0, 10)}.pdf`,
+      filters: [{ name: "PDF", extensions: ["pdf"] }],
+    });
 
     if (!filePath) {
       return {
         sucesso: false,
-        mensagem: 'Usuário cancelou'
-      }
+        mensagem: "Usuário cancelou",
+      };
     }
 
-    fs.writeFileSync(filePath, pdf)
+    fs.writeFileSync(filePath, pdf);
 
-    win.close()
+    win.close();
 
     return {
       sucesso: true,
-      mensagem: 'PDF gerado com sucesso!'
-    }
+      mensagem: "PDF gerado com sucesso!",
+    };
   } catch (error) {
     return {
       sucesso: false,
-      mensagem: 'Erro ao gerar PDF'
-    }
+      mensagem: "Erro ao gerar PDF",
+    };
   }
 
-  return true
-})
-
+  return true;
+});
 
 // PDF RELATORIO SAIDA DE PRODUTOS
-ipcMain.handle('gerar-pdf-saida-produto', async (event, setor, relatorio) => {
-
+ipcMain.handle("gerar-pdf-saida-produto", async (event, setor, relatorio) => {
   try {
-        const win = new BrowserWindow({
-      show: false // não precisa aparecer
-    })
+    const win = new BrowserWindow({
+      show: false, // não precisa aparecer
+    });
 
     // 🧾 Monta HTML na mão
     const html = `
@@ -318,58 +318,64 @@ ipcMain.handle('gerar-pdf-saida-produto', async (event, setor, relatorio) => {
             </thead>
 
             <tbody>
-              ${relatorio.map(relatorio => `
+              ${relatorio
+                .map(
+                  (relatorio) => `
                 <tr>
                   <td>${relatorio.produto}</td>
                   <td>${relatorio.quantidade}</td>
                 </tr>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </tbody>
           </table>
 
         </body>
       </html>
-    `
+    `;
 
-    await win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`)
+    await win.loadURL(
+      `data:text/html;charset=utf-8,${encodeURIComponent(html)}`,
+    );
 
     const pdf = await win.webContents.printToPDF({
       printBackground: true,
-      pageSize: 'A4'
-    })
+      pageSize: "A4",
+    });
 
     const { filePath } = await dialog.showSaveDialog({
-      title: 'Salvar PDF do relatórios de saída de produtos',
-      defaultPath: `relatorio-saida-produtos-${new Date().toISOString().slice(0,10)}.pdf`,
-      filters: [{ name: 'PDF', extensions: ['pdf'] }]
-    })
+      title: "Salvar PDF do relatórios de saída de produtos",
+      defaultPath: `relatorio-saida-produtos-${new Date().toISOString().slice(0, 10)}.pdf`,
+      filters: [{ name: "PDF", extensions: ["pdf"] }],
+    });
 
     if (!filePath) {
       return {
         sucesso: false,
-        mensagem: 'Usuário cancelou'
-      }
+        mensagem: "Usuário cancelou",
+      };
     }
 
-    fs.writeFileSync(filePath, pdf)
+    fs.writeFileSync(filePath, pdf);
 
-    win.close()
+    win.close();
 
     return {
       sucesso: true,
-      mensagem: 'PDF gerado com sucesso!'
-    }
+      mensagem: "PDF gerado com sucesso!",
+    };
   } catch (error) {
     return {
       sucesso: false,
-      mensagem: 'Erro ao gerar PDF'
-    }
+      mensagem: "Erro ao gerar PDF",
+    };
   }
 
-  return true
-})
+  return true;
+});
 
 // BAIXAR CSV
-ipcMain.handle('gerar-csv-saida-produto', async(event, dados) => {
-  return await baixarCSV(dados)
-})
+ipcMain.handle("gerar-csv-saida-produto", async (event, dados) => {
+  return await baixarCSV(dados);
+});

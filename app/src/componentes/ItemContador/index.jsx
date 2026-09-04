@@ -14,7 +14,7 @@ export default function ItemContador({
 
       // Busca só os inputs que podem ser navegados
       const inputs = Array.from(
-        document.querySelectorAll("input[data-navegavel='true']") //passando por parametro
+        document.querySelectorAll("input[data-navegavel='true']"), //passando por parametro
       );
       const index = inputs.indexOf(e.target);
 

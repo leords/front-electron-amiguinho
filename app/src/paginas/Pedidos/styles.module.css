@@ -4,7 +4,7 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: #f4f5f7;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 .principal {
@@ -298,8 +298,15 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.75); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
 }
 
 /* ── Spinner ── */
@@ -314,7 +321,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Tabela ── */
@@ -346,22 +355,44 @@
   justify-content: center;
 }
 
-.itemLista1 { justify-content: center !important;}
-.itemLista2 { justify-content: center !important;}
-.itemLista3 { justify-content: center !important;}
-.itemLista4 { justify-content: center;}
-.itemLista5 { justify-content: center;}
-.itemLista6 { justify-content: end;}
+.itemLista1 {
+  justify-content: center !important;
+}
+.itemLista2 {
+  justify-content: center !important;
+}
+.itemLista3 {
+  justify-content: center !important;
+}
+.itemLista4 {
+  justify-content: center;
+}
+.itemLista5 {
+  justify-content: center;
+}
+.itemLista6 {
+  justify-content: end;
+}
 
 .lista {
   max-height: 520px;
   overflow-y: auto;
 }
 
-.lista::-webkit-scrollbar { width: 5px; }
-.lista::-webkit-scrollbar-track { background: #f8f9fa; border-radius: 10px; }
-.lista::-webkit-scrollbar-thumb { background: #dee2e6; border-radius: 10px; }
-.lista::-webkit-scrollbar-thumb:hover { background: #adb5bd; }
+.lista::-webkit-scrollbar {
+  width: 5px;
+}
+.lista::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+.lista::-webkit-scrollbar-thumb {
+  background: #dee2e6;
+  border-radius: 10px;
+}
+.lista::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
+}
 
 /* ── Estado vazio ── */
 .estadoVazio {

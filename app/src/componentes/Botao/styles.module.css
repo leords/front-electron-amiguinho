@@ -1,8 +1,24 @@
 /* Cores por variante */
-.container[data-cor="orange"] { --btn-color: #ff8c00; --btn-light: #fff3e0; --btn-mid: #ffd699; }
-.container[data-cor="blue"]   { --btn-color: #1971c2; --btn-light: #e7f5ff; --btn-mid: #a5d8ff; }
-.container[data-cor="green"]  { --btn-color: #2f9e44; --btn-light: #ebfbee; --btn-mid: #8ce99a; }
-.container[data-cor="gray"]   { --btn-color: #495057; --btn-light: #f1f3f5; --btn-mid: #ced4da; }
+.container[data-cor="orange"] {
+  --btn-color: #ff8c00;
+  --btn-light: #fff3e0;
+  --btn-mid: #ffd699;
+}
+.container[data-cor="blue"] {
+  --btn-color: #1971c2;
+  --btn-light: #e7f5ff;
+  --btn-mid: #a5d8ff;
+}
+.container[data-cor="green"] {
+  --btn-color: #2f9e44;
+  --btn-light: #ebfbee;
+  --btn-mid: #8ce99a;
+}
+.container[data-cor="gray"] {
+  --btn-color: #495057;
+  --btn-light: #f1f3f5;
+  --btn-mid: #ced4da;
+}
 
 .container {
   all: unset;
@@ -14,7 +30,9 @@
   background: #ffffff;
   border: 1.5px solid #eaecef;
   border-radius: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 1px 8px rgba(0, 0, 0, 0.04);
   cursor: pointer;
   width: 100%;
   text-align: left;
@@ -39,13 +57,19 @@
 
 .container:hover {
   transform: translateY(-2px);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06);
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.08),
+    0 6px 24px rgba(0, 0, 0, 0.06);
   border-color: var(--btn-mid);
 }
 
-.container:hover::before { width: 6px; }
+.container:hover::before {
+  width: 6px;
+}
 
-.container:active { transform: translateY(0); }
+.container:active {
+  transform: translateY(0);
+}
 
 /* Ícone */
 .iconeWrapper {
@@ -61,7 +85,9 @@
   transition: transform 0.2s;
 }
 
-.container:hover .iconeWrapper { transform: scale(1.1); }
+.container:hover .iconeWrapper {
+  transform: scale(1.1);
+}
 
 /* Textos */
 .textos {
@@ -93,7 +119,9 @@
 .seta {
   color: #dee2e6;
   flex-shrink: 0;
-  transition: transform 0.2s, color 0.2s;
+  transition:
+    transform 0.2s,
+    color 0.2s;
 }
 
 .container:hover .seta {

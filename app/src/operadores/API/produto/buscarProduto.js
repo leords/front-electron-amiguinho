@@ -9,11 +9,10 @@ export const BuscarProduto = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    
-    console.log("Requisição de buscar produtos realizada!")
+
+    console.log("Requisição de buscar produtos realizada!");
     return resposta.data;
   } catch (error) {
-
     // ❌ sem resposta (API fora, internet, etc)
     if (error.request && !error.response) {
       throw new Error("Servidor não respondeu, tente novamente");
@@ -21,7 +20,7 @@ export const BuscarProduto = async () => {
 
     // 🔥 erro vindo do backend (AppError)
     if (error.response) {
-      console.log("error response: ", error.response)
+      console.log("error response: ", error.response);
       const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
       throw new Error(mensagem);
     }
@@ -29,5 +28,4 @@ export const BuscarProduto = async () => {
     // fallback
     throw new Error("Erro inesperado na requisição");
   }
-
 };

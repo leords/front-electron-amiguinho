@@ -20,10 +20,8 @@ delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
 function CentralizarMapa({ latitude, longitude }) {
@@ -41,14 +39,19 @@ function CentralizarMapa({ latitude, longitude }) {
   return null;
 }
 
-export default function Mapa({ latitude, longitude, dataCarregada, dataEntregue, remetente }) {
-  
+export default function Mapa({
+  latitude,
+  longitude,
+  dataCarregada,
+  dataEntregue,
+  remetente,
+}) {
   const inicio = new Date(dataCarregada);
-  const fim = new Date(dataEntregue)
+  const fim = new Date(dataEntregue);
 
   const diferencaMs = fim - inicio;
 
-  const tempo = Math.round(diferencaMs/60000)
+  const tempo = Math.round(diferencaMs / 60000);
 
   if (!latitude || !longitude) {
     return (
@@ -76,8 +79,10 @@ export default function Mapa({ latitude, longitude, dataCarregada, dataEntregue,
           offset={[0, -10]}
           opacity={1}
           className="tooltipEntrega"
-          >
-            {remetente === 'entrega' ? `⏱️ tempo de entrega: ${tempo} min` : '👤 Entregador'}
+        >
+          {remetente === "entrega"
+            ? `⏱️ tempo de entrega: ${tempo} min`
+            : "👤 Entregador"}
         </Tooltip>
         <Popup>Usuário</Popup>
       </Marker>

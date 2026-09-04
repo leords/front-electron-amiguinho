@@ -12,10 +12,9 @@ import {
   Motorcycle,
   ChartBarIcon,
   ChartLineUpIcon,
-  ChartPolarIcon
+  ChartPolarIcon,
 } from "@phosphor-icons/react";
 import MenuButton from "../../componentes/Botao/index";
-import mascote from "../../assets/logo.jpg";
 import styles from "./styles.module.css";
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
@@ -28,34 +27,32 @@ import Spinner from "../../componentes/Spinner";
 
 export default function Menu() {
   const [saudacao, setSaudacao] = useState("");
-  const [mensagemDoDia, setMensagemDoDia] = useState("");
-
+  // const [mensagemDoDia, setMensagemDoDia] = useState("");
 
   // Hook
   const { mensagem } = usarToast();
-  const { usuario } = usarAuth()
+  const { usuario } = usarAuth();
 
-  
   // carregando msg de IA
-  useEffect(() => {
-    const carregarMensagem = async () => {
-      const mensagemSalva = localStorage.getItem("mensagemDoDia");
-      const dataSalva = localStorage.getItem("mensagemDoDia_data");
-      const hoje = new Date().toISOString().slice(0, 10);
+  // useEffect(() => {
+  //   const carregarMensagem = async () => {
+  //     const mensagemSalva = localStorage.getItem("mensagemDoDia");
+  //     const dataSalva = localStorage.getItem("mensagemDoDia_data");
+  //     const hoje = new Date().toISOString().slice(0, 10);
 
-      if (mensagemSalva && dataSalva === hoje) {
-        setMensagemDoDia(mensagemSalva);
-        return;
-      }
+  //     if (mensagemSalva && dataSalva === hoje) {
+  //       setMensagemDoDia(mensagemSalva);
+  //       return;
+  //     }
 
-      const novaMensagem = await GerarVersiculo();
-      localStorage.setItem("mensagemDoDia", novaMensagem);
-      localStorage.setItem("mensagemDoDia_data", hoje);
-      setMensagemDoDia(novaMensagem);
-    };
+  //     const novaMensagem = await GerarVersiculo();
+  //     localStorage.setItem("mensagemDoDia", novaMensagem);
+  //     localStorage.setItem("mensagemDoDia_data", hoje);
+  //     setMensagemDoDia(novaMensagem);
+  //   };
 
-    carregarMensagem();
-  }, []);
+  //   carregarMensagem();
+  // }, []);
 
   // saudações
   useEffect(() => {
@@ -67,11 +64,10 @@ export default function Menu() {
 
   return (
     <div className={styles.container}>
-    <ToastRadix mensagem={mensagem} />
+      <ToastRadix mensagem={mensagem} />
       <Cabecalho />
 
       <main className={styles.principal}>
-
         {/* SAUDAÇÕES */}
         <div className={styles.cabecalho}>
           <div className={styles.saudacao}>
@@ -84,71 +80,128 @@ export default function Menu() {
 
         {/* BOTÕES */}
         <div className={styles.menuBotoes}>
-        {['ADMIN', 'BALCAO', 'DELIVERY'].includes(usuario.nivelAcesso) && (
-          <>
-          <MenuButton titulo="Vendas balcão"         descricao="Registrar novos pedidos balcão"           destino="/venda"          icone={ShoppingCartIcon}          cor="orange" />
-          <MenuButton titulo="Histórico balcão"      descricao="Consultar pedidos anteriores"      destino="/historico"      icone={ClockCounterClockwiseIcon} cor="orange"   />
-          <MenuButton titulo="Caixa balcão"      descricao="Conferir caixa do dia"             destino="/fechamento"     icone={CoinsIcon}                 cor="orange"  />
-        </>
-        )}
-
-        {['ADMIN', 'DELIVERY'].includes(usuario.nivelAcesso) && (
-          <>
-            <MenuButton titulo="Vendas Delivery"       descricao="Registrar novos pedidos delivery"  destino="/venda-delivery"       icone={Motorcycle}                cor="green"   />
-            <MenuButton titulo="Histórico Delivery"    descricao="Consultar pedidos anteriores"      destino="/historico-pedidos-delivery"       icone={ClockCounterClockwiseIcon}                cor="green"   />
-            <MenuButton titulo="Caixa delivery"    descricao="Conferir caixa do dia"      destino="/fechamento-usuario-delivery"       icone={CoinsIcon}                cor="green"   />
-
-        </>
-        )}
-
-        {['ADMIN'].includes(usuario.nivelAcesso) && (
-          <>
-            <MenuButton titulo="Dashboard"             descricao="Conferir números de venda"                    destino="/dashboard"            icone={ChartLineIcon}             cor="gray"  />
-            <MenuButton titulo="Fechar balcão"         descricao="Finalizar operações do dia"                   destino="/fechar-balcao"        icone={CurrencyCircleDollarIcon}  cor="gray"  />
-            <MenuButton titulo="Vales internos"        descricao="Consultar histórico de vales"                 destino="/vales-interno"        icone={HandWithdrawIcon}          cor="gray"  />
-            <MenuButton titulo="Pedidos"               descricao="Conferir pedidos realizados"                  destino="/pedidos"              icone={ClipboardTextIcon}         cor="gray"  />
-            <MenuButton titulo="Transmissão"           descricao="Realizar cargas forçadas"                     destino="/transmissao"          icone={CloudArrowUpIcon}          cor="gray"  />
-            <MenuButton titulo="Estoque"               descricao="Controle de estoque"                          destino="/estoque"              icone={PackageIcon}               cor="gray"  />
-            <MenuButton titulo="Gestão"                descricao="Gerencie os registros do sistema"             destino="/gestao"               icone={GearIcon}                  cor="gray"  />
-            <MenuButton titulo="Fechar delivery"       descricao="Finalizar operações do dia"                   destino="/fechamento-delivery"  icone={CurrencyCircleDollarIcon}  cor="gray"  />
-            <MenuButton titulo="Metas"                 descricao="Criar e acompanhar metas - construção"        destino="/fechamento-delivery"  icone={ChartPolarIcon}  cor="gray"  />
-            <MenuButton titulo="Vendas diária"         descricao="Acompanhar vendas do dia - construção"        destino="/buscar-relatorio-diario"  icone={ChartLineUpIcon}  cor="gray"  />
-            <MenuButton titulo="Relatório vendas"         descricao="Acompanhar vendas total  - construção"        destino="/fechamento-delivery"  icone={ChartBarIcon}  cor="gray"  />
-          </>
-        )}
-
-        </div>
-
-        {/* MENSAGEM E MASCOTE */}
-        <div className={styles.containerMascote}>
-
-          {/* MENSAGEM DO DIA */}
-          <div className={styles.dicaDia}>
-          {mensagemDoDia 
-          ?
+          {["ADMIN", "BALCAO", "DELIVERY"].includes(usuario.nivelAcesso) && (
             <>
-              <h3>
-                <span className={styles.emojiDica}>💡</span> Mensagem do Dia
-              </h3>
-              <p>{mensagemDoDia || "Carregando mensagem..."}</p>
+              <MenuButton
+                titulo="Vendas balcão"
+                descricao="Registrar novos pedidos balcão"
+                destino="/venda"
+                icone={ShoppingCartIcon}
+                cor="orange"
+              />
+              <MenuButton
+                titulo="Histórico balcão"
+                descricao="Consultar pedidos anteriores"
+                destino="/historico"
+                icone={ClockCounterClockwiseIcon}
+                cor="orange"
+              />
+              <MenuButton
+                titulo="Caixa balcão"
+                descricao="Conferir caixa do dia"
+                destino="/fechamento"
+                icone={CoinsIcon}
+                cor="orange"
+              />
             </>
-          :
-            <div className={styles.spinnerMsgDia}> 
-              <span className={styles.emojiDica}></span> Carrengando mensagens do dia!
-              <Spinner />
-            </div>
-          }
+          )}
 
-          </div>
+          {["ADMIN", "DELIVERY"].includes(usuario.nivelAcesso) && (
+            <>
+              <MenuButton
+                titulo="Vendas Delivery"
+                descricao="Registrar novos pedidos delivery"
+                destino="/venda-delivery"
+                icone={Motorcycle}
+                cor="green"
+              />
+              <MenuButton
+                titulo="Histórico Delivery"
+                descricao="Consultar pedidos anteriores"
+                destino="/historico-pedidos-delivery"
+                icone={ClockCounterClockwiseIcon}
+                cor="green"
+              />
+              <MenuButton
+                titulo="Caixa delivery"
+                descricao="Conferir caixa do dia"
+                destino="/fechamento-usuario-delivery"
+                icone={CoinsIcon}
+                cor="green"
+              />
+            </>
+          )}
 
-          {/* MASCOTE */}
-          <img
-            src={mascote}
-            alt="Mascote Amigão Distribuidora"
-            className={styles.mascote}
-          />
+          {["ADMIN"].includes(usuario.nivelAcesso) && (
+            <>
+              <MenuButton
+                titulo="Dashboard"
+                descricao="Conferir números de venda"
+                destino="/dashboard"
+                icone={ChartLineIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Fechar balcão"
+                descricao="Finalizar operações do dia"
+                destino="/fechar-balcao"
+                icone={CurrencyCircleDollarIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Vales internos"
+                descricao="Consultar histórico de vales"
+                destino="/vales-interno"
+                icone={HandWithdrawIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Pedidos"
+                descricao="Conferir pedidos realizados"
+                destino="/pedidos"
+                icone={ClipboardTextIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Transmissão"
+                descricao="Realizar cargas forçadas"
+                destino="/transmissao"
+                icone={CloudArrowUpIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Estoque"
+                descricao="Controle de estoque"
+                destino="/estoque"
+                icone={PackageIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Gestão"
+                descricao="Gerencie os registros do sistema"
+                destino="/gestao"
+                icone={GearIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Fechar delivery"
+                descricao="Finalizar operações do dia"
+                destino="/fechamento-delivery"
+                icone={CurrencyCircleDollarIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Vendas diária"
+                descricao="Acompanhar vendas do dia - construção"
+                destino="/buscar-relatorio-diario"
+                icone={ChartLineUpIcon}
+                cor="gray"
+              />
+              {/* <MenuButton titulo="Relatório vendas"         descricao="Acompanhar vendas total  - construção"        destino="/fechamento-delivery"  icone={ChartBarIcon}  cor="gray"  />
+            <MenuButton titulo="Metas"                 descricao="Criar e acompanhar metas - construção"        destino="/fechamento-delivery"  icone={ChartPolarIcon}  cor="gray"  /> */}
+            </>
+          )}
         </div>
-
       </main>
 
       <Rodape />

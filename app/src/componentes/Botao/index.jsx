@@ -2,7 +2,13 @@ import styles from "./styles.module.css";
 import { useNavigate } from "react-router-dom";
 import { ArrowRightIcon } from "@phosphor-icons/react";
 
-export default function MenuButton({ titulo, descricao, destino, icone: Icone, cor = "orange" }) {
+export default function MenuButton({
+  titulo,
+  descricao,
+  destino,
+  icone: Icone,
+  cor = "orange",
+}) {
   const navegar = useNavigate();
 
   return (

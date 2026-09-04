@@ -13,7 +13,7 @@
   --gray-300: #dee2e6;
   --white: #ffffff;
   --border: #eaecef;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 8px rgba(0, 0, 0, 0.04);
   --radius: 14px;
 }
 
@@ -72,7 +72,6 @@
 .itemFormProduto {
   width: 400px;
 }
-
 
 .itemFormTotal {
   display: flex;
@@ -254,9 +253,17 @@
   padding-right: 4px;
 }
 
-.lista::-webkit-scrollbar { width: 4px; }
-.lista::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 4px; }
-.lista::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+.lista::-webkit-scrollbar {
+  width: 4px;
+}
+.lista::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: 4px;
+}
+.lista::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 4px;
+}
 
 .listaVazia {
   display: flex;
@@ -268,7 +275,9 @@
   gap: 8px;
 }
 
-.iconeVazio { color: var(--gray-300); }
+.iconeVazio {
+  color: var(--gray-300);
+}
 
 .listaVazia p {
   font-size: 15px;
@@ -299,13 +308,13 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(255,140,0,0.25);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.25);
 }
 
 .botaoAdicionar:hover:not(:disabled) {
   background: #e07b00;
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(255,140,0,0.35);
+  box-shadow: 0 4px 14px rgba(255, 140, 0, 0.35);
 }
 
 .botaoAdicionar:disabled {
@@ -315,14 +324,15 @@
   box-shadow: none;
 }
 
-
 /* Spinner */
 .spinnerIcon {
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Animação */
@@ -331,6 +341,12 @@
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

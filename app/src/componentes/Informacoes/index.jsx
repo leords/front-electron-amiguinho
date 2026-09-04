@@ -3,7 +3,8 @@ import "./styles.css";
 
 // Remove aspas extras de valores salvos com JSON.stringify no localStorage
 function formatarValor(valor) {
-  if (valor === null || valor === undefined || valor === "undefined") return null;
+  if (valor === null || valor === undefined || valor === "undefined")
+    return null;
   try {
     const parsed = JSON.parse(valor);
     return parsed === null || parsed === "" ? null : parsed;
@@ -24,7 +25,11 @@ export default function Informacoes({
     { label: "Entregador", valor: formatarValor(usuario), icon: User },
     { label: "Latitude", valor: formatarValor(latitude), icon: MapPinLine },
     { label: "Longitude", valor: formatarValor(longitude), icon: MapPinLine },
-    { label: "Última atualização", valor: formatarValor(ultimaAtualizacao), icon: Clock },
+    {
+      label: "Última atualização",
+      valor: formatarValor(ultimaAtualizacao),
+      icon: Clock,
+    },
   ];
 
   return (

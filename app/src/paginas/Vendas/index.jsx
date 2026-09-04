@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
 import styles from "./styles.module.css";
-import logo from "../../assets/logo.jpg";
 import ItemListaPedido from "../../componentes/ItemListaPedido";
 import { usarAuth } from "../../componentes/Context/authContext";
 import { NovoPedidoBalcao } from "../../operadores/API/pedido/novoPedidoBalcao.js";
@@ -27,25 +26,23 @@ import {
   SpinnerIcon,
   CoinsIcon,
   WalletIcon,
-  OrangeIcon
+  OrangeIcon,
 } from "@phosphor-icons/react";
 import Spinner from "../../componentes/Spinner";
 import ItemListaPagamentosParcial from "../../componentes/ItemListaPagamentosParcial";
 import { useFormaPagamentoExterna } from "../../hooks/useFormaPagamentoExterna.js";
 
-
 export default function Vendas() {
-
   // Storaged
-  const nomeMaquina = localStorage.getItem('balcao')
+  const nomeMaquina = localStorage.getItem("balcao");
 
   // Hooks
   const { usuario } = usarAuth();
   const { mensagem, setMensagem } = usarToast();
   const { produtos, carregando } = useProdutos();
   const { listaFormaPagamento } = useFormaPagamentoBalcao();
-  const { listaFormaPagamento: listaFormaPagamentoParcial } = useFormaPagamentoExterna();
-
+  const { listaFormaPagamento: listaFormaPagamentoParcial } =
+    useFormaPagamentoExterna();
 
   // Estados
   const [nome, setNome] = useState("");
@@ -53,34 +50,34 @@ export default function Vendas() {
   const [quantidade, setQuantidade] = useState(1);
   const [cupom, setCupom] = useState([]);
   const [abrirOpcaoNome, setAbrirOpcaoNome] = useState(false);
-  const [statusPedido, setStatusPedido] = useState(false)
-  const [entradaDinheiro, setEntradaDinheiro] = useState("")
-  const [nomeFormaPagamentoParcial, setNomeFormaPagamentoParcial] = useState("A VISTA")
-  const [idFormaPagamentoParcial, setIdFormaPagamentoParcial] = useState(1)
-  const [pagamentosParciais, setPagamentosParciais] = useState([])
-  const [valorParcialFormaPagamento, setValorParcialFormaPagamento] = useState("")
-  const [totalListaPagamentosParcial, setTotalListaPagamentosParcial] = useState(0)
-
+  const [statusPedido, setStatusPedido] = useState(false);
+  const [entradaDinheiro, setEntradaDinheiro] = useState("");
+  const [nomeFormaPagamentoParcial, setNomeFormaPagamentoParcial] =
+    useState("A VISTA");
+  const [idFormaPagamentoParcial, setIdFormaPagamentoParcial] = useState(1);
+  const [pagamentosParciais, setPagamentosParciais] = useState([]);
+  const [valorParcialFormaPagamento, setValorParcialFormaPagamento] =
+    useState("");
+  const [totalListaPagamentosParcial, setTotalListaPagamentosParcial] =
+    useState(0);
 
   // Opções
   const balcaoOptions = [
-    { value: 'b1', label: 'Balcão 1' },
-    { value: 'b2', label: 'Balcão 2' },
+    { value: "b1", label: "Balcão 1" },
+    { value: "b2", label: "Balcão 2" },
   ];
 
   const [balcao, setBalcao] = useState(balcaoOptions[0]);
-  
+
   // Somando o total da lista
   useEffect(() => {
     const totalParciais = pagamentosParciais.reduce(
       (total, item) => total + item.valorParcialFormaPagamento,
-      0
+      0,
     );
 
     setTotalListaPagamentosParcial(totalParciais);
-  }, [pagamentosParciais])
-
-
+  }, [pagamentosParciais]);
 
   // Valida existencia de usuário.
   if (!usuario) {
@@ -88,19 +85,22 @@ export default function Vendas() {
   }
 
   // UX - tecla entrar chama o proximo componente disponivel
-  const handleEnter = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const elements = Array.from(document.querySelectorAll("input:not([data-skip-enter])"));
-      const index = elements.indexOf(e.target);
-      elements[index + 1]?.focus();
-    }
-  };
-
+  // const handleEnter = (e) => {
+  //   if (e.key === "Enter") {
+  //     e.preventDefault();
+  //     const elements = Array.from(
+  //       document.querySelectorAll("input:not([data-skip-enter])"),
+  //     );
+  //     const index = elements.indexOf(e.target);
+  //     elements[index + 1]?.focus();
+  //   }
+  // };
 
   // Mapeando produtos para ser utilizado no componentes <Select />
-  const options = produtos.map((p) => ({ value: p.id, label: p.nome }));
-
+  const options = useMemo(
+    () => produtos.map((p) => ({ value: p.id, label: p.nome })),
+    [produtos],
+  );
 
   // Adiciona forma de pagamento parcial
   const handleAddFormaPagamentoParcial = () => {
@@ -109,36 +109,42 @@ export default function Vendas() {
       !nomeFormaPagamentoParcial ||
       !idFormaPagamentoParcial
     ) {
-      setMensagem('Preencha valor e forma de pagamento para adicionar!')
-      return
+      setMensagem("Preencha valor e forma de pagamento para adicionar!");
+      return;
     }
 
     // Valida se o valor a ser adicionado é maior que o total do cupom.
     if (valorParcialFormaPagamento > Math.abs(trocoParcial)) {
-        setMensagem(`Valor máximo a ser adicionado é de R$ ${Math.abs(trocoParcial)}`)
-        return
+      setMensagem(
+        `Valor máximo a ser adicionado é de R$ ${Math.abs(trocoParcial)}`,
+      );
+      return;
     }
 
     // Criando o objeto
     const parciais = {
       valorParcialFormaPagamento: Number(valorParcialFormaPagamento),
       nomeFormaPagamentoParcial: nomeFormaPagamentoParcial,
-      idFormaPagamentoParcial: Number(idFormaPagamentoParcial)
-    }
-
+      idFormaPagamentoParcial: Number(idFormaPagamentoParcial),
+    };
 
     // Validando se já existe a forma de pagamento na lista, evita repetir a mesma forma.
-    const repetido = pagamentosParciais.find((item) => item.idFormaPagamentoParcial === Number(idFormaPagamentoParcial))
-    
+    const repetido = pagamentosParciais.find(
+      (item) =>
+        item.idFormaPagamentoParcial === Number(idFormaPagamentoParcial),
+    );
+
     if (repetido) {
-      setMensagem('Esta forma de pagamento já existe na lista')
-      return
+      setMensagem("Esta forma de pagamento já existe na lista");
+      return;
     }
     // Validando se é orçamento e impede de adicionar mais formas de pagamentos.
-    const orcamento = pagamentosParciais.find((item) => item.nomeFormaPagamentoParcial === 'ORÇAMENTO')
-    if(orcamento) {
-      setMensagem('Orçamento não é parcial de pagamento')
-      return
+    const orcamento = pagamentosParciais.find(
+      (item) => item.nomeFormaPagamentoParcial === "ORÇAMENTO",
+    );
+    if (orcamento) {
+      setMensagem("Orçamento não é parcial de pagamento");
+      return;
     }
 
     // Setando nova forma na lista
@@ -146,39 +152,50 @@ export default function Vendas() {
 
     setPagamentosParciais(novaLista);
     setValorParcialFormaPagamento("");
-  }
+  };
 
   // Remove forma de pagamento parcial
   const handleRemoverFormaPagamentoParcial = (id) => {
-    setPagamentosParciais(pagamentosParciais.filter((item) => item.idFormaPagamentoParcial !== id))
-  }
+    setPagamentosParciais(
+      pagamentosParciais.filter((item) => item.idFormaPagamentoParcial !== id),
+    );
+  };
 
   // Remove produto
-  const handleRemoveProduto = (id) => setCupom(cupom.filter((item) => item.id !== id));
+  const handleRemoveProduto = (id) =>
+    setCupom(cupom.filter((item) => item.id !== id));
 
   // Adiciona produto
   const handleAddProduto = () => {
-
     // Valida os campos de produto e quantidade
     if (!produtoSelecionado || quantidade <= 0) {
-      setProdutoSelecionado(null)
+      setProdutoSelecionado(null);
       setMensagem("Selecione um produto e quantidade válida!");
       return;
     }
 
     // Valida a configuração de validar estoque no multiclick
-    if (localStorage.getItem('validaEstoque') === 'true') {
+    if (localStorage.getItem("validaEstoque") === "true") {
       // Valida existencia do produto em estoque antes de adicionar, (transforma unidade em caixa)
-      if (produtoSelecionado.estoque < (quantidade / produtoSelecionado.quantidade)) {
-        setProdutoSelecionado(null)
-        setMensagem(`Estoque insuficiente. Disponível: ${produtoSelecionado.estoque} unidades.`)
-        return
+      if (
+        produtoSelecionado.estoque <
+        quantidade / produtoSelecionado.quantidade
+      ) {
+        setProdutoSelecionado(null);
+        setMensagem(
+          `Estoque insuficiente. Disponível: ${produtoSelecionado.estoque} unidades.`,
+        );
+        return;
       }
     }
 
     const itemExistente = cupom.find((i) => i.id === produtoSelecionado.id);
     const novoCupom = itemExistente
-      ? cupom.map((i) => i.id === produtoSelecionado.id ? { ...i, quantidade: i.quantidade + quantidade } : i)
+      ? cupom.map((i) =>
+          i.id === produtoSelecionado.id
+            ? { ...i, quantidade: i.quantidade + quantidade }
+            : i,
+        )
       : [...cupom, { ...produtoSelecionado, quantidade }];
 
     setCupom(novoCupom);
@@ -188,26 +205,28 @@ export default function Vendas() {
 
   // Realiza as somas dos produtos
   const totalProduto = (preco, qtd) => (preco * qtd).toFixed(2);
-  const totalPedido = cupom.reduce((acc, item) => acc + item.precoUndVenda * item.quantidade, 0).toFixed(2);
+  const totalPedido = cupom
+    .reduce((acc, item) => acc + item.precoUndVenda * item.quantidade, 0)
+    .toFixed(2);
   const quantidadeTotal = cupom.reduce((acc, item) => acc + item.quantidade, 0);
 
   useEffect(() => {
-    if(!totalPedido) {
-      return
+    if (!totalPedido) {
+      return;
     }
-    setValorParcialFormaPagamento(totalPedido)
-  }, [totalPedido])
-
+    setValorParcialFormaPagamento(totalPedido);
+  }, [totalPedido]);
 
   // Restante/troco (pagamentos parciais)
-  const trocoParcial = Number(totalListaPagamentosParcial || 0) - Number(totalPedido);
+  const trocoParcial =
+    Number(totalListaPagamentosParcial || 0) - Number(totalPedido);
 
   // Cancela o pedido
   const handleCancelarPedido = () => {
     if (cupom.length > 0) {
-      const confirmar = window.confirm("Deseja realmente cancelar o pedido? Todos os itens serão removidos.");
-      if (!confirmar) return;
+      return;
     }
+
     setCupom([]);
     setProdutoSelecionado(null);
     setQuantidade(1);
@@ -218,29 +237,44 @@ export default function Vendas() {
 
   // finaliza o pedido, imprime e envia para o backend
   const handleGerarPedido = async () => {
-    if (cupom.length === 0) { alert("Adicione produtos ao cupom antes de gerar o pedido!"); return; }
-    
+    if (cupom.length === 0) {
+      alert("Adicione produtos ao cupom antes de gerar o pedido!");
+      return;
+    }
+
     // fazendo a soma da lista de pagamentos adicionadas
-    const totalFormas = pagamentosParciais?.reduce((soma, forma) => {return soma + forma.valorParcialFormaPagamento}, 0)
+    const totalFormas = pagamentosParciais?.reduce((soma, forma) => {
+      return soma + forma.valorParcialFormaPagamento;
+    }, 0);
 
     // validando o total da lista de formas de pagamento vs total do cupom.
-    if(Number(totalFormas) !== Number(totalPedido)) {
-      setMensagem("Verifique as formas de pagamento, pois os valores não estão batendo com o total dos pedidos.")
-      return
+    if (Number(totalFormas) !== Number(totalPedido)) {
+      setMensagem(
+        "Verifique as formas de pagamento, pois os valores não estão batendo com o total dos pedidos.",
+      );
+      return;
     }
 
     try {
-      setStatusPedido(true)
+      setStatusPedido(true);
 
       // Criando o pedido
       const pedido = {
         cliente: nome || "",
         //formaPagamentoId: formaPagamento,
-        vendedor: usuario.nivelAcesso === 'ADMIN' ? balcao.value : nomeMaquina,
+        vendedor: usuario.nivelAcesso === "ADMIN" ? balcao.value : nomeMaquina,
         nomeUsuario: usuario.nome,
         usuarioId: usuario.id,
-        itens: cupom.map((item) => ({ produtoId: item.id, quantidade: item.quantidade, valorUnit: item.precoUndVenda })),
-        pagamentos: pagamentosParciais.map((pagamento) => ({ idFormaPagamentoParcial: pagamento.idFormaPagamentoParcial, nomeFormaPagamentoParcial: pagamento.nomeFormaPagamentoParcial, valorParcialFormaPagamento: pagamento.valorParcialFormaPagamento  }))
+        itens: cupom.map((item) => ({
+          produtoId: item.id,
+          quantidade: item.quantidade,
+          valorUnit: item.precoUndVenda,
+        })),
+        pagamentos: pagamentosParciais.map((pagamento) => ({
+          idFormaPagamentoParcial: pagamento.idFormaPagamentoParcial,
+          nomeFormaPagamentoParcial: pagamento.nomeFormaPagamentoParcial,
+          valorParcialFormaPagamento: pagamento.valorParcialFormaPagamento,
+        })),
       };
 
       const vendedorTerminal =
@@ -258,24 +292,36 @@ export default function Vendas() {
         //formaPagamento: nomeFormaPagamento,
         vendedor: vendedorTerminal,
         nomeUsuario: usuario.nome,
-        itens: cupom.map((item) => ({ produtoId: item.id, nome: item.nome, quantidade: item.quantidade, valorUnit: item.precoUndVenda })),
-        pagamentos: pagamentosParciais.map((pagamento) => ({ idFormaPagamentoParcial: pagamento.idFormaPagamentoParcial, nomeFormaPagamentoParcial: pagamento.nomeFormaPagamentoParcial, valorParcialFormaPagamento: pagamento.valorParcialFormaPagamento  }))
+        itens: cupom.map((item) => ({
+          produtoId: item.id,
+          nome: item.nome,
+          quantidade: item.quantidade,
+          valorUnit: item.precoUndVenda,
+        })),
+        pagamentos: pagamentosParciais.map((pagamento) => ({
+          idFormaPagamentoParcial: pagamento.idFormaPagamentoParcial,
+          nomeFormaPagamentoParcial: pagamento.nomeFormaPagamentoParcial,
+          valorParcialFormaPagamento: pagamento.valorParcialFormaPagamento,
+        })),
       };
-      
-      const orcamento = pagamentosParciais.find((item) => item.nomeFormaPagamentoParcial === 'ORÇAMENTO')
+
+      const orcamento = pagamentosParciais.find(
+        (item) => item.nomeFormaPagamentoParcial === "ORÇAMENTO",
+      );
 
       // Função imprimir condicional
       if (orcamento) {
         window.IMPRESSORA.imprimir(gerarOrcamento(pedidoImprimir));
-        setStatusPedido(false)
+        setStatusPedido(false);
         setMensagem("Orçamento gerado com sucesso!");
       } else {
-
         // Enviando o pedido para o banco
         const retornoAPI = await NovoPedidoBalcao("balcao", pedido);
         window.IMPRESSORA.imprimir(gerarCupom(pedidoImprimir));
-        setStatusPedido(false)
-        setMensagem(`${retornoAPI.mensagem}! Aguarde a impressão do comprovante.`);
+        setStatusPedido(false);
+        setMensagem(
+          `${retornoAPI.mensagem}! Aguarde a impressão do comprovante.`,
+        );
       }
 
       setNome("");
@@ -286,17 +332,18 @@ export default function Vendas() {
       setPagamentosParciais([]);
       setEntradaDinheiro("");
     } catch (error) {
-      setStatusPedido(false)
-      setMensagem(error.message)
-    };
-  }
+      setStatusPedido(false);
+      setMensagem(error.message);
+    }
+  };
 
   // Validando a existencia de A VISTA na lista
-  const validarTroco = pagamentosParciais.some(item => item.nomeFormaPagamentoParcial === 'A VISTA')
+  const validarTroco = pagamentosParciais.some(
+    (item) => item.nomeFormaPagamentoParcial === "A VISTA",
+  );
 
   // Variavel que soma o valor do troco
-  const valorTroco = entradaDinheiro - totalPedido
-
+  const valorTroco = entradaDinheiro - totalPedido;
 
   return (
     <div className={styles.container}>
@@ -304,10 +351,8 @@ export default function Vendas() {
       <Cabecalho />
 
       <main className={styles.main}>
-
         {/* LADO ESQUERDO */}
         <div className={styles.colunaEsquerda}>
-
           {/* CABEÇALHO (padrão obrigatório) */}
           <div className={styles.cabecalhoPage}>
             <div className={styles.tituloSection}>
@@ -321,7 +366,7 @@ export default function Vendas() {
             </div>
 
             {/* OPÇÃO SERÁ DISPONIVEL APENAS PARA USUÁRIO ADMIN */}
-            {usuario?.nivelAcesso === 'ADMIN' &&
+            {usuario?.nivelAcesso === "ADMIN" && (
               <div className={styles.balcaoSelector}>
                 <label className={styles.labelForm}>Balcão destino</label>
                 <Select
@@ -332,41 +377,57 @@ export default function Vendas() {
                   isSearchable={false}
                 />
               </div>
-            }
+            )}
           </div>
 
           {/* CARD ADICIONAR PRODUTO */}
           <div className={styles.cardAdicionar}>
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
-                <PlusCircleIcon size={17} weight="bold" className={styles.cardHeaderIcon} />
+                <PlusCircleIcon
+                  size={17}
+                  weight="bold"
+                  className={styles.cardHeaderIcon}
+                />
                 <h2>Adicionar produto</h2>
               </div>
             </div>
 
             <div className={styles.formulario}>
-
               {/* SELECT DE PRODUTO */}
               <div className={styles.campo}>
                 <label className={styles.label}>Produto</label>
                 {carregando || options.length <= 0 ? (
                   <div className={styles.carregandoProduto}>
-                    <SpinnerIcon size={16} weight="bold" className={styles.spinnerIcon} />
+                    <SpinnerIcon
+                      size={16}
+                      weight="bold"
+                      className={styles.spinnerIcon}
+                    />
                     Carregando produtos...
                   </div>
                 ) : (
                   <Select
                     classNamePrefix="custom"
                     options={options}
-                    value={options.find((opt) => opt.value === produtoSelecionado?.id) || null}
+                    value={
+                      options.find(
+                        (opt) => opt.value === produtoSelecionado?.id,
+                      ) || null
+                    }
                     onChange={(opt) => {
-                      if (!opt) { setProdutoSelecionado(null); return; }
-                      setProdutoSelecionado(produtos.find((p) => p.id === opt.value) ?? null);
+                      if (!opt) {
+                        setProdutoSelecionado(null);
+                        return;
+                      }
+                      setProdutoSelecionado(
+                        produtos.find((p) => p.id === opt.value) ?? null,
+                      );
                     }}
                     placeholder="Selecione ou digite..."
                     isSearchable
                     noOptionsMessage={() => "Nenhum produto encontrado"}
-                    onKeyDown={handleEnter}
+                    // Removido onKeyDown genérico daqui
                   />
                 )}
               </div>
@@ -379,7 +440,10 @@ export default function Vendas() {
                   <input
                     type="number"
                     value={!produtoSelecionado ? 0 : quantidade}
-                    onChange={(e) => { const v = parseInt(e.target.value) || 1; setQuantidade(v > 0 ? v : 1); }}
+                    onChange={(e) => {
+                      const v = parseInt(e.target.value) || 1;
+                      setQuantidade(v > 0 ? v : 1);
+                    }}
                     min="1"
                     className={styles.input}
                     disabled={!produtoSelecionado}
@@ -390,7 +454,11 @@ export default function Vendas() {
                   <label className={styles.label}>Preço unitário</label>
                   <input
                     type="text"
-                    value={produtoSelecionado ? `R$ ${Number(produtoSelecionado.precoUndVenda || 0).toFixed(2)}` : "R$ 0,00"}
+                    value={
+                      produtoSelecionado
+                        ? `R$ ${Number(produtoSelecionado.precoUndVenda || 0).toFixed(2)}`
+                        : "R$ 0,00"
+                    }
                     readOnly
                     className={`${styles.input} ${styles.inputReadonly}`}
                   />
@@ -402,7 +470,11 @@ export default function Vendas() {
                 <label className={styles.label}>Total do produto</label>
                 <input
                   type="text"
-                  value={produtoSelecionado ? `R$ ${totalProduto(produtoSelecionado.precoUndVenda, quantidade)}` : "R$ 0,00"}
+                  value={
+                    produtoSelecionado
+                      ? `R$ ${totalProduto(produtoSelecionado.precoUndVenda, quantidade)}`
+                      : "R$ 0,00"
+                  }
                   readOnly
                   className={`${styles.input} ${styles.inputTotal}`}
                 />
@@ -417,30 +489,27 @@ export default function Vendas() {
                 <PlusCircleIcon size={18} weight="bold" />
                 Adicionar ao cupom
               </button>
-              {!nomeMaquina && usuario?.nivelAcesso !== 'ADMIN' &&
-                <p className={styles.notificacaoNomeMaquina}>Este terminal ainda não possui um balcão cadastrado!</p>
-              }
-
+              {!nomeMaquina && usuario?.nivelAcesso !== "ADMIN" && (
+                <p className={styles.notificacaoNomeMaquina}>
+                  Este terminal ainda não possui um balcão cadastrado!
+                </p>
+              )}
             </div>
           </div>
-
-          {/* MASCOTE */}
-          <div className={styles.mascote}>
-            <img src={logo} alt="Logo" className={styles.logo} />
-          </div>
-
         </div>
 
         {/* LADO DIREITO */}
         <div className={styles.colunaDireita}>
-
           {/* CUPOM */}
           <div className={styles.cardCupom}>
-
             {/* TÍTULOS DE LISTA */}
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
-                <ReceiptIcon size={17} weight="bold" className={styles.cardHeaderIcon} />
+                <ReceiptIcon
+                  size={17}
+                  weight="bold"
+                  className={styles.cardHeaderIcon}
+                />
                 <h2>Cupom fiscal</h2>
               </div>
               <span className={styles.badge}>
@@ -450,37 +519,41 @@ export default function Vendas() {
 
             {/* LISTA */}
             <div className={styles.lista}>
-
               {/* LISTA VAZIA */}
               {cupom.length === 0 ? (
                 <div className={styles.listaVazia}>
-                  <PackageIcon size={40} weight="duotone" className={styles.iconeVazio} />
+                  <PackageIcon
+                    size={40}
+                    weight="duotone"
+                    className={styles.iconeVazio}
+                  />
                   <p>Nenhum produto adicionado</p>
                   <span>Selecione produtos para iniciar a venda</span>
                 </div>
               ) : (
                 cupom.map((item) => (
-                  <ItemListaPedido key={item.id} produto={item} onRemover={handleRemoveProduto} />
+                  <ItemListaPedido
+                    key={item.id}
+                    produto={item}
+                    onRemover={handleRemoveProduto}
+                  />
                 ))
               )}
             </div>
-
           </div>
 
-          {statusPedido
-            ?
+          {statusPedido ? (
             // RENDER LOADING...
             <div className={styles.enviandoPedido}>
               <Spinner />
               <p>Enviando pedido, aguarde um instante...</p>
               <span>Estabelecendo conexão com o banco de dados...</span>
             </div>
-            :
+          ) : (
             // RENDER FINALIZAR CUPOM...
             <>
               {/* DOCUMENTO, TOTAIS, FORMA DE PAGAMENTO E BOTÕES */}
               <div className={styles.cardResumo}>
-
                 {/* CHECKBOX PARA ATIVAR IDENTIFICAÇÃO OPCIONAL */}
                 <div className={styles.checkboxRow}>
                   <input
@@ -499,7 +572,9 @@ export default function Vendas() {
                 {/* INPUT OPCIONAL IDENTIFICAÇÃO DE CLIENTE */}
                 {abrirOpcaoNome && (
                   <div className={styles.campoNome}>
-                    <label className={styles.label}>Documento de identificação</label>
+                    <label className={styles.label}>
+                      Documento de identificação
+                    </label>
                     <input
                       type="text"
                       value={nome}
@@ -514,7 +589,10 @@ export default function Vendas() {
                 <div className={styles.totais}>
                   <div className={styles.linhaTotal}>
                     <span>Quantidade total</span>
-                    <strong>{quantidadeTotal} {quantidadeTotal === 1 ? "unidade" : "unidades"}</strong>
+                    <strong>
+                      {quantidadeTotal}{" "}
+                      {quantidadeTotal === 1 ? "unidade" : "unidades"}
+                    </strong>
                   </div>
                   <div className={styles.linhaTotal}>
                     <span>Subtotal</span>
@@ -522,154 +600,196 @@ export default function Vendas() {
                   </div>
                   <div className={`${styles.linhaTotal} ${styles.totalFinal}`}>
                     <span>Total</span>
-                    <strong className={styles.valorTotal}>{formatarMoeda(totalPedido)}</strong>
+                    <strong className={styles.valorTotal}>
+                      {formatarMoeda(totalPedido)}
+                    </strong>
                   </div>
                 </div>
 
                 {/* ADICIONAR FORMA DE PAGAMENTO MULTIPLO! */}
                 <div className={styles.campo}>
-                    <div className={styles.campoMultiFormas}>
-
-                      {/* VALOR */}
-                      <div className={styles.campoMetade}>
-                        <label className={styles.label}>
-                          <CurrencyDollarIcon size={14} weight="bold" />
-                          Valor
-                        </label>
-                        <input
-                          type="number"
-                          value={valorParcialFormaPagamento}
-                          onChange={(e) => setValorParcialFormaPagamento(e.target.value)}
-                          className={styles.input}
-                        />
-                      </div>
-
-                      {/* FORMA PAGAMENTO */}
-                      <div className={styles.campoMetade}>
-                        <label className={styles.label}>
-                          <WalletIcon size={14} weight="bold" />
-                          Forma de pagamento
-                        </label>
-
-                        <select
-                          value={idFormaPagamentoParcial}
-                          onChange={(e) => {
-                            const id = e.target.value;
-                            setIdFormaPagamentoParcial(id);
-                            setNomeFormaPagamentoParcial(listaFormaPagamento.find((f) => f.id === Number(id))?.nome || "");
-                          }}
-                          className={styles.select}
-                        >
-                          {listaFormaPagamento?.map((forma) => (
-                            <option key={forma.id} value={forma.id}>{forma.nome}</option>
-                          ))}
-                        </select>
-                      </div>
+                  <div className={styles.campoMultiFormas}>
+                    {/* VALOR */}
+                    <div className={styles.campoMetade}>
+                      <label className={styles.label}>
+                        <CurrencyDollarIcon size={14} weight="bold" />
+                        Valor
+                      </label>
+                      <input
+                        type="number"
+                        value={valorParcialFormaPagamento}
+                        onChange={(e) =>
+                          setValorParcialFormaPagamento(e.target.value)
+                        }
+                        className={styles.input}
+                      />
                     </div>
 
-                    {/* BOTÃO SALVAR FORMA DE PAGAMENTO PARCIAL */}
-                    <AlertaRadix
-                      titulo="Salvar pagamento"
-                      descricao="Você realmente deseja salvar forma de pagamento?"
-                      tratar={handleAddFormaPagamentoParcial}
-                      confirmarTexto="Sim"
-                      cancelarTexto="Sair"
-                      trigger={
-                        <button className={styles.botaoSalvarNovaFormaPagamento} disabled={!valorParcialFormaPagamento}>
-                          <CheckCircleIcon size={16} weight="bold" />
-                          Salvar pagamento
-                        </button>
-                      }
-                    />
+                    {/* FORMA PAGAMENTO */}
+                    <div className={styles.campoMetade}>
+                      <label className={styles.label}>
+                        <WalletIcon size={14} weight="bold" />
+                        Forma de pagamento
+                      </label>
 
-                    {/* LISTA DE FORMAS DE PAGAMENTOS */}
-                    <div className={styles.cardCupom}>
-
-                      {/* TÍTULOS DE LISTA */}
-                      <div className={styles.cardHeader}>
-                        <div className={styles.cardHeaderTitle}>
-                          <WalletIcon size={17} weight="bold" className={styles.cardHeaderIcon} />
-                          <h2>Formas de pagamentos adicionadas: {pagamentosParciais.length}</h2>
-                        </div>
-                        <span className={styles.badge}>
-                          {pagamentosParciais.length} {pagamentosParciais.length === 1 ? "item" : "formas"}
-                        </span>
-                      </div>
-
-                      {/* LISTA */}
-                      <div className={styles.lista}>
-
-                        {/* LISTA VAZIA */}
-                        {pagamentosParciais.length === 0
-                          ?
-                          (
-                            <div className={styles.listaVazia}>
-                              <PackageIcon size={40} weight="duotone" className={styles.iconeVazio} />
-                              <p>Nenhuma forma de pagamento adicionada</p>
-                              <span>Adicione formas de pagamento para finalizar a venda</span>
-                            </div>
-                          )
-                          :
-                          (
-                            pagamentosParciais?.map((item, index) => (
-                              <ItemListaPagamentosParcial
-                                key={item.idFormaPagamentoParcial}
-                                index={index}
-                                pagamento={item}
-                                onRemover={handleRemoverFormaPagamentoParcial} />
-                            ))
-                          )}
-                      </div>
-
+                      <select
+                        value={idFormaPagamentoParcial}
+                        onChange={(e) => {
+                          const id = e.target.value;
+                          setIdFormaPagamentoParcial(id);
+                          setNomeFormaPagamentoParcial(
+                            listaFormaPagamento.find((f) => f.id === Number(id))
+                              ?.nome || "",
+                          );
+                        }}
+                        className={styles.select}
+                      >
+                        {listaFormaPagamento?.map((forma) => (
+                          <option key={forma.id} value={forma.id}>
+                            {forma.nome}
+                          </option>
+                        ))}
+                      </select>
                     </div>
+                  </div>
 
-                    {/* Valida o total da lista de pagamentos VS o total do cupom */}
-                    {trocoParcial < 0 &&
-                      <span className={styles.validaTotalListaPagamentoNegativo} >
-                        Ainda faltam {formatarMoeda(Math.abs(trocoParcial))} para fechar o total do cupom. Adicione outra forma de pagamento ou ajuste o valor existente.
-                      </span>
+                  {/* BOTÃO SALVAR FORMA DE PAGAMENTO PARCIAL */}
+                  <AlertaRadix
+                    titulo="Salvar pagamento"
+                    descricao="Você realmente deseja salvar forma de pagamento?"
+                    tratar={handleAddFormaPagamentoParcial}
+                    confirmarTexto="Sim"
+                    cancelarTexto="Sair"
+                    trigger={
+                      <button
+                        className={styles.botaoSalvarNovaFormaPagamento}
+                        disabled={!valorParcialFormaPagamento}
+                      >
+                        <CheckCircleIcon size={16} weight="bold" />
+                        Salvar pagamento
+                      </button>
                     }
+                  />
 
-                    {/* TOTAL */}
-                    <div className={styles.totais}>
-                      <div className={`${styles.linhaTotal} ${styles.totalFinal}`}>
-                        <span>Total</span>
-                        <strong className={styles.valorTotal}>{formatarMoeda(totalPedido)}</strong>
+                  {/* LISTA DE FORMAS DE PAGAMENTOS */}
+                  <div className={styles.cardCupom}>
+                    {/* TÍTULOS DE LISTA */}
+                    <div className={styles.cardHeader}>
+                      <div className={styles.cardHeaderTitle}>
+                        <WalletIcon
+                          size={17}
+                          weight="bold"
+                          className={styles.cardHeaderIcon}
+                        />
+                        <h2>
+                          Formas de pagamentos adicionadas:{" "}
+                          {pagamentosParciais.length}
+                        </h2>
                       </div>
-                    </div>   
+                      <span className={styles.badge}>
+                        {pagamentosParciais.length}{" "}
+                        {pagamentosParciais.length === 1 ? "item" : "formas"}
+                      </span>
+                    </div>
 
-                    {/* Valido que existe apenas a forma de pagamento A VISTA na lista de formas de pagamentos */}
-                    { pagamentosParciais.length === 1 && validarTroco && (
-                      <div className={styles.controleTroco}>
-                        <label className={styles.label}>
-                          <CurrencyDollarIcon size={14} weight="bold" />
-                          Auxiliar de troco
-                        </label>
+                    {/* LISTA */}
+                    <div className={styles.lista}>
+                      {/* LISTA VAZIA */}
+                      {pagamentosParciais.length === 0 ? (
+                        <div className={styles.listaVazia}>
+                          <PackageIcon
+                            size={40}
+                            weight="duotone"
+                            className={styles.iconeVazio}
+                          />
+                          <p>Nenhuma forma de pagamento adicionada</p>
+                          <span>
+                            Adicione formas de pagamento para finalizar a venda
+                          </span>
+                        </div>
+                      ) : (
+                        pagamentosParciais?.map((item, index) => (
+                          <ItemListaPagamentosParcial
+                            key={item.idFormaPagamentoParcial}
+                            index={index}
+                            pagamento={item}
+                            onRemover={handleRemoverFormaPagamentoParcial}
+                          />
+                        ))
+                      )}
+                    </div>
+                  </div>
 
-                        {/* INPUT DE TROCO*/}
-                        <input
-                            type="number"
-                            value={entradaDinheiro}
-                            onChange={(e) => setEntradaDinheiro(e.target.value)}
-                            placeholder="Informe a quantia de dinheiro para calcular o troco."
-                            className={styles.input}
+                  {/* Valida o total da lista de pagamentos VS o total do cupom */}
+                  {trocoParcial < 0 && (
+                    <span className={styles.validaTotalListaPagamentoNegativo}>
+                      Ainda faltam {formatarMoeda(Math.abs(trocoParcial))} para
+                      fechar o total do cupom. Adicione outra forma de pagamento
+                      ou ajuste o valor existente.
+                    </span>
+                  )}
+
+                  {/* TOTAL */}
+                  <div className={styles.totais}>
+                    <div
+                      className={`${styles.linhaTotal} ${styles.totalFinal}`}
+                    >
+                      <span>Total</span>
+                      <strong className={styles.valorTotal}>
+                        {formatarMoeda(totalPedido)}
+                      </strong>
+                    </div>
+                  </div>
+
+                  {/* Valido que existe apenas a forma de pagamento A VISTA na lista de formas de pagamentos */}
+                  {pagamentosParciais.length === 1 && validarTroco && (
+                    <div className={styles.controleTroco}>
+                      <label className={styles.label}>
+                        <CurrencyDollarIcon size={14} weight="bold" />
+                        Auxiliar de troco
+                      </label>
+
+                      {/* INPUT DE TROCO*/}
+                      <input
+                        type="number"
+                        value={entradaDinheiro}
+                        onChange={(e) => setEntradaDinheiro(e.target.value)}
+                        placeholder="Informe a quantia de dinheiro para calcular o troco."
+                        className={styles.input}
+                      ></input>
+
+                      {/* INFORMATIVO DE TROCO*/}
+                      {entradaDinheiro && (
+                        <div
+                          className={
+                            valorTroco >= 0
+                              ? styles.trocoResult
+                              : styles.trocoResultNegativo
+                          }
+                        >
+                          <span
+                            className={
+                              valorTroco >= 0
+                                ? styles.trocoLabel
+                                : styles.trocoLabelNegativo
+                            }
                           >
-                        </input>
-
-                        {/* INFORMATIVO DE TROCO*/}
-                        {entradaDinheiro &&
-                        <div className={valorTroco >= 0 ? styles.trocoResult : styles.trocoResultNegativo}>
-                          <span className={valorTroco >= 0 ? styles.trocoLabel : styles.trocoLabelNegativo}> {valorTroco >= 0 ? "Troco" : "Falta"} </span>
-                          <span className={valorTroco >= 0 ? styles.trocoValor : styles.trocoValorNegativo}>
+                            {" "}
+                            {valorTroco >= 0 ? "Troco" : "Falta"}{" "}
+                          </span>
+                          <span
+                            className={
+                              valorTroco >= 0
+                                ? styles.trocoValor
+                                : styles.trocoValorNegativo
+                            }
+                          >
                             {formatarMoeda(Math.abs(valorTroco))}
                           </span>
-                        </div>}
-                      </div>
-                        
-                      )
-                    }
-
-
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* BOTÕES */}
@@ -696,24 +816,23 @@ export default function Vendas() {
                     confirmarTexto="Sim, gerar pedido!"
                     cancelarTexto="Sair"
                     trigger={
-                      <button className={styles.botaoGerar} disabled={cupom.length === 0}>
+                      <button
+                        className={styles.botaoGerar}
+                        disabled={cupom.length === 0}
+                      >
                         <CheckCircleIcon size={16} weight="bold" />
                         Gerar Pedido
                       </button>
                     }
                   />
                 </div>
-
               </div>
             </>
-          }
-
+          )}
         </div>
-
       </main>
 
       <Rodape />
-      
     </div>
   );
 }
