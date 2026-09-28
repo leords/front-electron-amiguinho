@@ -1,115 +1,134 @@
 .container {
   width: 100%;
-  max-height: 600px;
   overflow-x: auto;
-  overflow-y: auto;
+  border-radius: 8px;
+}
 
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: inherit;
+  font-size: 13px;
+  table-layout: fixed;
+}
 
+/* Cabeçalho */
+.tabela thead tr {
+  background-color: #f8f9fa;
+  border-bottom: 1.5px solid #dee2e6;
+}
+
+.tabela th {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #868e96;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+/* Linhas e Células */
+.tabela tbody tr {
+  border-bottom: 1px solid #f1f3f5;
+  transition: background-color 0.15s ease;
   cursor: pointer;
 }
 
-/* TABELA */
-.tabela {
-  width: 100%;
-  min-width: 750px;
-
-  border-collapse: collapse;
-  table-layout: fixed;
-
-  text-align: center;
-  font-family: "Montserrat", sans-serif;
+.tabela tbody tr:hover {
+  background-color: #fff9db !important;
 }
 
-/* LINHAS */
-.tabela tr {
-  background-color: #ffffff;
-  color: #0c0c0c;
-  font-weight: 500;
-  font-size: 14px;
+.tabela tbody tr:nth-child(even) {
+  background-color: #fafbfc;
 }
 
-/* CÉLULAS */
 .tabela td {
-  padding: 8px 6px;
-  font-size: 14px;
-  border-top: 1px solid #f3f3f3;
-
+  padding: 10px 12px;
+  color: #212529;
   vertical-align: middle;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ID */
-.tabela td:nth-child(1) {
-  width: 55px;
-}
-
-/* DATA */
-.tabela td:nth-child(2) {
-  width: 130px;
-}
-
-/* CLIENTE */
-.tabela td:nth-child(3) {
-  width: 180px;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* VENDEDOR */
-.tabela td:nth-child(4) {
-  width: 180px;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* TOTAL */
-.tabela td:nth-child(5) {
-  width: 100px;
-
-  white-space: nowrap;
-}
-
-/* PAGAMENTO */
-.tabela td:nth-child(6) {
-  width: 150px;
-
-  white-space: normal;
-  overflow-wrap: break-word;
-}
-
-/* CONFERÊNCIA */
-.tabela td:nth-child(7) {
-  width: 50px;
-
-  font-size: 16px;
-  font-weight: 700;
-}
-
-/* LINHAS ALTERNADAS */
-.tabela tr:nth-child(even) {
-  background-color: #ececec;
-}
-
-/* HOVER */
-.tabela tr:hover {
+/* Larguras e alinhamentos sincronizados */
+.colId {
+  width: 70px;
+  text-align: left;
   font-weight: 600;
+  color: #495057;
 }
 
-/* STATUS CANCELADO */
+.colData {
+  width: 140px;
+  text-align: left;
+}
+
+.colOrigem {
+  width: 170px;
+  text-align: left;
+}
+
+.colCliente {
+  width: 160px;
+  text-align: left;
+}
+
+.colTotal {
+  width: 110px;
+  text-align: right;
+}
+
+.tabela th.colTotal {
+  text-align: right;
+}
+
+.colPagamento {
+  width: 150px;
+  text-align: left;
+}
+
+.colConferencia {
+  width: 55px;
+  text-align: center;
+}
+
+.tabela th.colConferencia {
+  text-align: center;
+}
+
+/* Status e Estados */
 .validaStatus td {
-  color: red;
+  color: #e03131;
+  text-decoration: line-through;
 }
 
-/* PIX CONFERIDO */
 .pixConferido {
-  background-color: #dcfce7 !important;
+  background-color: #ebfbee !important;
+}
+
+/* Botão de Conferência */
+.btnConferencia {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #ced4da;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition:
+    color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.btnConferencia:hover {
+  color: #ff8c00;
+  transform: scale(1.1);
+}
+
+.btnConferido {
+  color: #2f9e44 !important;
 }

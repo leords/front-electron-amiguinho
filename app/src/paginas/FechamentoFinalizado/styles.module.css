@@ -1,0 +1,366 @@
+/* ===== BASE DA PÁGINA ===== */
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f2f4f7;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.main {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 28px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ===== CABEÇALHO DA PÁGINA ===== */
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pageHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconeWrapper {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #ff8c00, #ffb347);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(255, 140, 0, 0.35);
+  flex-shrink: 0;
+}
+
+.pageSubtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 2px;
+}
+
+.pageTitulo {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.containerData {
+  display: flex;
+  gap: 8px;
+}
+
+.calendario {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--gray-300);
+  background-color: var(--white);
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.calendario:hover {
+  border-color: #adb5bd;
+}
+.calendario:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
+}
+
+.botaoHoje {
+  padding: 9px 16px;
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1.5px solid var(--orange-mid);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.botaoHoje:hover {
+  background: var(--orange);
+  color: var(--white);
+  border-color: var(--orange);
+}
+
+/* ===== GRID DOS 3 CARDS (Delivery / Balcão 1 / Balcão 2) ===== */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid #f1f3f5;
+}
+
+.cardHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.cardHeaderTitle h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+/* ===== BADGE DE STATUS ===== */
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.badgeVerde {
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green-mid);
+}
+.badgeLaranja {
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1px solid var(--orange-mid);
+}
+.badgeCinza {
+  background: var(--gray-100);
+  color: var(--gray-500);
+  border: 1px solid var(--gray-300);
+}
+
+/* ===== LINHAS DE INFORMAÇÃO (vendedor / data) ===== */
+.infoLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+.infoLabel {
+  color: var(--gray-500);
+  font-weight: 600;
+}
+.infoValor {
+  color: var(--gray-900);
+  font-weight: 700;
+}
+
+/* ===== VALORES (sistema / informado / diferença) ===== */
+.valoresGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.valorBox {
+  background: var(--gray-100);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.valorBoxDestaque {
+  grid-column: 1 / -1;
+  background: var(--orange-light);
+}
+
+.valorLabel {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.valorNumero {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--gray-900);
+}
+
+.textoVerde {
+  color: var(--green);
+}
+.textoAzul {
+  color: var(--blue);
+}
+.textoVermelho {
+  color: var(--red);
+}
+
+/* ===== CONTAGEM DE CÉDULAS ===== */
+.cedulasSection {
+  border-top: 1.5px solid #f1f3f5;
+  padding-top: 14px;
+}
+
+.cedulasTitulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 10px;
+}
+.cedulasTitulo svg {
+  color: var(--orange);
+}
+
+.cedulasGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 8px;
+}
+
+.cedulaItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  background: var(--gray-100);
+  border-radius: 8px;
+}
+.cedulaLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray-500);
+}
+.cedulaValor {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--gray-900);
+}
+
+/* ===== ESTADO VAZIO ===== */
+.estadoVazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 12px;
+  text-align: center;
+  gap: 8px;
+}
+.estadoVazio .iconeVazio {
+  color: var(--gray-300);
+}
+.estadoVazio p {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin: 0;
+}
+.estadoVazio span {
+  font-size: 12px;
+  color: var(--gray-300);
+}
+
+/* ===== SKELETON (carregando) ===== */
+.skeletonGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.skeleton {
+  background: linear-gradient(90deg, #f1f3f5 25%, #e9ecef 50%, #f1f3f5 75%);
+  background-size: 200% 100%;
+  border-radius: 8px;
+  animation: shimmer 1.4s infinite;
+}
+.skeletonLinha {
+  height: 14px;
+  width: 70%;
+}
+.skeletonBloco {
+  height: 90px;
+  width: 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 1200px) {
+  .cardsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 20px 16px 40px;
+  }
+  .pageTitulo {
+    font-size: 20px;
+  }
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+  .containerData {
+    width: 100%;
+  }
+  .calendario {
+    flex: 1;
+  }
+}

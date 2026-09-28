@@ -151,6 +151,45 @@
   min-width: 160px;
 }
 
+.containerData {
+  display: flex;
+  gap: 8px;
+}
+
+.calendario {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--gray-300);
+  background-color: var(--white);
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.calendario:hover {
+  border-color: #adb5bd;
+}
+.calendario:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
+}
+
+.botaoHoje {
+  padding: 9px 16px;
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1.5px solid var(--orange-mid);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
 /* ============================================================
    CARDS DE RESUMO RÁPIDO
    ============================================================ */
@@ -912,6 +951,64 @@
   letter-spacing: -0.5px;
 }
 
+/* ── Card "Contagem de notas" (estado fechado) ── */
+.fechadoCardNotas {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fechadoCardNotasHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.fechadoCardNotasHeader .fechadoCardLabel {
+  margin: 0;
+}
+
+.notasGridFechado {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.notaItemFechado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background: var(--gray-100);
+  border: 1px solid #eaecef;
+  border-radius: 10px;
+}
+
+.notaItemFechado span {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.notaItemFechado strong {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--gray-900);
+}
+
+.fechadoNotasResumo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 14px;
+  border-top: 1.5px solid #f1f3f5;
+}
+
 .obs {
   font-size: 11px;
   text-align: center;
@@ -972,6 +1069,9 @@
   .fechadoGrid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .fechadoCardNotas {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1019,5 +1119,8 @@
   .maquininhaDivider {
     width: 100%;
     height: 1px;
+  }
+  .notasGridFechado {
+    grid-template-columns: repeat(3, 1fr);
   }
 }

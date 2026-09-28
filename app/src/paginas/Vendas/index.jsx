@@ -113,10 +113,18 @@ export default function Vendas() {
       return;
     }
 
-    // Valida se o valor a ser adicionado é maior que o total do cupom.
-    if (valorParcialFormaPagamento > Math.abs(trocoParcial)) {
+    // Valida se o valor a ser adicionado é maior que o total disponível.
+    const valorParcialCentavos = Math.round(
+      Number(valorParcialFormaPagamento) * 100,
+    );
+
+    const trocoParcialCentavos = Math.round(
+      Math.abs(Number(trocoParcial)) * 100,
+    );
+
+    if (valorParcialCentavos > trocoParcialCentavos) {
       setMensagem(
-        `Valor máximo a ser adicionado é de R$ ${Math.abs(trocoParcial)}`,
+        `Valor máximo a ser adicionado é de R$ ${Math.abs(trocoParcial).toFixed(2)}`,
       );
       return;
     }
@@ -247,8 +255,11 @@ export default function Vendas() {
       return soma + forma.valorParcialFormaPagamento;
     }, 0);
 
-    // validando o total da lista de formas de pagamento vs total do cupom.
-    if (Number(totalFormas) !== Number(totalPedido)) {
+    // Validando o total das formas de pagamento vs total do cupom.
+    const totalFormasCentavos = Math.round(Number(totalFormas) * 100);
+    const totalPedidoCentavos = Math.round(Number(totalPedido) * 100);
+
+    if (totalFormasCentavos !== totalPedidoCentavos) {
       setMensagem(
         "Verifique as formas de pagamento, pois os valores não estão batendo com o total dos pedidos.",
       );

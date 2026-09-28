@@ -1,0 +1,169 @@
+/* ===== BASE DA PÁGINA ===== */
+.container {
+  flex-direction: column;
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: #f2f4f7;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.main {
+  flex: 1;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 28px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ===== CABEÇALHO DA PÁGINA ===== */
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pageHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconeWrapper {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #ff8c00, #ffb347);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(255, 140, 0, 0.35);
+  flex-shrink: 0;
+}
+
+.pageSubtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 2px;
+}
+
+.pageTitulo {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+/* ===== CARD DO FORMULÁRIO ===== */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 28px 26px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.campoMetade {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+
+.label svg {
+  color: var(--orange);
+}
+
+.select {
+  padding: 9px 12px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--white);
+  color: var(--gray-700);
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.select:hover {
+  border-color: #adb5bd;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
+}
+
+/* ===== BOTÃO SALVAR ===== */
+.botaoGerar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.25);
+  align-self: flex-start;
+}
+
+.botaoGerar:hover:not(:disabled) {
+  background: #e07b00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(255, 140, 0, 0.35);
+}
+
+.botaoGerar:disabled {
+  background: var(--gray-300);
+  color: var(--gray-500);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .main {
+    padding: 20px 16px 40px;
+  }
+  .pageTitulo {
+    font-size: 20px;
+  }
+  .campoMetade {
+    max-width: 100%;
+  }
+  .botaoGerar {
+    width: 100%;
+  }
+}

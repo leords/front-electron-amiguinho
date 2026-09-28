@@ -25,6 +25,8 @@ import FechamentoDeliveryUsuario from "../paginas/FechamentoDeliveryUsuario/inde
 import FechamentoDelivery from "../paginas/FechamentoDelivery/index.jsx";
 import Localizacao from "../paginas/Localizacao/index.jsx";
 import RelatorioVendas from "../paginas/RelatorioDiario/index.jsx";
+import FechamentoFinalizado from "../paginas/FechamentoFinalizado/index.jsx";
+import ConfigurarImpressora from "../paginas/Impressora/index.jsx";
 
 export function Navegador() {
   return (
@@ -67,6 +69,14 @@ export function Navegador() {
             <Route
               path="/buscar-relatorio-diario"
               element={<RelatorioVendas />}
+            />
+            <Route
+              path="/fechamentos-finalizados"
+              element={<FechamentoFinalizado />}
+            />
+            <Route
+              path="/configurar-impressora"
+              element={<ConfigurarImpressora />}
             />
           </Routes>
         </ToastProvedor>

@@ -8,7 +8,7 @@ export default function Rodape() {
 
         <span className={styles.divisor} aria-hidden="true" />
 
-        <span className={styles.versao}>v2.1.5</span>
+        <span className={styles.versao}>v2.2.1</span>
 
         <span className={styles.divisor} aria-hidden="true" />
 

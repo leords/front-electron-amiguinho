@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog, shell } from "electron";
 import path from "path";
 import dotenv from "dotenv";
+import Store from "electron-store";
 import { fileURLToPath } from "url";
 import buscarGroq from "./backend/groq.js";
 import buscarClima from "./backend/buscarClima.js";
@@ -13,6 +14,8 @@ const __dirname = path.dirname(__filename);
 
 // Caminho do .env no modo DEV
 const envDevPath = path.join(__dirname, ".env");
+
+const store = new Store();
 
 // Carregando variáveis conforme ambiente
 if (process.env.NODE_ENV === "development") {
@@ -129,11 +132,13 @@ ipcMain.on("imprimir-cupom", async (event, htmlContent) => {
 
   // Só imprimimos depois que o HTML terminar de carregar
   printWindow.webContents.once("did-finish-load", () => {
+    const deviceName = store.get("impressoraTermica");
     // Envia diretamente para a impressora
     printWindow.webContents.print(
       {
         silent: true, // Imprime sem abrir o diálogo do Windows
         printBackground: true, // Respeita estilos e fundos definidos no HTML
+        deviceName,
       },
       (success, error) => {
         // Callback acionado quando a impressão termina
@@ -378,4 +383,15 @@ ipcMain.handle("gerar-pdf-saida-produto", async (event, setor, relatorio) => {
 // BAIXAR CSV
 ipcMain.handle("gerar-csv-saida-produto", async (event, dados) => {
   return await baixarCSV(dados);
+});
+
+// LISTAR IMPRESSORAS
+ipcMain.handle("retornar-impressoras", async (event) => {
+  return await event.sender.getPrintersAsync();
+});
+// RETORNA A IMPRESSORA SELECIONADA
+ipcMain.handle("definir-impressora", async (event, deviceName) => {
+  store.set("impressoraTermica", deviceName);
+
+  return true;
 });

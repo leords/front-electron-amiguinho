@@ -1,6 +1,6 @@
 {
   "name": "amiguinho-controle",
-  "version": "2.1.7",
+  "version": "2.2.1",
   "description": "Sistema de controle Amiguinho",
   "main": "index.js",
   "type": "module",
@@ -28,6 +28,7 @@
     "@radix-ui/react-toast": "^1.2.15",
     "csv-writer": "^1.6.0",
     "dotenv": "^17.2.3",
+    "electron-store": "^11.0.2",
     "groq-sdk": "^0.37.0",
     "react-leaflet": "^5.0.0",
     "recharts": "^3.8.0",

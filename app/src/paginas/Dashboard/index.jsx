@@ -33,27 +33,29 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Importando as funções de API do projeto 
+// Importando as funções de API do projeto
 import { TotalVendasPeriodo } from "../../operadores/API/pedido/totalVendasPeriodo.js";
-import { TicketMedio }        from "../../operadores/API/pedido/ticketMedio.js";
-import { IntervaloTemporal }  from "../../operadores/API/pedido/intervaloTemporal.js";
-import { TopProdutos }        from "../../operadores/API/pedido/topProdutos.js";
-import { MixProdutos }        from "../../operadores/API/pedido/mixProdutos.js";
-import { QuantidadePedidos }  from "../../operadores/API/pedido/quantidadePedidos.js";
-import { RelatorioProduto }   from "../../operadores/API/produto/relatorioProduto.js";
+import { TicketMedio } from "../../operadores/API/pedido/ticketMedio.js";
+import { IntervaloTemporal } from "../../operadores/API/pedido/intervaloTemporal.js";
+import { TopProdutos } from "../../operadores/API/pedido/topProdutos.js";
+import { MixProdutos } from "../../operadores/API/pedido/mixProdutos.js";
+import { QuantidadePedidos } from "../../operadores/API/pedido/quantidadePedidos.js";
+import { RelatorioProduto } from "../../operadores/API/produto/relatorioProduto.js";
 import { usarToast } from "../../componentes/Context/toastContext.jsx";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao.jsx";
 
 const SETORES = ["balcao", "delivery", "externo"];
 const medalCores = ["#ff8c00", "#adb5bd", "#cd7f32"];
 
-// Tooltips 
+// Tooltips
 function TooltipVendas({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
     <div className={styles.tooltip}>
       <p className={styles.tooltipLabel}>{label}</p>
-      <p className={styles.tooltipValor}>{formatarMoeda(payload[0]?.value ?? 0)}</p>
+      <p className={styles.tooltipValor}>
+        {formatarMoeda(payload[0]?.value ?? 0)}
+      </p>
       <p className={styles.tooltipSub}>{payload[1]?.value ?? 0} pedidos</p>
     </div>
   );
@@ -68,40 +70,39 @@ function KpiCard({ icone: Icone, cor, label, valor, sub, carregando }) {
       </div>
       <div className={styles.kpiInfo}>
         <p className={styles.kpiLabel}>{label}</p>
-        {carregando
-          ? <div className={styles.kpiSkeleton} />
-          : <strong className={styles.kpiValor}>{valor}</strong>
-        }
+        {carregando ? (
+          <div className={styles.kpiSkeleton} />
+        ) : (
+          <strong className={styles.kpiValor}>{valor}</strong>
+        )}
         <p className={styles.kpiSub}>{sub}</p>
       </div>
     </div>
   );
 }
 
-
 export default function Dashboard() {
-  const [setor, setSetor]           = useState("balcao");
+  const [setor, setSetor] = useState("balcao");
   const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim]       = useState("");
+  const [dataFim, setDataFim] = useState("");
   const [carregando, setCarregando] = useState(false);
 
   //hooks
-    const { mensagem, setMensagem } = usarToast();
+  const { mensagem, setMensagem } = usarToast();
 
   // dados principais
-  const [totalVendas, setTotalVendas]               = useState(null);
-  const [ticketMedio, setTicketMedio]               = useState(null);
-  const [intervaloTemporal, setIntervaloTemporal]   = useState([]);
-  const [topProdutos, setTopProdutos]               = useState([]);
-  const [mixProdutos, setMixProdutos]               = useState({});
+  const [totalVendas, setTotalVendas] = useState(null);
+  const [ticketMedio, setTicketMedio] = useState(null);
+  const [intervaloTemporal, setIntervaloTemporal] = useState([]);
+  const [topProdutos, setTopProdutos] = useState([]);
+  const [mixProdutos, setMixProdutos] = useState({});
   const [pedidosPorVendedor, setPedidosPorVendedor] = useState([]);
 
   // relatório de produto
-  const [produtoSelecionado, setProdutoSelecionado]     = useState("");
-  const [relatorioProduto, setRelatorioProduto]         = useState(null);
-  const [carregandoProduto, setCarregandoProduto]       = useState(false);
-  const [expandirRelatorio, setExpandirRelatorio]       = useState(false);
-
+  const [produtoSelecionado, setProdutoSelecionado] = useState("");
+  const [relatorioProduto, setRelatorioProduto] = useState(null);
+  const [carregandoProduto, setCarregandoProduto] = useState(false);
+  const [expandirRelatorio, setExpandirRelatorio] = useState(false);
 
   // Inicializa datas com o primeiro dia do mês até hoje
   useEffect(() => {
@@ -123,7 +124,7 @@ export default function Dashboard() {
         TotalVendasPeriodo(setor, params),
         TicketMedio(setor, params),
         IntervaloTemporal(setor, params),
-        TopProdutos(setor, {...params, quantidade: 6}),
+        TopProdutos(setor, { ...params }),
         MixProdutos(setor, params),
         QuantidadePedidos(setor, params),
       ]);
@@ -140,12 +141,13 @@ export default function Dashboard() {
       setRelatorioProduto(null);
       setExpandirRelatorio(false);
     } catch (e) {
-      console.log(e)
-      const mensagem = e.response?.data?.erro.mensagem || 
+      console.log(e);
+      const mensagem =
+        e.response?.data?.erro.mensagem ||
         e.message ||
         "Erro, não foi possivel realizar a alteração!";
-                  
-      setMensagem(mensagem)
+
+      setMensagem(mensagem);
     } finally {
       setCarregando(false);
     }
@@ -173,7 +175,7 @@ export default function Dashboard() {
       setRelatorioProduto(resultado);
     } catch (e) {
       console.error("Erro ao buscar relatório do produto:", e);
-      setMensagem(e.message)
+      setMensagem(e.message);
 
       alert(e.message);
     } finally {
@@ -184,25 +186,25 @@ export default function Dashboard() {
   // Mix: pegar os 8 pares mais frequentes
   const mixPares = Object.entries(mixProdutos)
     .flatMap(([prod, assoc]) =>
-      Object.entries(assoc).map(([parceiro, freq]) => ({ par: `${prod} + ${parceiro}`, freq }))
+      Object.entries(assoc).map(([parceiro, freq]) => ({
+        par: `${prod} + ${parceiro}`,
+        freq,
+      })),
     )
     .sort((a, b) => b.freq - a.freq)
     .slice(0, 8);
 
   // Nome do produto selecionado para exibir no cabeçalho
-  const nomeProdutoSelecionado = topProdutos.find(
-    (p) => String(p.produtoId) === String(produtoSelecionado)
-  )?.nomeProduto ?? "";
+  const nomeProdutoSelecionado =
+    topProdutos.find((p) => String(p.produtoId) === String(produtoSelecionado))
+      ?.nomeProduto ?? "";
 
-
-  console.log(intervaloTemporal);
   return (
     <div className={styles.container}>
       <ToastRadix mensagem={mensagem} />
       <Cabecalho />
 
       <main className={styles.main}>
-
         {/*  CABEÇALHO  */}
         <div className={styles.pageHeader}>
           <div className={styles.pageHeaderLeft}>
@@ -217,7 +219,11 @@ export default function Dashboard() {
 
           {carregando && (
             <div className={styles.carregandoBadge}>
-              <SpinnerIcon size={14} weight="bold" className={styles.spinnerIcon} />
+              <SpinnerIcon
+                size={14}
+                weight="bold"
+                className={styles.spinnerIcon}
+              />
               Atualizando...
             </div>
           )}
@@ -226,7 +232,11 @@ export default function Dashboard() {
         {/*  FILTROS  */}
         <div className={styles.painelFiltros}>
           <div className={styles.filtrosHeader}>
-            <FunnelIcon size={14} weight="bold" className={styles.filtroIcone} />
+            <FunnelIcon
+              size={14}
+              weight="bold"
+              className={styles.filtroIcone}
+            />
             <span>Filtros</span>
           </div>
           <div className={styles.filtrosGrid}>
@@ -279,35 +289,38 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-
           </div>
         </div>
 
         {/* KPIs */}
         <div className={styles.kpiGrid}>
           <KpiCard
-            icone={TrendUpIcon} cor="orange"
+            icone={TrendUpIcon}
+            cor="orange"
             label="Total de vendas"
             valor={formatarMoeda(totalVendas?.totalVendas ?? 0)}
             sub={`${totalVendas?.quantidadePedidos ?? 0} pedidos no período`}
             carregando={carregando}
           />
           <KpiCard
-            icone={CurrencyDollarIcon} cor="green"
+            icone={CurrencyDollarIcon}
+            cor="green"
             label="Ticket médio"
             valor={formatarMoeda(ticketMedio?.pedidoMedio ?? 0)}
             sub={`base: ${ticketMedio?.quantidadePedidos ?? 0} pedidos`}
             carregando={carregando}
           />
           <KpiCard
-            icone={ShoppingCartIcon} cor="blue"
+            icone={ShoppingCartIcon}
+            cor="blue"
             label="Total de pedidos"
             valor={totalVendas?.quantidadePedidos ?? 0}
             sub="pedidos no período selecionado"
             carregando={carregando}
           />
           <KpiCard
-            icone={UsersIcon} cor="purple"
+            icone={UsersIcon}
+            cor="purple"
             label="Vendedores ativos"
             valor={pedidosPorVendedor.length}
             sub={`${setor} · no período`}
@@ -317,99 +330,200 @@ export default function Dashboard() {
 
         {/* GRÁFICO DE VENDAS E PEDIDOS POR VDE */}
         <div className={styles.linhaGraficos}>
-
           <div className={`${styles.card} ${styles.cardGrande}`}>
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
-                <TrendUpIcon size={18} weight="bold" className={styles.cardHeaderIcon} />
+                <TrendUpIcon
+                  size={18}
+                  weight="bold"
+                  className={styles.cardHeaderIcon}
+                />
                 <h2>Vendas por horário</h2>
               </div>
-              <span className={styles.cardBadge}>{intervaloTemporal.length} faixas</span>
+              <span className={styles.cardBadge}>
+                {intervaloTemporal.length} faixas
+              </span>
             </div>
 
-            {carregando ? <div className={styles.graficoSkeleton} /> :
-             intervaloTemporal.length === 0 ? <div className={styles.vazioGrafico}>Sem dados no período</div> : (
+            {/* PEDIDO POR HORARIO */}
+            {carregando ? (
+              <div className={styles.graficoSkeleton} />
+            ) : intervaloTemporal.length === 0 ? (
+              <div className={styles.vazioGrafico}>Sem dados no período</div>
+            ) : (
               <ResponsiveContainer width="100%" height={240}>
-                <AreaChart data={intervaloTemporal} margin={{ top: 6, right: 16, left: 0, bottom: 0 }}>
+                <AreaChart
+                  data={intervaloTemporal}
+                  margin={{ top: 6, right: 16, left: 0, bottom: 0 }}
+                >
                   <defs>
                     <linearGradient id="gradVendas" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#ff8c00" stopOpacity={0.25} />
+                      <stop
+                        offset="5%"
+                        stopColor="#ff8c00"
+                        stopOpacity={0.25}
+                      />
                       <stop offset="95%" stopColor="#ff8c00" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f3f5" vertical={false} />
-                  <XAxis dataKey="horario" tick={{ fontSize: 12, fill: "#868e96" }} axisLine={false} tickLine={false} />
-                  <YAxis tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: "#868e96" }} axisLine={false} tickLine={false} width={48} />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#f1f3f5"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="horario"
+                    tick={{ fontSize: 12, fill: "#868e96" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+                    tick={{ fontSize: 11, fill: "#868e96" }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={48}
+                  />
                   <Tooltip content={<TooltipVendas />} />
-                  <Area type="monotone" dataKey="totalVendido"      stroke="#ff8c00" strokeWidth={2.5} fill="url(#gradVendas)" />
-                  <Area type="monotone" dataKey="quantidadePedidos" stroke="#adb5bd" strokeWidth={1.5} fill="none" strokeDasharray="4 3" />
+                  <Area
+                    type="monotone"
+                    dataKey="totalVendido"
+                    stroke="#ff8c00"
+                    strokeWidth={2.5}
+                    fill="url(#gradVendas)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="quantidadePedidos"
+                    stroke="#adb5bd"
+                    strokeWidth={1.5}
+                    fill="none"
+                    strokeDasharray="4 3"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             )}
 
             <div className={styles.legendaGrafico}>
-              <span className={styles.legendaItem} data-cor="orange">— Faturamento</span>
-              <span className={styles.legendaItem} data-cor="gray">- - Pedidos</span>
+              <span className={styles.legendaItem} data-cor="orange">
+                — Faturamento
+              </span>
+              <span className={styles.legendaItem} data-cor="gray">
+                - - Pedidos
+              </span>
             </div>
           </div>
 
+          {/* PEDIDOS DO VENDEDOR */}
           <div className={styles.card}>
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
-                <UsersIcon size={18} weight="bold" className={styles.cardHeaderIcon} />
+                <UsersIcon
+                  size={18}
+                  weight="bold"
+                  className={styles.cardHeaderIcon}
+                />
                 <h2>Pedidos por vendedor</h2>
               </div>
             </div>
 
-            {carregando ? <div className={styles.graficoSkeleton} /> :
-             pedidosPorVendedor.length === 0 ? <div className={styles.vazioGrafico}>Sem dados no período</div> : (
+            {carregando ? (
+              <div className={styles.graficoSkeleton} />
+            ) : pedidosPorVendedor.length === 0 ? (
+              <div className={styles.vazioGrafico}>Sem dados no período</div>
+            ) : (
               <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={pedidosPorVendedor} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f3f5" horizontal={false} />
-                  <XAxis type="number" tick={{ fontSize: 11, fill: "#868e96" }} axisLine={false} tickLine={false} />
-                  <YAxis dataKey="vendedor" type="category" tick={{ fontSize: 12, fill: "#495057", fontWeight: 600 }} axisLine={false} tickLine={false} width={40} />
+                <BarChart
+                  data={pedidosPorVendedor}
+                  layout="vertical"
+                  margin={{ top: 0, right: 16, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#f1f3f5"
+                    horizontal={false}
+                  />
+                  <XAxis
+                    type="number"
+                    tick={{ fontSize: 11, fill: "#868e96" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    dataKey="vendedor"
+                    type="category"
+                    tick={{ fontSize: 12, fill: "#495057", fontWeight: 600 }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={40}
+                  />
                   <Tooltip formatter={(v) => [`${v} pedidos`, "Qtd"]} />
-                  <Bar dataKey="quantidadePedidos" fill="#ff8c00" radius={[0, 6, 6, 0]} maxBarSize={28} />
+                  <Bar
+                    dataKey="quantidadePedidos"
+                    fill="#ff8c00"
+                    radius={[0, 6, 6, 0]}
+                    maxBarSize={28}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             )}
           </div>
-
         </div>
 
         {/* TOP PRODUTOS E MIX */}
         <div className={styles.linhaInferior}>
-
           {/* Top produtos */}
           <div className={styles.card}>
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
-                <MedalIcon size={18} weight="bold" className={styles.cardHeaderIcon} />
+                <MedalIcon
+                  size={18}
+                  weight="bold"
+                  className={styles.cardHeaderIcon}
+                />
                 <h2>Top produtos</h2>
               </div>
-              <span className={styles.cardBadge}>{topProdutos.length} itens</span>
+              <span className={styles.cardBadge}>
+                {topProdutos.length} itens
+              </span>
             </div>
 
             {carregando ? (
-              <><div className={styles.rowSkeleton} /><div className={styles.rowSkeleton} /><div className={styles.rowSkeleton} /></>
+              <>
+                <div className={styles.rowSkeleton} />
+                <div className={styles.rowSkeleton} />
+                <div className={styles.rowSkeleton} />
+              </>
             ) : topProdutos.length === 0 ? (
               <div className={styles.vazioGrafico}>Sem dados no período</div>
             ) : (
               <div className={styles.topProdutoLista}>
                 {topProdutos.map((p, i) => {
-                  const pct = Math.round((p.quantidadeVendida / topProdutos[0].quantidadeVendida) * 100);
+                  const pct = Math.round(
+                    (p.quantidadeVendida / topProdutos[0].quantidadeVendida) *
+                      100,
+                  );
                   return (
                     <div key={p.produtoId} className={styles.topProdutoItem}>
-                      <div className={styles.topProdutoPos} style={{ color: medalCores[i] ?? "#adb5bd" }}>
-                        {i < 3
-                          ? <MedalIcon size={16} weight="fill" />
-                          : <span className={styles.topProdutoNum}>{i + 1}</span>
-                        }
+                      <div
+                        className={styles.topProdutoPos}
+                        style={{ color: medalCores[i] ?? "#adb5bd" }}
+                      >
+                        {i < 3 ? (
+                          <MedalIcon size={16} weight="fill" />
+                        ) : (
+                          <span className={styles.topProdutoNum}>{i + 1}</span>
+                        )}
                       </div>
                       <div className={styles.topProdutoInfo}>
-                        <div className={styles.topProdutoNome}>{p.nomeProduto}</div>
+                        <div className={styles.topProdutoNome}>
+                          {p.nomeProduto}
+                        </div>
                         <div className={styles.topProdutoBar}>
-                          <div className={styles.topProdutoBarFill} style={{ width: `${pct}%` }} />
+                          <div
+                            className={styles.topProdutoBarFill}
+                            style={{ width: `${pct}%` }}
+                          />
                         </div>
                       </div>
                       <div className={styles.topProdutoMetrics}>
@@ -427,15 +541,25 @@ export default function Dashboard() {
           <div className={styles.card}>
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
-                <ArrowsLeftRightIcon size={18} weight="bold" className={styles.cardHeaderIcon} />
+                <ArrowsLeftRightIcon
+                  size={18}
+                  weight="bold"
+                  className={styles.cardHeaderIcon}
+                />
                 <h2>Mix de produtos</h2>
               </div>
               <span className={styles.cardBadge}>combinações</span>
             </div>
-            <p className={styles.mixSubtitulo}>Produtos mais comprados juntos</p>
+            <p className={styles.mixSubtitulo}>
+              Produtos mais comprados juntos
+            </p>
 
             {carregando ? (
-              <><div className={styles.rowSkeleton} /><div className={styles.rowSkeleton} /><div className={styles.rowSkeleton} /></>
+              <>
+                <div className={styles.rowSkeleton} />
+                <div className={styles.rowSkeleton} />
+                <div className={styles.rowSkeleton} />
+              </>
             ) : mixPares.length === 0 ? (
               <div className={styles.vazioGrafico}>Sem dados no período</div>
             ) : (
@@ -444,11 +568,16 @@ export default function Dashboard() {
                   <div key={i} className={styles.mixItem}>
                     <div className={styles.mixPar}>
                       {par.par.split(" + ").map((nome, j) => (
-                        <span key={j} className={styles.mixTag}>{nome}</span>
+                        <span key={j} className={styles.mixTag}>
+                          {nome}
+                        </span>
                       ))}
                     </div>
                     <div className={styles.mixFreq}>
-                      <div className={styles.mixFreqBar} style={{ width: `${Math.min(par.freq * 20, 100)}%` }} />
+                      <div
+                        className={styles.mixFreqBar}
+                        style={{ width: `${Math.min(par.freq * 20, 100)}%` }}
+                      />
                       <span>{par.freq}×</span>
                     </div>
                   </div>
@@ -456,18 +585,23 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-
         </div>
 
         {/* RELATÓRIO E PRODUTOS*/}
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderTitle}>
-              <MagnifyingGlassIcon size={18} weight="bold" className={styles.cardHeaderIcon} />
+              <MagnifyingGlassIcon
+                size={18}
+                weight="bold"
+                className={styles.cardHeaderIcon}
+              />
               <h2>Relatório de produto</h2>
             </div>
             {nomeProdutoSelecionado && (
-              <span className={styles.cardBadgeProduto}>{nomeProdutoSelecionado}</span>
+              <span className={styles.cardBadgeProduto}>
+                {nomeProdutoSelecionado}
+              </span>
             )}
           </div>
 
@@ -501,25 +635,34 @@ export default function Dashboard() {
 
               {carregandoProduto ? (
                 <div className={styles.relatorioSkeletonGrid}>
-                  {[...Array(6)].map((_, i) => <div key={i} className={styles.relatorioSkeleton} />)}
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className={styles.relatorioSkeleton} />
+                  ))}
                 </div>
               ) : relatorioProduto ? (
                 <div className={styles.relatorioGrid}>
-
                   <div className={styles.relatorioCard} data-cor="orange">
                     <div className={styles.relatorioCardIcone}>
                       <PackageIcon size={18} weight="fill" />
                     </div>
-                    <p className={styles.relatorioCardLabel}>Quantidade vendida</p>
-                    <strong className={styles.relatorioCardValor}>{relatorioProduto.quantidade} un.</strong>
+                    <p className={styles.relatorioCardLabel}>
+                      Quantidade vendida
+                    </p>
+                    <strong className={styles.relatorioCardValor}>
+                      {relatorioProduto.quantidade} un.
+                    </strong>
                   </div>
 
                   <div className={styles.relatorioCard} data-cor="green">
                     <div className={styles.relatorioCardIcone}>
                       <TrendUpIcon size={18} weight="fill" />
                     </div>
-                    <p className={styles.relatorioCardLabel}>Faturamento total</p>
-                    <strong className={styles.relatorioCardValor}>{formatarMoeda(relatorioProduto.faturamentoTotal)}</strong>
+                    <p className={styles.relatorioCardLabel}>
+                      Faturamento total
+                    </p>
+                    <strong className={styles.relatorioCardValor}>
+                      {formatarMoeda(relatorioProduto.faturamentoTotal)}
+                    </strong>
                   </div>
 
                   <div className={styles.relatorioCard} data-cor="blue">
@@ -527,24 +670,35 @@ export default function Dashboard() {
                       <CurrencyDollarIcon size={18} weight="fill" />
                     </div>
                     <p className={styles.relatorioCardLabel}>Preço médio</p>
-                    <strong className={styles.relatorioCardValor}>{formatarMoeda(relatorioProduto.precoMedio)}</strong>
+                    <strong className={styles.relatorioCardValor}>
+                      {formatarMoeda(relatorioProduto.precoMedio)}
+                    </strong>
                   </div>
 
                   <div className={styles.relatorioCard} data-cor="purple">
                     <div className={styles.relatorioCardIcone}>
                       <ShoppingCartIcon size={18} weight="fill" />
                     </div>
-                    <p className={styles.relatorioCardLabel}>Média por pedido</p>
-                    <strong className={styles.relatorioCardValor}>{relatorioProduto.mediaProdutoPorPedido.toFixed(1)} un.</strong>
+                    <p className={styles.relatorioCardLabel}>
+                      Média por pedido
+                    </p>
+                    <strong className={styles.relatorioCardValor}>
+                      {relatorioProduto.mediaProdutoPorPedido.toFixed(1)} un.
+                    </strong>
                   </div>
 
                   <div className={styles.relatorioCard} data-cor="orange">
                     <div className={styles.relatorioCardIcone}>
                       <ChartLineUpIcon size={18} weight="fill" />
                     </div>
-                    <p className={styles.relatorioCardLabel}>Pedidos positivados</p>
+                    <p className={styles.relatorioCardLabel}>
+                      Pedidos positivados
+                    </p>
                     <strong className={styles.relatorioCardValor}>
-                      {relatorioProduto.pedidoPositavo} <span className={styles.relatorioCardSub}>de {relatorioProduto.totalPedidos}</span>
+                      {relatorioProduto.pedidoPositavo}{" "}
+                      <span className={styles.relatorioCardSub}>
+                        de {relatorioProduto.totalPedidos}
+                      </span>
                     </strong>
                   </div>
 
@@ -559,17 +713,17 @@ export default function Dashboard() {
                     <div className={styles.positivacaoBar}>
                       <div
                         className={styles.positivacaoBarFill}
-                        style={{ width: `${Math.min(relatorioProduto.porcentualPositivado, 100)}%` }}
+                        style={{
+                          width: `${Math.min(relatorioProduto.porcentualPositivado, 100)}%`,
+                        }}
                       />
                     </div>
                   </div>
-
                 </div>
               ) : null}
             </div>
           )}
         </div>
-
       </main>
 
       <Rodape />

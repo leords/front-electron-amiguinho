@@ -198,6 +198,7 @@ export default function Historico() {
                   </span>
                 )}
               </div>
+
               {carregando && (
                 <span className={styles.loading}>
                   <span className={styles.dot} />
@@ -207,34 +208,24 @@ export default function Historico() {
             </div>
 
             <div className={styles.tabelaWrapper}>
-              <div className={styles.tituloLista}>
-                <h3 className={styles.itemLista1}>ID</h3>
-                <h3 className={styles.itemLista2}>Data / Hora</h3>
-                <h3 className={styles.itemLista3}>Balcão · Vendedor</h3>
-                <h3 className={styles.itemLista4}>Total</h3>
-                <h3 className={styles.itemLista5}>Pagamento</h3>
-              </div>
-
-              <div className={styles.lista}>
-                {carregando ? (
-                  <div className={styles.estadoVazio}>
-                    <div className={styles.spinner} />
-                    <p>Buscando pedidos...</p>
-                  </div>
-                ) : pedidosFiltrados.length === 0 ? (
-                  <div className={styles.estadoVazio}>
-                    <FileTextIcon
-                      size={44}
-                      weight="duotone"
-                      className={styles.iconeVazio}
-                    />
-                    <p>Nenhum pedido encontrado</p>
-                    <span>Não há vendas registradas para esta data</span>
-                  </div>
-                ) : (
-                  <ItemListaHistorico pedidos={pedidosFiltrados} />
-                )}
-              </div>
+              {carregando ? (
+                <div className={styles.estadoVazio}>
+                  <div className={styles.spinner} />
+                  <p>Buscando pedidos...</p>
+                </div>
+              ) : pedidosFiltrados.length === 0 ? (
+                <div className={styles.estadoVazio}>
+                  <FileTextIcon
+                    size={44}
+                    weight="duotone"
+                    className={styles.iconeVazio}
+                  />
+                  <p>Nenhum pedido encontrado</p>
+                  <span>Não há vendas registradas para esta data</span>
+                </div>
+              ) : (
+                <ItemListaHistorico pedidos={pedidosFiltrados} />
+              )}
             </div>
           </section>
         </div>

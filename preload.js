@@ -3,6 +3,11 @@ const { contextBridge, ipcRenderer, shell } = require("electron");
 // imprimir
 contextBridge.exposeInMainWorld("IMPRESSORA", {
   imprimir: (html) => ipcRenderer.send("imprimir-cupom", html),
+  // listar impressoras ativas na maquina.
+  retornarImpressoras: () => ipcRenderer.invoke("retornar-impressoras"),
+  // retorna a impressora escolhida
+  salvarImpressoras: (deviceName) =>
+    ipcRenderer.invoke("definir-impressora", deviceName),
 });
 
 // Acessar o .env

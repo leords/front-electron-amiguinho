@@ -80,6 +80,11 @@
   margin: 0 0 2px;
 }
 
+.tabelaWrapper {
+  overflow-x: auto;
+  padding: 0 22px 22px;
+}
+
 .menuTitulo {
   font-size: 24px;
   font-weight: 800;

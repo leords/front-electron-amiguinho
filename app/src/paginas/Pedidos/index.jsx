@@ -426,20 +426,6 @@ export default function Pedidos() {
           </div>
 
           <div className={styles.tabelaWrapper}>
-            <div className={styles.tituloLista}>
-              <h3 className={styles.itemLista1}>ID</h3>
-
-              <h3 className={styles.itemLista3}>Data / Hora</h3>
-              {setor === "balcao" ? (
-                <></>
-              ) : (
-                <h3 className={styles.itemLista4}>Cliente</h3>
-              )}
-              <h3 className={styles.itemLista5}>Vendedor</h3>
-              <h3 className={styles.itemLista6}>Total</h3>
-              <h3 className={styles.itemLista7}>Pagamento</h3>
-            </div>
-
             <div className={styles.lista}>
               {carregando ? (
                 <div className={styles.estadoVazio}>

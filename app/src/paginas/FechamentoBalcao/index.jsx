@@ -82,6 +82,7 @@ export default function FechamentoBalcao() {
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inicioCaixa, setInicioCaixa] = useState("");
+  const [dataAtual, setDataAtual] = useState(dataFormatadaCalendario());
   const [
     erroFormularioPagamentoEletronico,
     setErroFormularioPagamentoEletronico,
@@ -104,6 +105,17 @@ export default function FechamentoBalcao() {
     abrirAdicionarPagamentoExternosCartao,
     setAbrirAdicionarPagamentoExternosCartao,
   ] = useState(false);
+
+  // atualiza a data automaticamente com a data atual.
+  useEffect(() => {
+    setDataAtual(dataFormatadaCalendario());
+  }, []);
+
+  // Pega o valor de data selecionado no input
+  const tratarAlteracao = (e) => setDataAtual(e.target.value);
+
+  // Função que seta o dia atual
+  const setarHoje = () => setDataAtual(dataFormatadaCalendario());
 
   // Função que busca o inicio de caixa salvo no banco de dados.
   useEffect(() => {
@@ -155,7 +167,9 @@ export default function FechamentoBalcao() {
         // buscar vendas no balcao antes para validar criar o fechamento.
         const fechamento = await criarFechamento("balcao", {
           vendedor: balcao.value,
+          data: dataAtual,
         });
+
         setFechamentoAtual(fechamento);
       } catch (error) {
         console.log(error.message);
@@ -165,7 +179,7 @@ export default function FechamentoBalcao() {
       }
     };
     buscarFechamentoBalcaoDia();
-  }, [balcao, vendaBalcao, statusFechamento]);
+  }, [balcao, vendaBalcao, statusFechamento, dataAtual]);
 
   // Busca as movimentações de caixa(entrada e saidas manuais)
   const buscarMovimentacoes = async () => {
@@ -190,7 +204,7 @@ export default function FechamentoBalcao() {
   // Atualiza movimentações
   useEffect(() => {
     buscarMovimentacoes();
-  }, [fechamentoAtual]);
+  }, [fechamentoAtual, dataAtual]);
 
   // Criar movimentação
   const novaMovimentacao = async () => {
@@ -300,8 +314,7 @@ export default function FechamentoBalcao() {
     }
     if (
       !valorManutencaoPagamentosEletronicos ||
-      typeof valorManutencaoPagamentosEletronicos !== "number" ||
-      valorManutencaoPagamentosEletronicos <= 0
+      typeof valorManutencaoPagamentosEletronicos !== "number"
     ) {
       setErroFormularioPagamentoEletronico("Informe um valor válido.");
       return;
@@ -371,13 +384,6 @@ export default function FechamentoBalcao() {
     .filter((m) => m.tipo === "entrada")
     .reduce((acc, m) => acc + m.valor, 0);
 
-  // formantando data
-  const dataHoje = new Date().toLocaleDateString("pt-BR", {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-  });
-
   return (
     <div className={styles.container}>
       <ToastRadix mensagem={mensagem} />
@@ -399,8 +405,19 @@ export default function FechamentoBalcao() {
 
           {/* DATA E SELECIONAR BALCÃO */}
           <div className={styles.pageHeaderRight}>
-            {/* DATA */}
-            <span className={styles.badgeData}>{dataHoje}</span>
+            <div className={styles.containerData}>
+              <input
+                className={styles.calendario}
+                type="date"
+                value={dataAtual}
+                onChange={tratarAlteracao}
+              />
+              {/* BOTÃO */}
+              <button className={styles.botaoHoje} onClick={setarHoje}>
+                Hoje
+              </button>
+            </div>
+
             {/* SELECIONAL BALCÃO */}
             <div className={styles.balcaoSelector}>
               <label className={styles.labelForm}>Balcão ativo</label>
@@ -765,15 +782,16 @@ export default function FechamentoBalcao() {
                             <input
                               className={styles.inputValor}
                               type="number"
-                              min="0"
                               step="0.01"
                               placeholder="0,00"
                               value={valorManutencaoPagamentosEletronicos}
-                              onChange={(e) =>
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                // Permite limpar o campo sem travar em 0 ou NaN
                                 setValorManutencaoPagamentosEletronicos(
-                                  Number(e.target.value),
-                                )
-                              }
+                                  val === "" ? "" : Number(val),
+                                );
+                              }}
                             />
                           </div>
 
@@ -864,17 +882,22 @@ export default function FechamentoBalcao() {
                             {movimentacoesPagamentosEletronicos.map((m) => (
                               <div
                                 key={m.id}
-                                className={`${styles.itemMovimentacao} ${styles[`item_${m.tipo}`]}`}
+                                className={`${styles.itemMovimentacao} 
+                                ${m.valor < 0 ? styles.itemNegativoDigital : styles.itemPositivoDigital}
+                                `}
                               >
                                 <div
-                                  className={`${styles.itemIconeTipo} ${styles[`icone_${m.tipo}`]}`}
+                                  className={`${styles.itemIconeTipo} 
+                                  ${m.valor < 0 ? styles.iconeNegativoDigital : styles.iconePositivoDigital}
+                                  `}
                                 >
-                                  {m.tipo === "entrada" ? (
+                                  {m.valor > 0 ? (
                                     <ArrowUpIcon size={14} weight="bold" />
                                   ) : (
                                     <ArrowDownIcon size={14} weight="bold" />
                                   )}
                                 </div>
+
                                 <div className={styles.itemInfo}>
                                   <p className={styles.itemDescricao}>
                                     {m.descricao}
@@ -885,11 +908,13 @@ export default function FechamentoBalcao() {
                                   </span>
                                 </div>
                                 <strong
-                                  className={`${styles.itemValor} ${styles[`valor_${m.tipo}`]}`}
+                                  className={`${styles.itemValor} 
+                                  ${m.valor < 0 ? styles.valorNegativoDigital : styles.valorPositivoDigital}`}
                                 >
-                                  {m.tipo === "saida" ? "−" : "+"}{" "}
+                                  {m.valor < 0 ? "" : "+"}{" "}
                                   {formatarMoeda(m.valor)}
                                 </strong>
+
                                 <AlertaRadix
                                   titulo="Remover movimentação"
                                   descricao={`Deseja remover "${m.descricao}"?`}
@@ -1162,34 +1187,80 @@ export default function FechamentoBalcao() {
                       {formatarMoeda(valorTotalMaquininha)}
                     </strong>
                   </div>
-                  <div className={styles.fechadoCard}>
-                    <DeviceMobileIcon
-                      size={22}
-                      weight="duotone"
-                      className={styles.fechadoCardIcone}
-                    />
-                    <p className={styles.fechadoCardLabel}>Pix</p>
-                    <strong className={styles.fechadoCardValor}>
-                      {formatarMoeda(valorPix)}
-                    </strong>
-                  </div>
+
+                  {/* CONTAGEM DE NOTAS */}
                   <div
-                    className={`${styles.fechadoCard} ${styles.fechadoCardDestaque}`}
+                    className={`${styles.fechadoCard} ${styles.fechadoCardNotas}`}
                   >
-                    <CalculatorIcon
-                      size={22}
-                      weight="duotone"
-                      className={styles.fechadoCardIcone}
-                    />
-                    <p className={styles.fechadoCardLabel}>
-                      Diferença de caixa
-                    </p>
-                    {/* fechamento atual - o inicio de caixa: pq quem faz a conta da diferença é o backend. */}
-                    <strong className={styles.fechadoCardValor}>
-                      {formatarMoeda(
-                        fechamentoAtual?.diferenca - inicioCaixa.valor || 0,
-                      )}
-                    </strong>
+                    <div className={styles.fechadoCardNotasHeader}>
+                      <CalculatorIcon
+                        size={22}
+                        weight="duotone"
+                        className={styles.fechadoCardIcone}
+                      />
+                      <p className={styles.fechadoCardLabel}>
+                        Contagem de notas
+                      </p>
+                    </div>
+
+                    <div className={styles.notasGridFechado}>
+                      <div className={styles.notaItemFechado}>
+                        <span>R$ 200,00</span>
+                        <strong>{fechamentoAtual?.nota200 ?? 0}</strong>
+                      </div>
+                      <div className={styles.notaItemFechado}>
+                        <span>R$ 100,00</span>
+                        <strong>{fechamentoAtual?.nota100 ?? 0}</strong>
+                      </div>
+                      <div className={styles.notaItemFechado}>
+                        <span>R$ 50,00</span>
+                        <strong>{fechamentoAtual?.nota50 ?? 0}</strong>
+                      </div>
+                      <div className={styles.notaItemFechado}>
+                        <span>R$ 20,00</span>
+                        <strong>{fechamentoAtual?.nota20 ?? 0}</strong>
+                      </div>
+                      <div className={styles.notaItemFechado}>
+                        <span>R$ 10,00</span>
+                        <strong>{fechamentoAtual?.nota10 ?? 0}</strong>
+                      </div>
+                      <div className={styles.notaItemFechado}>
+                        <span>R$ 5,00</span>
+                        <strong>{fechamentoAtual?.nota5 ?? 0}</strong>
+                      </div>
+                      <div className={styles.notaItemFechado}>
+                        <span>R$ 2,00</span>
+                        <strong>{fechamentoAtual?.nota2 ?? 0}</strong>
+                      </div>
+                    </div>
+
+                    <div className={styles.fechadoNotasResumo}>
+                      <div className={styles.conferenciaLinha}>
+                        <span>Total informado</span>
+                        <strong className={styles.valorNeutro}>
+                          {formatarMoeda(fechamentoAtual?.totalInformado || 0)}
+                        </strong>
+                      </div>
+                      <div className={styles.conferenciaLinha}>
+                        <span>Diferença</span>
+                        <span
+                          className={
+                            (fechamentoAtual?.totalInformado -
+                              fechamentoAtual?.totalSistema || 0) === 0
+                              ? styles.valorOk
+                              : (fechamentoAtual?.totalInformado -
+                                    fechamentoAtual?.totalSistema || 0) > 0
+                                ? styles.valorPositivo
+                                : styles.valorNegativo
+                          }
+                        >
+                          {formatarMoeda(
+                            fechamentoAtual?.totalInformado -
+                              fechamentoAtual?.totalSistema || 0,
+                          )}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -227,16 +227,6 @@ export default function HistoricoDelivery() {
             </div>
 
             <div className={styles.tabelaWrapper}>
-              <div className={styles.tituloLista}>
-                <h3 className={styles.itemLista1}>ID</h3>
-                <h3 className={styles.itemLista2}>Data / Hora</h3>
-                <h3 className={styles.itemLista3}>Cliente</h3>
-                <h3 className={styles.itemLista3}>Usuário</h3>
-                <h3 className={styles.itemLista4}>Total</h3>
-                <h3 className={styles.itemLista5}>Pagamento</h3>
-                <h3 className={styles.itemLista5}>Status</h3>
-              </div>
-
               <div className={styles.lista}>
                 {carregando ? (
                   <div className={styles.estadoVazio}>

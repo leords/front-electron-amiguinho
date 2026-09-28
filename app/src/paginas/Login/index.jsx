@@ -47,8 +47,6 @@ export default function Login() {
     try {
       const dadosUsuario = await authAPI({ usuario, senha });
 
-      console.log("Dados Usuário: ", dadosUsuario);
-
       const tempoPassado = Date.now() - inicio;
       const restante = tempoMinimo - tempoPassado;
 
@@ -149,6 +147,7 @@ export default function Login() {
   }
 
   const clicks = useRef(0);
+
   // 5 clicks seguidos para abrir a opção de configurar o servidor
   function multiLogoClick() {
     clicks.current++;

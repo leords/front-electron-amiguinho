@@ -6,6 +6,8 @@ import {
   Truck,
   CoinsIcon,
   GpsFixIcon,
+  HandCoinsIcon,
+  PrinterIcon,
 } from "@phosphor-icons/react";
 import styles from "./styles.module.css";
 import Cabecalho from "../../componentes/Cabecalho";
@@ -53,6 +55,7 @@ export default function Gestao() {
             icone={Storefront}
             cor="orange"
           />
+
           <MenuButton
             titulo="Ajustes de caixas"
             descricao="Visualisar e ajustar inicio de caixa"
@@ -60,12 +63,29 @@ export default function Gestao() {
             icone={CoinsIcon}
             cor="blue"
           />
+
           <MenuButton
             titulo="Localizar"
             descricao="Visualizar localização de aplicações externas"
             destino="/buscar-localizacao"
             icone={GpsFixIcon}
             cor="green"
+          />
+
+          <MenuButton
+            titulo="Buscar fechamentos"
+            descricao="Visualizar fechamentos finalizados"
+            destino="/fechamentos-finalizados"
+            icone={HandCoinsIcon}
+            cor="orange"
+          />
+
+          <MenuButton
+            titulo="Configurar impressão"
+            descricao="Configurar impressora destino"
+            destino="/configurar-impressora"
+            icone={PrinterIcon}
+            cor="blue"
           />
         </div>
       </main>

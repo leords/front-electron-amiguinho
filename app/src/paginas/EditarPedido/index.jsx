@@ -82,6 +82,19 @@ export default function EditarPedido() {
     setValorTotal(total);
   }, [itens]);
 
+  // total já pago nas formas de pagamento, calculado em tempo real =====
+  const totalPagamentos =
+    formasPagamento?.reduce((acc, p) => acc + Number(p.valor || 0), 0) || 0;
+
+  // Diferença entre o total recalculado dos itens e o que está distribuído nas formas de pagamento.
+  const diferencaPagamento = Number(
+    ((valorTotal || 0) - totalPagamentos).toFixed(2),
+  );
+
+  // valido se o tipo é balcao e a se a diferença é diferente de 0
+  const pagamentoDivergente =
+    state.tipo === "balcao" && diferencaPagamento !== 0;
+
   // Funções p/ lista de produtos
   const atualizarQuantidade = (key, valor) => {
     setItens((prev) =>
@@ -155,7 +168,7 @@ export default function EditarPedido() {
         payload,
       );
 
-      setMensagem(retorno.mensagem);
+      setMensagem(retorno.mensagem); // Testar caso de pedido com pagamentos multiplos.
 
       navegar("/pedidos");
     } catch (error) {
@@ -173,7 +186,8 @@ export default function EditarPedido() {
       );
 
       const valorComparado1 = Number(validarTotalPagamento.toFixed(2));
-      const valorComparado2 = Number(state.total.toFixed(2));
+
+      const valorComparado2 = Number((valorTotal || 0).toFixed(2));
 
       if (valorComparado1 !== valorComparado2) {
         setMensagem(
@@ -420,6 +434,28 @@ export default function EditarPedido() {
                 <Plus size={15} weight="bold" />
                 Adicionar forma
               </button>
+
+              {/* DIVERGENCIA ENTRE TOTAL DE PAGAMENTOS COM TOTAL DO CUPOM ATUAL. */}
+              {pagamentoDivergente && (
+                <div
+                  className={styles.balcaoAvisoDivergencia}
+                  style={{
+                    marginTop: 8,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    color: "var(--red-500, #e5484d)",
+                    fontSize: 13,
+                  }}
+                >
+                  <Warning size={14} weight="fill" />
+                  {diferencaPagamento > 0
+                    ? `Faltam ${formatarMoeda(diferencaPagamento)} nas formas de pagamento`
+                    : `Formas de pagamento excedem o total em ${formatarMoeda(
+                        Math.abs(diferencaPagamento),
+                      )}`}
+                </div>
+              )}
             </div>
           </div>
         ) : (
@@ -674,15 +710,19 @@ export default function EditarPedido() {
               Cancelar
             </button>
 
-            {/* SALVAR */}
+            {/* SALVAR COM CONDIÇÃO DE ATIVÇÃO = pagamentoDivergente */}
+
             <AlertaRadix
               titulo="Salvar Alteração"
               descricao="Você realmente deseja salvar a alteração?"
               tratar={tratarSalvar}
-              confirmarTexto="Confirmar cancelamento"
+              confirmarTexto="Confirmar alteração"
               cancelarTexto="Sair"
               trigger={
-                <button className={styles.botaoPrincipal}>
+                <button
+                  className={styles.botaoPrincipal}
+                  disabled={pagamentoDivergente}
+                >
                   <CheckCircle size={16} weight="fill" />
                   Salvar Alterações
                 </button>

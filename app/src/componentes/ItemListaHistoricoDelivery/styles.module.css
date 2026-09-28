@@ -82,3 +82,144 @@
   font-weight: 600;
   font-size: 12px;
 }
+
+.container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: inherit;
+  font-size: 13px;
+  table-layout: fixed;
+}
+
+/* Cabeçalho */
+.tabela thead tr {
+  background-color: #f8f9fa;
+  border-bottom: 1.5px solid #dee2e6;
+}
+
+.tabela th {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #868e96;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+/* Linhas e Células */
+.tabela tbody tr {
+  border-bottom: 1px solid #f1f3f5;
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.tabela tbody tr:hover {
+  background-color: #fff9db !important;
+}
+
+.tabela tbody tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+.tabela td {
+  padding: 10px 12px;
+  color: #212529;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Colunas e Larguras */
+.colId {
+  width: 70px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+}
+
+.colData {
+  width: 140px;
+  text-align: left;
+}
+
+.colCliente {
+  width: 180px;
+  text-align: left;
+}
+
+.colVendedor {
+  width: 160px;
+  text-align: left;
+}
+
+.colTotal {
+  width: 110px;
+  text-align: right;
+}
+
+.tabela th.colTotal {
+  text-align: right;
+}
+
+.colPagamento {
+  width: 150px;
+  text-align: left;
+}
+
+.colStatus {
+  width: 130px;
+  text-align: center;
+}
+
+.tabela th.colStatus {
+  text-align: center;
+}
+
+/* Linha cancelada */
+.linhaCancelada td {
+  color: #c92a2a;
+  text-decoration: line-through;
+}
+
+/* Badges de Status */
+.badgeStatus {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.statusEntregue {
+  background-color: #ebfbee;
+  color: #2f9e44;
+  border: 1px solid #b2f2bb;
+}
+
+.statusCarregado {
+  background-color: #fff3bf;
+  color: #f59f00;
+  border: 1px solid #ffe066;
+}
+
+.statusCancelado {
+  background-color: #ffe3e3;
+  color: #e03131;
+  border: 1px solid #ffc9c9;
+}
+
+.statusPadrao {
+  background-color: #f1f3f5;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
