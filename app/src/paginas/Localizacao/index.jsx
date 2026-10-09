@@ -1,120 +1,125 @@
 import { useState } from "react";
-import { MapPin, Package, User } from "@phosphor-icons/react";
+import { MapPin, Moped, Path } from "@phosphor-icons/react";
 
 import BuscaPedidos from "../../componentes/BuscaPedidos/index.jsx";
-import BuscaUsuarios from "../../componentes/BuscarUsuarios/index.jsx";
+import BuscarRotas from "../../componentes/BuscarRotas/index.jsx";
 import Cabecalho from "../../componentes/Cabecalho/index.jsx";
-import Informacoes from "../../componentes/Informacoes/index.jsx";
+import Rodape from "../../componentes/Rodape/index.jsx";
 import Mapa from "../../componentes/Mapa/index.jsx";
-import "./styles.css";
+import styles from "./styles.module.css";
 
 export default function Localizacao() {
   // Estados
-  const [tipoBusca, setTipoBusca] = useState("pedido");
+  const [tipoBusca, setTipoBusca] = useState("delivery"); // 'delivery' | 'rota'
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [dataCarregada, setDataCarregada] = useState(null);
   const [dataEntregue, setDataEntregue] = useState(null);
-  const [remetente, setRemetente] = useState("");
+  const [remetente, setRemetente] = useState("delivery");
+  const [pontosRota, setPontosRota] = useState([]);
+  const [pontoFocado, setPontoFocado] = useState(null);
+
+  // Altera o tipo de busca e reseta dados
+  const tratarMudarTipoBusca = (novoTipo) => {
+    setTipoBusca(novoTipo);
+    setPontoFocado(null);
+    setPontosRota([]);
+    setRemetente(novoTipo);
+    setLatitude(null);
+    setLongitude(null);
+  };
 
   return (
-    <div className="container">
+    <div className={styles.container}>
       <Cabecalho />
 
-      <div className="principal">
+      <div className={styles.principal}>
         {/* Cabeçalho padrão de página */}
-        <div className="cabecalho-page">
-          <div className="titulo-section">
-            <div className="icone-wrapper">
+        <div className={styles.cabecalhoPage}>
+          <div className={styles.tituloSection}>
+            <div className={styles.iconeWrapper}>
               <MapPin size={22} weight="fill" />
             </div>
             <div>
-              <p className="page-subtitulo">Rastreamento em tempo real</p>
-              <h1 className="page-titulo">Localização dos Entregadores</h1>
+              <p className={styles.pageSubtitulo}>Rastreamento em tempo real e rotas</p>
+              <h1 className={styles.pageTitulo}>Localização e Rotas</h1>
             </div>
           </div>
         </div>
 
-        <div className="conteudo">
+        <div className={styles.conteudo}>
           {/* Painel esquerdo */}
-          <div className="painel-esquerdo">
+          <div className={styles.painelEsquerdo}>
             {/* Painel de filtros - tipo de busca */}
-            <div className="painel-filtros">
-              <div className="filtros-header">
-                <MapPin size={14} weight="bold" className="filtro-icone" />
+            <div className={styles.painelFiltros}>
+              <div className={styles.filtrosHeader}>
+                <MapPin size={14} weight="bold" className={styles.filtroIcone} />
                 Tipo de busca
               </div>
 
-              <div className="tipo-busca-grid">
+              <div className={styles.tipoBuscaGrid}>
                 <button
                   type="button"
-                  className={`tipo-busca-btn ${
-                    tipoBusca === "pedido" ? "tipo-busca-btn-ativo" : ""
+                  className={`${styles.tipoBuscaBtn} ${
+                    tipoBusca === "delivery" ? styles.tipoBuscaBtnAtivo : ""
                   }`}
-                  onClick={() => setTipoBusca("pedido")}
+                  onClick={() => tratarMudarTipoBusca("delivery")}
                 >
-                  <Package size={17} weight="bold" />
-                  Pedido
+                  <Moped size={16} weight="bold" />
+                  Delivery
                 </button>
 
                 <button
                   type="button"
-                  className={`tipo-busca-btn ${
-                    tipoBusca === "usuario" ? "tipo-busca-btn-ativo" : ""
+                  className={`${styles.tipoBuscaBtn} ${
+                    tipoBusca === "rota" ? styles.tipoBuscaBtnAtivo : ""
                   }`}
-                  onClick={() => setTipoBusca("usuario")}
+                  onClick={() => tratarMudarTipoBusca("rota")}
                 >
-                  <User size={17} weight="bold" />
-                  Entregador
+                  <Path size={16} weight="bold" />
+                  Rota
                 </button>
               </div>
             </div>
 
-            {/* Card de busca */}
-            <div className="card">
-              {tipoBusca === "pedido" ? (
+            {/* Card de busca dinâmico */}
+            <div className={styles.card}>
+              {tipoBusca === "delivery" && (
                 <BuscaPedidos
-                  setLatitude={setLatitude}
-                  setLongitude={setLongitude}
-                  setDataCarregada={setDataCarregada}
-                  setDataEntregue={setDataEntregue}
+                  setPontosRota={setPontosRota}
+                  setPontoFocado={setPontoFocado}
                   setRemetente={setRemetente}
                 />
-              ) : (
-                <BuscaUsuarios
-                  setLatitude={setLatitude}
-                  setLongitude={setLongitude}
+              )}
+
+              {tipoBusca === "rota" && (
+                <BuscarRotas
+                  setPontosRota={setPontosRota}
+                  setPontoFocado={setPontoFocado}
                   setRemetente={setRemetente}
                 />
               )}
             </div>
-
-            {/* Card de informações */}
-            <div className="card">
-              <Informacoes
-                latitude={localStorage.getItem("ultimaLatitude")}
-                longitude={localStorage.getItem("ultimaLongitude")}
-                ultimaAtualizacao={localStorage.getItem("ultimaBusca")}
-                pedido={localStorage.getItem("ultimoCliente")}
-                usuario={localStorage.getItem("ultimoUsuario")}
-              />
-            </div>
           </div>
 
           {/* Painel direito - mapa */}
-          <div className="painel-direito">
-            <div className="mapa-card">
+          <div className={styles.painelDireito}>
+            <div className={styles.mapaCard}>
               <Mapa
                 latitude={latitude}
                 longitude={longitude}
                 dataCarregada={dataCarregada}
                 dataEntregue={dataEntregue}
                 remetente={remetente}
+                pontosRota={pontosRota}
+                pontoFocado={pontoFocado}
               />
             </div>
           </div>
         </div>
       </div>
+
+      <Rodape />
     </div>
   );
 }

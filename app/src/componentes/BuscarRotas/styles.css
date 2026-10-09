@@ -1,0 +1,284 @@
+.busca-rotas {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Header do card */
+.busca-rotas .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid #f1f3f5;
+}
+
+.busca-rotas .card-header-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.busca-rotas .card-header-title h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.busca-rotas .card-header-icon {
+  color: #1971c2;
+}
+
+/* Badge de carregando */
+.busca-rotas .carregando-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  background: #e7f5ff;
+  color: #1971c2;
+  border: 1px solid #a5d8ff;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.busca-rotas .spinner-icon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Grid de filtros */
+.busca-rotas .filtros-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 12px;
+}
+
+.busca-rotas .filtro-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.busca-rotas .filtro-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.busca-rotas .calendario,
+.busca-rotas .select-input {
+  padding: 9px 12px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--white);
+  color: var(--gray-700);
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.busca-rotas .calendario:focus,
+.busca-rotas .select-input:focus {
+  border-color: #1971c2;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(25, 113, 194, 0.12);
+}
+
+/* Botão principal */
+.busca-rotas .botao-principal {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: #1971c2;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.busca-rotas .botao-principal:hover:not(:disabled) {
+  background: #1864ab;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 113, 194, 0.25);
+}
+
+.busca-rotas .botao-principal:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Header da lista de paradas */
+.busca-rotas .resumo-rota-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+
+.busca-rotas .badge-total-pontos {
+  background: #e7f5ff;
+  color: #1971c2;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+/* Lista de pontos da rota */
+.busca-rotas .lista-pontos-rota {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+
+.busca-rotas .item-ponto-rota {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.busca-rotas .item-ponto-rota:hover {
+  border-color: #1971c2;
+  background: #f8fbff;
+  transform: translateX(2px);
+}
+
+.busca-rotas .item-ponto-ativo {
+  border-color: #1971c2;
+  background: #e7f5ff;
+  box-shadow: 0 2px 8px rgba(25, 113, 194, 0.15);
+}
+
+.busca-rotas .ponto-sequencia-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: #1971c2;
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.busca-rotas .item-ponto-ativo .ponto-sequencia-badge {
+  background: #ff8c00;
+}
+
+.busca-rotas .ponto-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.busca-rotas .ponto-cliente-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.busca-rotas .ponto-cliente-nome {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.busca-rotas .ponto-origem-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.busca-rotas .origem-pedido {
+  background: #ebfbee;
+  color: #2f9e44;
+  border: 1px solid #b2f2bb;
+}
+
+.busca-rotas .origem-visita {
+  background: #fff3e0;
+  color: #d9480f;
+  border: 1px solid #ffd8a8;
+}
+
+.busca-rotas .ponto-detalhes {
+  font-size: 11px;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.busca-rotas .ponto-endereco {
+  font-size: 11px;
+  color: var(--gray-700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.busca-rotas .estado-vazio-inline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 16px;
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  color: var(--gray-500);
+  font-size: 12px;
+  text-align: center;
+}
+
+.busca-rotas .icone-vazio {
+  color: var(--gray-400);
+}

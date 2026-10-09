@@ -5,34 +5,34 @@
 }
 
 /* Header do card */
-.card-header {
+.busca-pedidos .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4px;
-  padding-bottom: 14px;
+  padding-bottom: 12px;
   border-bottom: 1.5px solid #f1f3f5;
 }
 
-.card-header-title {
+.busca-pedidos .card-header-title {
   display: flex;
   align-items: center;
   gap: 9px;
 }
 
-.card-header-title h2 {
+.busca-pedidos .card-header-title h2 {
   font-size: 15px;
   font-weight: 700;
   color: var(--gray-900);
   margin: 0;
 }
 
-.card-header-icon {
+.busca-pedidos .card-header-icon {
   color: var(--orange);
 }
 
 /* Badge de carregando */
-.carregando-badge {
+.busca-pedidos .carregando-badge {
   display: flex;
   align-items: center;
   gap: 7px;
@@ -45,29 +45,30 @@
   font-weight: 700;
 }
 
-.spinner-icon {
+.busca-pedidos .spinner-icon {
   animation: spin 0.8s linear infinite;
 }
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* Grid de filtros (datas) */
-.filtros-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.filtro-grupo {
+/* Filtro de data única */
+.busca-pedidos .filtros-grid {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.filtro-label {
+.busca-pedidos .filtro-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.busca-pedidos .filtro-label {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -78,13 +79,11 @@
   letter-spacing: 0.5px;
 }
 
-/* Inputs (calendário e select) */
-.busca-pedidos .calendario,
-.busca-pedidos .select-input {
+.busca-pedidos .calendario {
   padding: 9px 12px;
   border: 1.5px solid var(--gray-300);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   background: var(--white);
   color: var(--gray-700);
@@ -93,73 +92,181 @@
   box-sizing: border-box;
 }
 
-.busca-pedidos .calendario:hover,
-.busca-pedidos .select-input:hover {
-  border-color: #adb5bd;
-}
-
-.busca-pedidos .calendario:focus,
-.busca-pedidos .select-input:focus {
-  outline: none;
+.busca-pedidos .calendario:focus {
   border-color: var(--orange);
+  outline: none;
   box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
 }
 
 /* Botão principal */
 .busca-pedidos .botao-principal {
+  all: unset;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 20px;
+  width: 100%;
+  padding: 10px;
   background: var(--orange);
-  color: var(--white);
-  border: none;
-  border-radius: 9px;
-  font-size: 14px;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.25);
+  box-sizing: border-box;
 }
 
 .busca-pedidos .botao-principal:hover:not(:disabled) {
   background: #e07b00;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(255, 140, 0, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.25);
 }
 
 .busca-pedidos .botao-principal:disabled {
-  background: var(--gray-300);
-  color: var(--gray-500);
+  opacity: 0.6;
   cursor: not-allowed;
-  box-shadow: none;
 }
 
-/* Estado vazio inline */
-.estado-vazio-inline {
+/* Header da lista de entregas */
+.busca-pedidos .resumo-entrega-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+
+.busca-pedidos .badge-total-pontos {
+  background: var(--orange-light);
+  color: var(--orange);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+/* Lista de entregas */
+.busca-pedidos .lista-pontos-delivery {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+
+.busca-pedidos .item-ponto-delivery {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.busca-pedidos .item-ponto-delivery:hover {
+  border-color: var(--orange);
+  background: #fffaf5;
+  transform: translateX(2px);
+}
+
+.busca-pedidos .item-ponto-ativo {
+  border-color: var(--orange);
+  background: var(--orange-light);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.15);
+}
+
+.busca-pedidos .ponto-sequencia-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--orange);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.busca-pedidos .item-ponto-ativo .ponto-sequencia-badge {
+  background: #e07b00;
+}
+
+.busca-pedidos .ponto-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.busca-pedidos .ponto-cliente-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.busca-pedidos .ponto-cliente-nome {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.busca-pedidos .ponto-detalhes {
+  font-size: 11px;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.busca-pedidos .ponto-endereco {
+  font-size: 11px;
+  color: var(--gray-700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.busca-pedidos .ponto-valores {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--gray-700);
+  font-weight: 600;
+  margin-top: 1px;
+}
+
+.busca-pedidos .estado-vazio-inline {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px 12px;
-  text-align: center;
   gap: 8px;
-}
-
-.estado-vazio-inline .icone-vazio {
-  color: var(--gray-300);
-}
-
-.estado-vazio-inline span {
-  font-size: 13px;
+  padding: 24px 16px;
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
   color: var(--gray-500);
-  font-weight: 600;
+  font-size: 12px;
+  text-align: center;
 }
 
-/* Responsividade */
-@media (max-width: 480px) {
-  .filtros-grid {
-    grid-template-columns: 1fr;
-  }
+.busca-pedidos .icone-vazio {
+  color: var(--gray-400);
 }

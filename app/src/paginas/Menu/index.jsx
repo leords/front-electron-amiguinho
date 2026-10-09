@@ -13,6 +13,10 @@ import {
   ChartBarIcon,
   ChartLineUpIcon,
   ChartPolarIcon,
+  Truck,
+  HandCoinsIcon,
+  ReceiptIcon,
+  Storefront,
 } from "@phosphor-icons/react";
 import MenuButton from "../../componentes/Botao/index";
 import styles from "./styles.module.css";
@@ -32,27 +36,6 @@ export default function Menu() {
   // Hook
   const { mensagem } = usarToast();
   const { usuario } = usarAuth();
-
-  // carregando msg de IA
-  // useEffect(() => {
-  //   const carregarMensagem = async () => {
-  //     const mensagemSalva = localStorage.getItem("mensagemDoDia");
-  //     const dataSalva = localStorage.getItem("mensagemDoDia_data");
-  //     const hoje = new Date().toISOString().slice(0, 10);
-
-  //     if (mensagemSalva && dataSalva === hoje) {
-  //       setMensagemDoDia(mensagemSalva);
-  //       return;
-  //     }
-
-  //     const novaMensagem = await GerarVersiculo();
-  //     localStorage.setItem("mensagemDoDia", novaMensagem);
-  //     localStorage.setItem("mensagemDoDia_data", hoje);
-  //     setMensagemDoDia(novaMensagem);
-  //   };
-
-  //   carregarMensagem();
-  // }, []);
 
   // saudações
   useEffect(() => {
@@ -132,6 +115,18 @@ export default function Menu() {
             </>
           )}
 
+          {["ADMIN", "EXTERNO"].includes(usuario.nivelAcesso) && (
+            <>
+              <MenuButton
+                titulo="Vendas Externas"
+                descricao="Registrar novos pedidos externos"
+                destino="/venda-externa"
+                icone={Storefront}
+                cor="blue"
+              />
+            </>
+          )}
+
           {["ADMIN"].includes(usuario.nivelAcesso) && (
             <>
               <MenuButton
@@ -174,6 +169,27 @@ export default function Menu() {
                 descricao="Controle de estoque"
                 destino="/estoque"
                 icone={PackageIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Cargas"
+                descricao="Montagem de carga e despacho"
+                destino="/cargas"
+                icone={Truck}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Pendências"
+                descricao="Contas a receber de externos"
+                destino="/pendencias"
+                icone={HandCoinsIcon}
+                cor="gray"
+              />
+              <MenuButton
+                titulo="Prestação de contas"
+                descricao="Conferência e baixa de pagamentos"
+                destino="/prestacao-contas"
+                icone={ReceiptIcon}
                 cor="gray"
               />
               <MenuButton

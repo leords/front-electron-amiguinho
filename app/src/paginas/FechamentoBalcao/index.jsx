@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
 import styles from "./styles.module.css";
@@ -26,6 +26,7 @@ import {
   LockKeyIcon,
   TrendUpIcon,
   InfoIcon,
+  FileTextIcon,
 } from "@phosphor-icons/react";
 import ItemContador from "../../componentes/ItemContador";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
@@ -41,6 +42,9 @@ import { LerInicioCaixa } from "../../operadores/API/caixa/lerInicioCaixa";
 import { buscarMovimentacaoPagamentoEletronico } from "../../operadores/API/movimentacaoPagamentosEletronicos/buscarMovimentacao";
 import { criarMovimentacaoPagamentoEletronico } from "../../operadores/API/movimentacaoPagamentosEletronicos/criarMovimentacao";
 import { deletarMovimentacaoPagamentoEletronico } from "../../operadores/API/movimentacaoPagamentosEletronicos/deletarMovimentacao";
+import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
+import { obterOrcamentosLocais } from "../../utils/orcamentosStorage.js";
+import ModalPedidosOrcamento from "../../componentes/ModalPedidosOrcamento";
 
 const tiposMovimentacao = [
   { value: "saida", label: "🔻 Saída", tipo: "saida" },
@@ -133,15 +137,19 @@ export default function FechamentoBalcao() {
     buscarInicioCaixa();
   }, []);
 
+  // Estados para orçamentos
+  const [modalOrcamentosAberto, setModalOrcamentosAberto] = useState(false);
+  const [pedidosOrcamentoAPI, setPedidosOrcamentoAPI] = useState([]);
+  const [carregandoOrcamentos, setCarregandoOrcamentos] = useState(false);
+
   // Busca fechamento do balcao // quanto de venda!
   useEffect(() => {
-    const dataFormatada = dataFormatadaCalendario();
     setCarregandoVendas(true);
     const buscarVendasDia = async () => {
       try {
         const dados = await buscarFechamentoBalcao({
           setor: "balcao",
-          data: dataFormatada,
+          data: dataAtual,
           vendedor: balcao.value,
         });
         setVendaBalcao(dados);
@@ -154,7 +162,87 @@ export default function FechamentoBalcao() {
       }
     };
     buscarVendasDia();
-  }, [balcao]);
+  }, [balcao, dataAtual]);
+
+  // Busca orçamentos da API para a data e balcão selecionados
+  useEffect(() => {
+    let ativo = true;
+    const buscarOrcamentosBalcao = async () => {
+      try {
+        setCarregandoOrcamentos(true);
+        const resposta = await buscarPedido({
+          setor: "balcao",
+          vendedor: balcao.value,
+          dataInicio: dataAtual,
+          dataFim: dataAtual,
+        });
+        if (!ativo) return;
+
+        const lista = Array.isArray(resposta)
+          ? resposta
+          : Array.isArray(resposta?.resultado)
+          ? resposta.resultado
+          : [];
+
+        // Filtra pedidos com forma de pagamento ORÇAMENTO
+        const filtrados = lista.filter((p) => {
+          if (p.status?.toLowerCase() === "cancelado") return false;
+          const temPagamentoOrcamento = p.pagamentos?.some((pg) => {
+            const nome = String(
+              pg.formaPagamento?.nome || pg.nomeFormaPagamentoParcial || ""
+            )
+              .trim()
+              .toUpperCase();
+            return nome.includes("ORÇAMENTO") || nome.includes("ORCAMENTO");
+          });
+          if (temPagamentoOrcamento) return true;
+          const formaRaiz = String(
+            p.formaPagamento?.nome || p.formaPagamentoNome || ""
+          )
+            .trim()
+            .toUpperCase();
+          return (
+            formaRaiz.includes("ORÇAMENTO") || formaRaiz.includes("ORCAMENTO")
+          );
+        });
+
+        setPedidosOrcamentoAPI(filtrados);
+      } catch (erro) {
+        console.log("Erro ao buscar orçamentos da API:", erro.message);
+      } finally {
+        if (ativo) setCarregandoOrcamentos(false);
+      }
+    };
+
+    buscarOrcamentosBalcao();
+    return () => {
+      ativo = false;
+    };
+  }, [balcao, dataAtual]);
+
+  // Unifica orçamentos da API e locais (armazenados pelo terminal)
+  const listaOrcamentos = useMemo(() => {
+    const locais = obterOrcamentosLocais({
+      data: dataAtual,
+      vendedor: balcao.value,
+    });
+
+    const mapa = new Map();
+    // 1. Orçamentos da API
+    pedidosOrcamentoAPI.forEach((p) => {
+      mapa.set(String(p.id), p);
+    });
+    // 2. Orçamentos locais (caso não estejam na API)
+    locais.forEach((p) => {
+      mapa.set(String(p.id), p);
+    });
+
+    return Array.from(mapa.values()).sort(
+      (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
+    );
+  }, [pedidosOrcamentoAPI, dataAtual, balcao]);
+
+  const totalOrcamentos = listaOrcamentos.length;
 
   // Buscar/Criar fechamento de caixa.
   useEffect(() => {
@@ -511,6 +599,26 @@ export default function FechamentoBalcao() {
                         {vendaBalcao?.quantidade ?? 0}
                       </strong>
                     </div>
+                  </div>
+
+                  {/* ORÇAMENTOS (CLICÁVEL) */}
+                  <div
+                    className={`${styles.resumoCard} ${styles.resumoCardClicavel}`}
+                    onClick={() => setModalOrcamentosAberto(true)}
+                    role="button"
+                    tabIndex={0}
+                    title="Clique para ver os pedidos em orçamento"
+                  >
+                    <div className={styles.resumoCardIcon} data-color="amber">
+                      <FileTextIcon size={18} weight="fill" />
+                    </div>
+                    <div>
+                      <p className={styles.resumoCardLabel}>Orçamentos</p>
+                      <strong className={styles.resumoCardValor}>
+                        {totalOrcamentos}
+                      </strong>
+                    </div>
+                    <span className={styles.cardAcaoDica}>Ver lista →</span>
                   </div>
                 </div>
 
@@ -1165,6 +1273,23 @@ export default function FechamentoBalcao() {
                       {vendaBalcao?.quantidade ?? 0}
                     </strong>
                   </div>
+                  <div
+                    className={`${styles.fechadoCard} ${styles.fechadoCardClicavel}`}
+                    onClick={() => setModalOrcamentosAberto(true)}
+                    role="button"
+                    tabIndex={0}
+                    title="Clique para ver os pedidos em orçamento"
+                  >
+                    <FileTextIcon
+                      size={22}
+                      weight="duotone"
+                      className={styles.fechadoCardIcone}
+                    />
+                    <p className={styles.fechadoCardLabel}>Orçamentos</p>
+                    <strong className={styles.fechadoCardValor}>
+                      {totalOrcamentos}
+                    </strong>
+                  </div>
                   <div className={styles.fechadoCard}>
                     <MoneyIcon
                       size={22}
@@ -1268,6 +1393,15 @@ export default function FechamentoBalcao() {
           </>
         )}
       </main>
+
+      {/* MODAL DE ORÇAMENTOS */}
+      <ModalPedidosOrcamento
+        aberto={modalOrcamentosAberto}
+        aoFechar={() => setModalOrcamentosAberto(false)}
+        pedidos={listaOrcamentos}
+        data={dataAtual}
+        balcaoNome={balcao?.label || "Balcão"}
+      />
 
       <Rodape />
     </div>

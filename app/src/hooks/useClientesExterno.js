@@ -1,30 +1,34 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LerClienteExterno } from "../operadores/API/cliente/lerClienteExterno.js";
 
 export function useClientesExterno() {
-  //estados
+  // estados
   const [clientes, setClientes] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  useEffect(() => {
-    const carregar = async () => {
-      try {
-        const lista = await LerClienteExterno();
-        setClientes(lista);
-      } catch (error) {
-        setErro(error);
-      } finally {
-        setCarregando(false);
-      }
-    };
-
-    carregar();
+  const carregar = useCallback(async () => {
+    setCarregando(true);
+    try {
+      const lista = await LerClienteExterno();
+      setClientes(lista ?? []);
+      setErro(null);
+    } catch (error) {
+      setErro(error);
+      setClientes([]);
+    } finally {
+      setCarregando(false);
+    }
   }, []);
+
+  useEffect(() => {
+    carregar();
+  }, [carregar]);
 
   return {
     clientes,
     carregando,
     erro,
+    recarregarClientes: carregar,
   };
 }

@@ -22,28 +22,33 @@ export const apiLong = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const ehRotaLogin = error.config?.url?.includes("/login");
 
-    if (
-      error.response?.status === 401 &&
-      error.config?.url !== "/login"
-    ) {
+    if (error.response?.status === 401 && !ehRotaLogin) {
       localStorage.removeItem("token");
-      window.location.href = "/";
+      localStorage.removeItem("nomeUsuario");
+      localStorage.removeItem("idUsuario");
+      localStorage.removeItem("nivelAcesso");
+      window.location.hash = "#/";  // rotas com # para o Electron nao tentar carregar a raiz do disco.
     }
 
     return Promise.reject(error);
   }
 );
 
-apiLong.interceptors.response.use((response) => response, (error) => {
+apiLong.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const ehRotaLogin = error.config?.url?.includes("/login");
 
-    if(error.response?.status === 401) {
-
-      localStorage.removeItem('token')
-
-      window.location.href = '/'
+    if (error.response?.status === 401 && !ehRotaLogin) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("nomeUsuario");
+      localStorage.removeItem("idUsuario");
+      localStorage.removeItem("nivelAcesso");
+      window.location.hash = "#/"; // rotas com # para o Electron nao tentar carregar a raiz do disco.
     }
 
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);

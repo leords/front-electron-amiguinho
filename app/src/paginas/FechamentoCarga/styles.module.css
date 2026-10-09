@@ -1,0 +1,1336 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.main {
+  flex: 1;
+  padding: 24px 32px 60px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── CABEÇALHO DA PÁGINA ── */
+.cabecalhoPage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tituloSection {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.botaoVoltar {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1.5px solid #dee2e6;
+  color: #495057;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.botaoVoltar:hover {
+  background: #f1f3f5;
+  border-color: #ced4da;
+  color: #1a1f2e;
+}
+
+.iconeWrapper {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #ebfbee;
+  color: #2f9e44;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(47, 158, 68, 0.15);
+}
+
+.pageSubtitulo {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2f9e44;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.pageTitulo {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 2px 0 0;
+}
+
+.cabecalhoAcoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badgeCargaStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #e7f5ff;
+  color: #1971c2;
+  border: 1px solid #a5d8ff;
+}
+
+/* ── CARDS DE TOTAIS POR FORMA DE PAGAMENTO ── */
+.gridTotais {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.cardTotal {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px 18px;
+  border: 1px solid #eaecef;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.cardTotal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+}
+
+.cardTotalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardTotalLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #868e96;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cardTotalIcone {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardTotalValor {
+  font-size: 20px;
+  font-weight: 900;
+  color: #1a1f2e;
+  margin: 0;
+}
+
+.cardTotalSub {
+  font-size: 11px;
+  color: #868e96;
+}
+
+/* Cores específicas dos cards */
+.cardDinheiro {
+  border-left: 4px solid #2f9e44;
+}
+.cardDinheiro .cardTotalIcone {
+  background: #ebfbee;
+  color: #2f9e44;
+}
+.cardDinheiro .cardTotalValor {
+  color: #2b8a3e;
+}
+
+.cardPix {
+  border-left: 4px solid #0ca678;
+}
+.cardPix .cardTotalIcone {
+  background: #e6fcf5;
+  color: #0ca678;
+}
+
+.cardCartao {
+  border-left: 4px solid #1971c2;
+}
+.cardCartao .cardTotalIcone {
+  background: #e7f5ff;
+  color: #1971c2;
+}
+
+.cardCheque {
+  border-left: 4px solid #7048e8;
+}
+.cardCheque .cardTotalIcone {
+  background: #f3f0ff;
+  color: #7048e8;
+}
+
+.cardVale {
+  border-left: 4px solid #f59f00;
+}
+.cardVale .cardTotalIcone {
+  background: #fff9db;
+  color: #f59f00;
+}
+
+.cardGeral {
+  border-left: 4px solid #7048e8;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f6ff 100%);
+}
+.cardGeral .cardTotalIcone {
+  background: #f3f0ff;
+  color: #7048e8;
+}
+.cardGeral .cardTotalValor {
+  color: #5f3dc4;
+}
+
+/* ── GRID PRINCIPAL DE CONTEÚDO (PEDIDOS + AJUSTES + CALCULADORA) ── */
+.conteudoGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1.05fr 290px;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 1400px) {
+  .conteudoGrid {
+    grid-template-columns: 1.3fr 1fr;
+  }
+}
+
+@media (max-width: 960px) {
+  .conteudoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── CALCULADORA / SOMA DE NOTAS (COMPACTA & LEVE) ── */
+.contadorTabela {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tabelaNotasHeader {
+  display: grid;
+  grid-template-columns: 52px 1fr 80px;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: #f1f3f5;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.itemNotaRow {
+  display: grid;
+  grid-template-columns: 52px 1fr 80px;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: #fdfdfd;
+  border: 1px solid #eaecef;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.itemNotaRow:hover {
+  background: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.inputNotaQtd {
+  width: 100%;
+  height: 28px;
+  padding: 2px 4px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  color: #1a1f2e;
+  outline: none;
+  background: #ffffff;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.inputNotaQtd:focus {
+  border-color: #2f9e44;
+  box-shadow: 0 0 0 2px rgba(47, 158, 68, 0.15);
+  background: #ebfbee;
+}
+
+.notaRotulo {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #343a40;
+}
+
+.notaSubtotal {
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.contadorResumoBloco {
+  background: #f8f9fa;
+  border: 1px solid #eaecef;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.contadorResumoLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.contadorResumoLinha strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.contadorDiferencaBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.diferencaExato {
+  background: #ebfbee;
+  color: #2b8a3e;
+  border: 1px solid #b2f2bb;
+}
+
+.diferencaSobra {
+  background: #e7f5ff;
+  color: #1971c2;
+  border: 1px solid #a5d8ff;
+}
+
+.diferencaFalta {
+  background: #fff5f5;
+  color: #c92a2a;
+  border: 1px solid #ffc9c9;
+}
+
+.btnLimparContador {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  background: #fff5f5;
+  color: #c92a2a;
+  border: 1px solid #ffc9c9;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btnLimparContador:hover {
+  background: #c92a2a;
+  color: #ffffff;
+}
+
+/* ── SEÇÃO CARD PADRÃO ── */
+.secaoCard {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #eaecef;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.secaoCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f3f5;
+  padding-bottom: 12px;
+}
+
+.secaoCardTituloWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.secaoCardTitulo {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 0;
+}
+
+.secaoCardContador {
+  background: #f1f3f5;
+  color: #495057;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+/* ── BUSCA E FILTROS DE PEDIDOS ── */
+.barraBuscaFiltroPedidos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.inputBuscaPedidosWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputBuscaPedidosIcone {
+  position: absolute;
+  left: 12px;
+  color: #868e96;
+  pointer-events: none;
+}
+
+.inputBuscaPedidos {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  font-size: 13px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  outline: none;
+  background: #f8f9fa;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.inputBuscaPedidos:focus {
+  background: #ffffff;
+  border-color: #1971c2;
+  box-shadow: 0 0 0 3px rgba(25, 113, 194, 0.12);
+}
+
+.filtrosChipsWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.chipFiltro {
+  all: unset;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f1f3f5;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.chipFiltro:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+}
+
+.chipFiltroAtivo {
+  background: #1971c2;
+  color: #ffffff;
+  border-color: #1971c2;
+}
+
+.chipFiltroDevolvidoAtivo {
+  background: #c92a2a;
+  color: #ffffff;
+  border-color: #c92a2a;
+}
+
+/* ── TABELA / LISTAGEM DE PEDIDOS ── */
+.listaPedidos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 560px;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #ced4da #f8f9fa;
+}
+
+.listaPedidos::-webkit-scrollbar {
+  width: 6px;
+}
+
+.listaPedidos::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.listaPedidos::-webkit-scrollbar-thumb {
+  background: #ced4da;
+  border-radius: 4px;
+}
+
+.listaPedidos::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
+}
+
+.pedidoItemCard {
+  background: #ffffff;
+  border: 1.5px solid #eaecef;
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.pedidoItemCard:hover {
+  border-color: #ced4da;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.pedidoDevolvidoCard {
+  background: #fff5f5;
+  border-color: #ffc9c9;
+  opacity: 0.85;
+}
+
+.pedidoLinhaUnica {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pedidoInfoEsquerda {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pedidoPosicao {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1a1f2e;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pedidoCliente {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1f2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.pedidoIdSutil {
+  font-size: 11px;
+  font-weight: 400;
+  color: #868e96;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pedidoInfoDireita {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.tagPagamento {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f1f3f5;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.tagPagamentoDestaque {
+  background: #ebfbee;
+  color: #2f9e44;
+  border-color: #b2f2bb;
+}
+
+.tagPagamentoPix {
+  background: #e6fcf5;
+  color: #0ca678;
+  border-color: #96f2d7;
+}
+
+.tagPagamentoCartao {
+  background: #e7f5ff;
+  color: #1971c2;
+  border-color: #a5d8ff;
+}
+
+.tagPagamentoVale {
+  background: #fff9db;
+  color: #f59f00;
+  border-color: #ffe066;
+}
+
+.tagDevolvido {
+  background: #ffe3e3;
+  color: #c92a2a;
+  border-color: #ffc9c9;
+  font-weight: 800;
+}
+
+/* ── PENDÊNCIAS EM ABERTO DO CLIENTE NO CARD DO PEDIDO (DISCRETO) ── */
+.pendenciasDiscretasWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 6px;
+  margin-top: 2px;
+  border-top: 1px dashed #edf2f7;
+  flex-wrap: wrap;
+}
+
+.pendenciasDiscretasLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #868e96;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.pendenciasDiscretasChips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.chipPendenciaDiscreto {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px 2px 8px;
+  border-radius: 6px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  font-size: 11px;
+  color: #495057;
+  transition: all 0.15s ease;
+}
+
+.chipPendenciaDiscreto:hover {
+  background: #f1f3f5;
+  border-color: #ced4da;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.chipPendenciaClickInfo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.chipPendenciaClickInfo:hover .chipPendenciaData {
+  color: #1971c2;
+  text-decoration: underline;
+}
+
+.chipPendenciaData {
+  font-weight: 500;
+  color: #495057;
+  font-size: 11px;
+  transition: color 0.15s;
+}
+
+.chipPendenciaPago {
+  font-weight: 700;
+  color: #2f9e44;
+  background-color: #ebfbee;
+  border: 1px solid #8ce99a;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 10px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.chipPendenciaSaldo {
+  font-weight: 600;
+  color: #e03131;
+}
+
+.chipPendenciaAcao {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #1971c2;
+  background: #e7f5ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.chipPendenciaAcao:hover {
+  background: #1971c2;
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(25, 113, 194, 0.25);
+}
+
+.pedidoBotoesAcao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnAcaoPedido {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btnEditarPedido {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: #e7f5ff;
+  color: #1971c2;
+  border: 1px solid #a5d8ff;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btnEditarPedido:hover {
+  background: #1971c2;
+  color: #ffffff;
+  border-color: #1971c2;
+}
+
+.btnDevolver {
+  background: #fff5f5;
+  color: #c92a2a;
+  border: 1px solid #ffc9c9;
+}
+
+.btnDevolver:hover {
+  background: #c92a2a;
+  color: #ffffff;
+}
+
+.btnRestaurarPedido {
+  background: #ebfbee;
+  color: #2f9e44;
+  border: 1px solid #b2f2bb;
+}
+
+.btnRestaurarPedido:hover {
+  background: #2f9e44;
+  color: #ffffff;
+}
+
+/* ── PRESETS / BOTÕES RÁPIDOS DE AJUSTES ── */
+.presetsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.presetsTitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: #868e96;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.presetsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.btnPreset {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btnPreset:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+  color: #1a1f2e;
+}
+
+.btnPresetPositivo {
+  background: #f4fbf7;
+  border-color: #c3fae8;
+  color: #0ca678;
+}
+
+.btnPresetPositivo:hover {
+  background: #0ca678;
+  color: #ffffff;
+  border-color: #0ca678;
+}
+
+.btnPresetAmarelo {
+  background: #fff9db;
+  border-color: #ffe066;
+  color: #d97706;
+}
+
+.btnPresetAmarelo:hover {
+  background: #f59f00;
+  color: #ffffff;
+  border-color: #f59f00;
+}
+
+.btnPresetNegativo {
+  background: #fff8f8;
+  border-color: #ffdeeb;
+  color: #e03131;
+}
+
+.btnPresetNegativo:hover {
+  background: #e03131;
+  color: #ffffff;
+  border-color: #e03131;
+}
+
+/* ── FORMULÁRIO DE NOVO AJUSTE ── */
+.formAjuste {
+  background: #f8f9fa;
+  border: 1.5px solid #eaecef;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formAjusteLinha {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 10px;
+}
+
+.formAjusteLinha2 {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 100px;
+  gap: 10px;
+}
+
+.inputForm, .selectForm {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  font-size: 13px;
+  background: #ffffff;
+  color: #1a1f2e;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.inputForm:focus, .selectForm:focus {
+  border-color: #2f9e44;
+  box-shadow: 0 0 0 3px rgba(47, 158, 68, 0.12);
+}
+
+.btnAdicionarAjuste {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #2f9e44;
+  color: #ffffff;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btnAdicionarAjuste:hover:not(:disabled) {
+  background: #2b8a3e;
+}
+
+.btnAdicionarAjuste:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── LISTA DE AJUSTES ADICIONADOS ── */
+.listaAjustes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.itemAjuste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  background: #ffffff;
+  border: 1px solid #eaecef;
+}
+
+.itemAjustePos {
+  border-left: 4px solid #0ca678;
+}
+
+.itemAjusteNeg {
+  border-left: 4px solid #c92a2a;
+}
+
+.itemAjusteInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.itemAjusteDescricao {
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.itemAjusteDetalhe {
+  font-size: 11px;
+  color: #868e96;
+}
+
+.itemAjusteValorAcoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.itemAjusteValor {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.itemAjusteValorPos {
+  color: #0ca678;
+}
+
+.itemAjusteValorNeg {
+  color: #c92a2a;
+}
+
+.btnRemoverAjuste {
+  all: unset;
+  cursor: pointer;
+  color: #adb5bd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.btnRemoverAjuste:hover {
+  background: #fff5f5;
+  color: #c92a2a;
+}
+
+.semAjustes {
+  text-align: center;
+  color: #868e96;
+  font-size: 12px;
+  padding: 18px 0;
+  margin: 0;
+}
+
+/* ── BARRA INFERIOR FIXA / RODAPÉ DE AÇÃO ── */
+.barraAcaoFixa {
+  position: sticky;
+  bottom: 14px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1.5px solid #d0d7de;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  padding: 12px 24px;
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.barraAcaoResumo {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.barraAcaoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.barraAcaoItem span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #868e96;
+  text-transform: uppercase;
+}
+
+.barraAcaoItem strong {
+  font-size: 18px;
+  font-weight: 900;
+  color: #1a1f2e;
+}
+
+.barraAcaoBotoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btnIrPendencias {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #fff3e0;
+  color: #d9480f;
+  border: 1px solid #ffd8a8;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btnIrPendencias:hover {
+  background: #ff922b;
+  color: #ffffff;
+  border-color: #ff922b;
+  box-shadow: 0 4px 12px rgba(247, 103, 7, 0.2);
+}
+
+.btnImprimirFechamento {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #e7f5ff;
+  color: #1971c2;
+  border: 1px solid #a5d8ff;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btnImprimirFechamento:hover {
+  background: #1971c2;
+  color: #ffffff;
+}
+
+.btnConcluirFechamento {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  background: #2f9e44;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(47, 158, 68, 0.25);
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btnConcluirFechamento:hover:not(:disabled) {
+  background: #2b8a3e;
+  transform: translateY(-1px);
+}
+
+.btnConcluirFechamento:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── MODAIS INTERNOS (PAGAMENTO PARCIAL / CONTADOR DE CÉDULAS) ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f3f5;
+  padding-bottom: 12px;
+}
+
+.modalTitulo {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 0;
+}
+
+.modalCloseBtn {
+  all: unset;
+  cursor: pointer;
+  color: #868e96;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+
+.modalCloseBtn:hover {
+  background: #f1f3f5;
+  color: #1a1f2e;
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #f1f3f5;
+  padding-top: 14px;
+  margin-top: 6px;
+}
+
+.btnCancelarModal {
+  all: unset;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #495057;
+  background: #f1f3f5;
+  transition: all 0.15s;
+  box-sizing: border-box;
+}
+
+.btnCancelarModal:hover {
+  background: #e9ecef;
+}
+
+.btnSalvarModal {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffffff;
+  background: #2f9e44;
+  transition: all 0.15s;
+  box-sizing: border-box;
+}
+
+.btnSalvarModal:hover {
+  background: #2b8a3e;
+}
+
+/* Linha de split de pagamento */
+.splitPagamentoLinha {
+  display: grid;
+  grid-template-columns: 1fr 110px 36px;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Contador de cédulas */
+.gridCedulas {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.itemCedula {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.inputQtdCedula {
+  width: 70px;
+  padding: 5px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 700;
+  outline: none;
+}

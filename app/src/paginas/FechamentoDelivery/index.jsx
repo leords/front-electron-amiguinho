@@ -26,6 +26,7 @@ import {
   TrendUpIcon,
   MoneyWavyIcon,
   InfoIcon,
+  BarcodeIcon,
 } from "@phosphor-icons/react";
 import ItemContador from "../../componentes/ItemContador";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
@@ -411,6 +412,25 @@ export default function FechamentoDelivery() {
   const valorPix = vendaDelivery?.resultado?.pix ?? 0;
   const valorCartao = vendaDelivery?.resultado?.cartão ?? 0;
   const valorTotalMaquininha = valorPix + valorCartao;
+  const valorBoleto = (() => {
+    if (
+      !vendaDelivery?.resultado ||
+      typeof vendaDelivery.resultado !== "object"
+    ) {
+      return 0;
+    }
+    let soma = 0;
+    Object.entries(vendaDelivery.resultado).forEach(([chave, valor]) => {
+      const normalizada = String(chave)
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      if (normalizada.includes("bol") && typeof valor === "number") {
+        soma += valor;
+      }
+    });
+    return soma;
+  })();
   const totalEntradas = movimentacoes
     .filter((m) => m.tipo === "entrada")
     .reduce((acc, m) => acc + m.valor, 0);
@@ -520,6 +540,19 @@ export default function FechamentoDelivery() {
                       <p className={styles.resumoCardLabel}>Cartão + Pix</p>
                       <strong className={styles.resumoCardValor}>
                         {formatarMoeda(valorTotalMaquininha)}
+                      </strong>
+                    </div>
+                  </div>
+
+                  {/* BOLETO */}
+                  <div className={styles.resumoCard}>
+                    <div className={styles.resumoCardIcon} data-color="amber">
+                      <BarcodeIcon size={18} weight="fill" />
+                    </div>
+                    <div>
+                      <p className={styles.resumoCardLabel}>Boleto</p>
+                      <strong className={styles.resumoCardValor}>
+                        {formatarMoeda(valorBoleto)}
                       </strong>
                     </div>
                   </div>
@@ -1211,6 +1244,17 @@ export default function FechamentoDelivery() {
                     <p className={styles.fechadoCardLabel}>Cartão + Pix</p>
                     <strong className={styles.fechadoCardValor}>
                       {formatarMoeda(valorTotalMaquininha)}
+                    </strong>
+                  </div>
+                  <div className={styles.fechadoCard}>
+                    <BarcodeIcon
+                      size={22}
+                      weight="duotone"
+                      className={styles.fechadoCardIcone}
+                    />
+                    <p className={styles.fechadoCardLabel}>Boleto</p>
+                    <strong className={styles.fechadoCardValor}>
+                      {formatarMoeda(valorBoleto)}
                     </strong>
                   </div>
 

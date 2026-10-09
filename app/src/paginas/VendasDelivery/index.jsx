@@ -52,6 +52,16 @@ export default function VendasDelivery() {
   const { clientes, carregandoClientesDelivery } = useClientesDelivery();
   const { listaFormaPagamento } = useFormaPagamentoExterna();
 
+  // Formas de pagamento permitidas no Delivery: Apenas A VISTA, CARTÃO e PIX
+  const listaFormasPagamentoFiltrada = useMemo(() => {
+    if (!Array.isArray(listaFormaPagamento)) return [];
+
+    const permitidas = ["A VISTA", "CARTÃO", "PIX"];
+    return listaFormaPagamento.filter((forma) =>
+      permitidas.includes(String(forma?.nome || "").trim().toUpperCase())
+    );
+  }, [listaFormaPagamento]);
+
   // Estados
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [clienteSelecionado, setClienteSelecionado] = useState(null);
@@ -69,6 +79,18 @@ export default function VendasDelivery() {
   const [atualizarRelatorio, setAtualizarRelatorio] = useState(false);
   const [carregarSincronizacaoClientes, setCarregarSincronizacaoClientes] =
     useState(false);
+
+  // Ajusta a forma de pagamento selecionada para a primeira válida quando a lista carregar
+  useEffect(() => {
+    if (listaFormasPagamentoFiltrada.length > 0) {
+      const existe = listaFormasPagamentoFiltrada.some(
+        (f) => Number(f.id) === Number(formaPagamento)
+      );
+      if (!existe) {
+        setFormaPagamento(Number(listaFormasPagamentoFiltrada[0].id));
+      }
+    }
+  }, [listaFormasPagamentoFiltrada, formaPagamento]);
 
   // Valida existencia de usuário.
   if (!usuario) {
@@ -283,7 +305,11 @@ export default function VendasDelivery() {
       setStatusPedido(true);
 
       const formaPagamentoId = Number(formaPagamento);
-      const formaPagamentoSelecionada = listaFormaPagamento.find(
+      const formasDisponiveis =
+        listaFormasPagamentoFiltrada.length > 0
+          ? listaFormasPagamentoFiltrada
+          : listaFormaPagamento || [];
+      const formaPagamentoSelecionada = formasDisponiveis.find(
         (f) => Number(f.id) === formaPagamentoId,
       );
 
@@ -432,9 +458,7 @@ export default function VendasDelivery() {
       <Cabecalho />
 
       <main className={styles.main}>
-        {/* =====================================================
-            CABEÇALHO E MASCOTE
-        ====================================================== */}
+        {/* CABEÇALHO E MASCOTE */}
 
         <div className={styles.containerTituloLogo}>
           {/* CABEÇALHO */}
@@ -547,14 +571,10 @@ export default function VendasDelivery() {
           </div>
         </div>
 
-        {/* =====================================================
-            CARD NOVO PEDIDO
-        ====================================================== */}
+        {/* CARD NOVO PEDIDO */}
 
         <div className={styles.centro}>
-          {/* ===================================================
-              LADO ESQUERDO
-          ==================================================== */}
+          {/* LADO ESQUERDO */}
 
           <div className={styles.colunaEsquerda}>
             {carregarSincronizacaoClientes ? (
@@ -972,10 +992,7 @@ export default function VendasDelivery() {
                     </div>
                   </div>
 
-                  {/* =================================================
-                      🔧 ALTERAÇÃO:
-                      FORMA DE PAGAMENTO
-                  ================================================== */}
+                  {/* ALTERAÇÃO FORMA DE PAGAMENTO */}
 
                   <div className={styles.campo}>
                     <label className={styles.label}>
@@ -998,7 +1015,7 @@ export default function VendasDelivery() {
                       }}
                       className={styles.select}
                     >
-                      {listaFormaPagamento?.map((forma) => (
+                      {listaFormasPagamentoFiltrada?.map((forma) => (
                         <option key={forma.id} value={forma.id}>
                           {forma.nome}
                         </option>

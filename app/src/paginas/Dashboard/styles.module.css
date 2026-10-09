@@ -151,6 +151,35 @@
   align-items: end;
 }
 
+.filtrosGridExterno {
+  display: grid;
+  grid-template-columns: auto auto 1fr 1fr;
+  gap: 20px;
+  padding: 18px 20px;
+  align-items: end;
+}
+
+.selectInputFiltro {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--white);
+  color: var(--gray-900);
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.selectInputFiltro:hover {
+  border-color: #adb5bd;
+}
+.selectInputFiltro:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
 .filtroGrupo {
   display: flex;
   flex-direction: column;
@@ -256,7 +285,19 @@
    ============================================================ */
 .kpiGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+
+.kpiGrid5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+
+.kpiGrid6 {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
   gap: 14px;
 }
 
@@ -317,10 +358,22 @@
   background: var(--purple-light);
   color: var(--purple);
 }
+.kpiIcone[data-cor="red"] {
+  background: var(--red-light);
+  color: var(--red);
+}
 
 .kpiInfo {
   flex: 1;
   min-width: 0;
+}
+
+.kpiHeaderLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 0 0 4px;
 }
 
 .kpiLabel {
@@ -329,7 +382,30 @@
   color: var(--gray-500);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin: 0 0 4px;
+  margin: 0;
+}
+
+.kpiBotaoAcao {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #dc2626;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.kpiBotaoAcao:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+  transform: translateY(-1px);
 }
 
 .kpiValor {
@@ -367,6 +443,203 @@
   100% {
     background-position: -200% 0;
   }
+}
+
+/* ============================================================
+   CARD DE TENDÊNCIA / PROJEÇÃO DO MÊS ATUAL
+   ============================================================ */
+.cardTendencia {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: fadeUp 0.4s ease both;
+  position: relative;
+  overflow: hidden;
+}
+
+.cardTendencia::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--orange), #ffb347, var(--green));
+}
+
+.cardTendenciaHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cardTendenciaHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cardTendenciaIconeWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1971c2, #4dabf7);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 12px rgba(25, 113, 194, 0.28);
+  flex-shrink: 0;
+}
+
+.cardTendenciaTitulos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cardTendenciaSubtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardTendenciaBadgeSetor {
+  background: #e7f5ff;
+  color: var(--blue);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.cardTendenciaTitulo {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.cardTendenciaBadgeTempo {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: var(--gray-700);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cardTendenciaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: 16px;
+}
+
+.cardTendenciaItem {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.cardTendenciaItemDestaque {
+  background: linear-gradient(135deg, #f8fff9 0%, #eefcf0 100%);
+  border: 1.5px solid #bbf7d0;
+  box-shadow: 0 4px 14px rgba(47, 158, 68, 0.1);
+}
+
+.cardTendenciaItemLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardTendenciaTagProjecao {
+  background: #2f9e44;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cardTendenciaItemValor {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gray-900);
+  letter-spacing: -0.5px;
+  margin: 2px 0 0;
+}
+
+.cardTendenciaItemValorDestaque {
+  color: #2b8a3e;
+}
+
+.cardTendenciaItemSub {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin: 0;
+}
+
+.cardTendenciaProgressoWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.cardTendenciaProgressoBarra {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cardTendenciaProgressoFill {
+  height: 100%;
+  background: linear-gradient(90deg, #1971c2 0%, #ff8c00 50%, #2f9e44 100%);
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cardTendenciaProgressoLegenda {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-500);
 }
 
 /* ============================================================
@@ -439,9 +712,30 @@
 /* ============================================================
    LAYOUT
    ============================================================ */
+.linhaGraficosCirculares {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.linhaGraficosCircularesUnico {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.linhaGraficosSuperiores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
 .linhaGraficos {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
   align-items: start;
 }
@@ -451,6 +745,201 @@
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   align-items: start;
+}
+
+/* ============================================================
+   BARRAS DE PARTICIPAÇÃO (% SETOR E FORMA PAGAMENTO)
+   ============================================================ */
+.barraProgressoLista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.barraProgressoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 10px 14px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.barraProgressoItem:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-300);
+}
+
+.barraProgressoHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.barraProgressoIdent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barraProgressoDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.barraProgressoNome {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.barraProgressoQtd {
+  font-size: 11px;
+  color: var(--gray-500);
+}
+
+.barraProgressoValores {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.barraProgressoTotal {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--gray-900);
+}
+
+.barraProgressoPctBadge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+}
+
+.barraProgressoTrack {
+  height: 5px;
+  background: var(--gray-100);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barraProgressoFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.barraSkeletonLista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ============================================================
+   RANKING DE VENDEDORES EXTERNOS
+   ============================================================ */
+.rankingLista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rankingItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.rankingItem:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-300);
+}
+
+.rankingPosicao {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.rankingInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.rankingNomeLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.rankingNome {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.rankingValores {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rankingTotal {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--gray-900);
+}
+
+.rankingPctBadge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  background: var(--orange-light);
+  border: 1px solid var(--orange-mid);
+  padding: 2px 7px;
+  border-radius: 12px;
+}
+
+.rankingBarTrack {
+  height: 5px;
+  background: var(--gray-100);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.rankingBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), #ffb347);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.rankingMetaLinha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--gray-500);
 }
 
 /* ============================================================
@@ -868,9 +1357,29 @@
 /* ============================================================
    RESPONSIVIDADE
    ============================================================ */
+@media (max-width: 1350px) {
+  .kpiGrid,
+  .kpiGrid5,
+  .kpiGrid6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 1200px) {
-  .kpiGrid {
+  .cardTendenciaGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .kpiGrid,
+  .kpiGrid5,
+  .kpiGrid6 {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .linhaGraficosCirculares {
+    grid-template-columns: 1fr;
+  }
+  .linhaGraficosSuperiores {
+    grid-template-columns: 1fr;
   }
   .linhaGraficos {
     grid-template-columns: 1fr;
@@ -896,7 +1405,9 @@
   .pageTitulo {
     font-size: 20px;
   }
-  .kpiGrid {
+  .kpiGrid,
+  .kpiGrid5,
+  .kpiGrid6 {
     grid-template-columns: 1fr 1fr;
   }
   .filtrosGrid {
@@ -917,7 +1428,9 @@
 }
 
 @media (max-width: 480px) {
-  .kpiGrid {
+  .kpiGrid,
+  .kpiGrid5,
+  .kpiGrid6 {
     grid-template-columns: 1fr;
   }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   ArrowLeft,
   Receipt,
@@ -34,6 +34,18 @@ export default function EditarPedido() {
   const { state } = useLocation();
   const navegar = useNavigate();
 
+  // Setor do pedido: BALCAO = precoUndVenda | EXTERNO / DELIVERY = precoVenda
+  const ehBalcao =
+    (state?.tipo || state?.setor || "").toLowerCase() === "balcao";
+
+  const obterPrecoProduto = (prod) => {
+    if (!prod) return 0;
+    if (ehBalcao) {
+      return Number(prod.precoUndVenda ?? prod.precoVenda ?? 0);
+    }
+    return Number(prod.precoVenda ?? prod.precoUndVenda ?? 0);
+  };
+
   // Estados
   const [itens, setItens] = useState(state.itens);
   const [novaQuantidade, setNovaQuantidade] = useState(1);
@@ -52,8 +64,14 @@ export default function EditarPedido() {
   const { produtos } = useProdutos();
   const { mensagem, setMensagem } = usarToast();
 
-  // Mapeando produtos para o <Select />
-  const options = produtos.map((p) => ({ value: p.id, label: p.nome }));
+  // Mapeando produtos para o <Select /> com preço do setor
+  const options = useMemo(() => {
+    return (produtos || []).map((p) => ({
+      value: p.id,
+      label: `${p.nome} — R$ ${obterPrecoProduto(p).toFixed(2)}`,
+      produto: p,
+    }));
+  }, [produtos, ehBalcao]);
 
   // Adiciona o nome referente ao id e key a todos os itens
   useEffect(() => {
@@ -124,6 +142,14 @@ export default function EditarPedido() {
   const adicionarItem = () => {
     if (!produtoSelecionado) return;
 
+    const precoUnit = obterPrecoProduto(produtoSelecionado);
+    const qtd = Number(novaQuantidade || 1);
+
+    if (qtd <= 0) {
+      setMensagem("Informe uma quantidade válida!");
+      return;
+    }
+
     setItens((prev) => [
       ...prev,
       {
@@ -132,9 +158,9 @@ export default function EditarPedido() {
         id: state.id,
         pedidoId: state.id,
         produtoId: produtoSelecionado.id,
-        quantidade: Number(novaQuantidade),
-        valorTotal: Number(produtoSelecionado?.precoUndVenda * novaQuantidade),
-        valorUnit: Number(produtoSelecionado?.precoUndVenda),
+        quantidade: qtd,
+        valorTotal: Number((precoUnit * qtd).toFixed(2)),
+        valorUnit: precoUnit,
       },
     ]);
 
@@ -635,13 +661,13 @@ export default function EditarPedido() {
                   Valor Unit. (R$)
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   className={styles.input}
                   placeholder="0,00"
                   value={
-                    state.tipo === "balcao"
-                      ? produtoSelecionado?.precoUndVenda
-                      : produtoSelecionado?.precoVenda
+                    produtoSelecionado
+                      ? `R$ ${obterPrecoProduto(produtoSelecionado).toFixed(2)}`
+                      : "R$ 0,00"
                   }
                   disabled={true}
                 />
@@ -654,13 +680,16 @@ export default function EditarPedido() {
                   Valor Total. (R$)
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   className={styles.input}
                   placeholder="0,00"
                   value={
-                    state.tipo === "balcao"
-                      ? produtoSelecionado?.precoUndVenda * novaQuantidade
-                      : produtoSelecionado?.precoVenda * novaQuantidade
+                    produtoSelecionado
+                      ? `R$ ${(
+                          obterPrecoProduto(produtoSelecionado) *
+                          Number(novaQuantidade || 1)
+                        ).toFixed(2)}`
+                      : "R$ 0,00"
                   }
                   readOnly
                 />
@@ -678,7 +707,10 @@ export default function EditarPedido() {
               <button
                 className={styles.botaoSalvarNovoItem}
                 onClick={adicionarItem}
-                disabled={!produtoSelecionado?.precoUndVenda}
+                disabled={
+                  !produtoSelecionado ||
+                  obterPrecoProduto(produtoSelecionado) <= 0
+                }
               >
                 <Plus size={15} weight="bold" />
                 Adicionar

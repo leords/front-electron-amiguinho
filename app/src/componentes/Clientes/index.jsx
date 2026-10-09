@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import styles from "./styles.module.css";
 import { LerClienteDelivery } from "../../operadores/API/cliente/lerClienteDelivery";
 import { LerClienteExterno } from "../../operadores/API/cliente/lerClienteExterno";
+import { formatarMoeda } from "../../utils/formartarMoeda";
 import {
   FileTextIcon,
   MagnifyingGlassIcon,
@@ -159,6 +160,7 @@ export default function ListaCliente() {
                 <span>Vendedor</span>
                 <span>Atendimento</span>
                 <span>Frequência</span>
+                <span>Pendências</span>
               </div>
             ) : (
               // DELIVERY
@@ -193,6 +195,38 @@ export default function ListaCliente() {
                     <span>{cliente.vendedor || "-"}</span>
                     <span>{cliente.atendimento || "-"}</span>
                     <span>{cliente.frequencia || "-"}</span>
+                    <div className={styles.pendenciaCol}>
+                      {Number(cliente.totalPendencia || 0) > 0 ? (
+                        <div className={styles.pendenciaContainer}>
+                          <span
+                            className={styles.pendenciaValor}
+                            title={`Saldo devedor: ${formatarMoeda(cliente.totalPendencia)}`}
+                          >
+                            {formatarMoeda(cliente.totalPendencia)}
+                          </span>
+                          {Number(cliente.totalPago || 0) > 0 && (
+                            <span
+                              className={styles.pendenciaPago}
+                              title={`Total já pago: ${formatarMoeda(cliente.totalPago)}`}
+                            >
+                              Pago: {formatarMoeda(cliente.totalPago)}
+                            </span>
+                          )}
+                        </div>
+                      ) : Number(cliente.totalPago || 0) > 0 ? (
+                        <div className={styles.pendenciaContainer}>
+                          <span className={styles.pendenciaQuitada}>Quitada</span>
+                          <span
+                            className={styles.pendenciaPago}
+                            title={`Total pago: ${formatarMoeda(cliente.totalPago)}`}
+                          >
+                            Pago: {formatarMoeda(cliente.totalPago)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className={styles.semPendencia}>-</span>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   // LISTA DELIVERY

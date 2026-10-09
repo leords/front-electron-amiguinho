@@ -14,6 +14,7 @@ import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { gerarOrcamento } from "../../utils/gerarOrcamento";
 import { formatarMoeda } from "../../utils/formartarMoeda";
+import { salvarOrcamentoLocal } from "../../utils/orcamentosStorage.js";
 import {
   ShoppingCartIcon,
   PlusCircleIcon,
@@ -322,6 +323,17 @@ export default function Vendas() {
 
       // Função imprimir condicional
       if (orcamento) {
+        salvarOrcamentoLocal({
+          data: new Date(),
+          vendedor:
+            usuario.nivelAcesso === "ADMIN"
+              ? balcao.value
+              : nomeMaquina || "b1",
+          nomeUsuario: usuario.nome,
+          cliente: nome || "Consumidor",
+          itens: pedidoImprimir.itens,
+          total: totalPedidoCentavos / 100,
+        });
         window.IMPRESSORA.imprimir(gerarOrcamento(pedidoImprimir));
         setStatusPedido(false);
         setMensagem("Orçamento gerado com sucesso!");

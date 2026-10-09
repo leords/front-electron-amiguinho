@@ -115,24 +115,32 @@ export default function Reimprimir() {
         setCarregando(false)
 
     } else {
+        const nomeCliente = typeof cupom.cliente === "object" ? cupom.cliente?.nome : (cupom.cliente || cupom.nomeCliente || "Cliente não informado");
+        const enderecoCliente = typeof cupom.cliente === "object" ? cupom.cliente?.endereco : (cupom.endereco || "");
+        const cidadeCliente = typeof cupom.cliente === "object" ? cupom.cliente?.cidade : (cupom.cidade || "");
+        const telefoneCliente = typeof cupom.cliente === "object" ? cupom.cliente?.telefone : (cupom.telefone || "");
+        const referenciaCliente = typeof cupom.cliente === "object" ? cupom.cliente?.referencia : (cupom.referencia || "");
+        const nomeFormaPagamento = typeof cupom.formaPagamento === "object" ? cupom.formaPagamento?.nome : (cupom.formaPagamento || cupom.formaPagamentoNome || "A VISTA");
+        const listaItens = Array.isArray(cupom.itens) ? cupom.itens : [];
+
         const cupomFormatado = {
           tipo: "segundaVia",
           motivo: "PRODUTO JÁ CARREGADO!",
           data: cupom.data,
-          cliente: cupom.cliente.nome,
-          endereco: cupom.cliente.endereco,
-          cidade: cupom.cliente.cidade,
-          telefone: cupom.cliente.telefone,
-          referencia: cupom.cliente.referencia,
-          formaPagamento: cupom.formaPagamento.nome,
-          vendedor: cupom.vendedor,
-          nomeUsuario: cupom.vendedor,
-          itens: cupom.itens.map((item) => ({
-              produtoId: item.produtoId,
+          cliente: nomeCliente,
+          endereco: enderecoCliente,
+          cidade: cidadeCliente,
+          telefone: telefoneCliente,
+          referencia: referenciaCliente,
+          formaPagamento: nomeFormaPagamento,
+          vendedor: cupom.vendedor || cupom.nomeUsuario || "",
+          nomeUsuario: cupom.vendedor || cupom.nomeUsuario || "",
+          itens: listaItens.map((item) => ({
+              produtoId: item.produtoId || item.id,
               nome: produtos.find((p) => 
-              p.id === item.produtoId)?.nome || "",
-              quantidade: item.quantidade,
-              valorUnit: item.valorUnit,
+              p.id === (item.produtoId || item.id))?.nome || item.nome || "Produto",
+              quantidade: item.quantidade || 1,
+              valorUnit: item.valorUnit || item.precoVenda || 0,
           })),
         };
 
@@ -145,8 +153,11 @@ export default function Reimprimir() {
     }
   };
 
+  const listaItens = Array.isArray(cupom.itens) ? cupom.itens : [];
   // Faz a soma dos pedidos
-  const totalItens = cupom.itens.reduce((acc, item) => acc + item.quantidade, 0);
+  const totalItens = listaItens.reduce((acc, item) => acc + (Number(item.quantidade) || 0), 0);
+  const nomeClienteExibicao = typeof cupom.cliente === "object" ? cupom.cliente?.nome : (cupom.cliente || cupom.nomeCliente || "Cliente não informado");
+  const nomeFormaPagamentoExibicao = typeof cupom.formaPagamento === "object" ? cupom.formaPagamento?.nome : (cupom.formaPagamento || cupom.formaPagamentoNome || "A VISTA");
 
   return (
     <div className={styles.container}>
@@ -182,7 +193,7 @@ export default function Reimprimir() {
                 </div>
                 <div>
                   <p className={styles.cardLabel}>Itens no pedido</p>
-                  <strong className={styles.cardValor}>{cupom.itens.length}</strong>
+                  <strong className={styles.cardValor}>{listaItens.length}</strong>
                   <p className={styles.cardSub}>{totalItens} unidades no total</p>
                 </div>
               </div>
@@ -193,7 +204,7 @@ export default function Reimprimir() {
                 </div>
                 <div>
                   <p className={styles.cardLabel}>Total do pedido</p>
-                  <strong className={styles.cardValor}>{formatarMoeda(cupom.total)}</strong>
+                  <strong className={styles.cardValor}>{formatarMoeda(cupom.total || cupom.valorTotal || 0)}</strong>
                   <p className={styles.cardSub}>valor final</p>
                 </div>
               </div>
@@ -204,16 +215,16 @@ export default function Reimprimir() {
                 </div>
                 <div>
                   <p className={styles.cardLabel}>Forma de pagamento</p>
-                  {cupom.tipo === 'balcao'
+                  {cupom.tipo === 'balcao' && Array.isArray(cupom.pagamentos)
                   ?
                     <strong className={styles.cardValorPagamento}>
                         {cupom.pagamentos
-                          .map((p) => p.formaPagamento.nome)
+                          .map((p) => p.formaPagamento?.nome || p.nomeFormaPagamento || "Outros")
                           .join(" / ")}
                     </strong>                    
                   :
                     <strong className={styles.cardValorPagamento}>
-                        {cupom.formaPagamento?.nome}
+                        {nomeFormaPagamentoExibicao}
                     </strong>
                 }
 
@@ -247,10 +258,10 @@ export default function Reimprimir() {
                       ${cupom.status === 'pendente' ? styles.carregado : ''}
                       ${cupom.status === 'entregue' ? styles.entregue : ''}
                       ${cupom.status === 'devolvido' ? styles.devolvido : ''}
-                      `}>{cupom.status}</p>
+                      `}>{cupom.status || 'pendente'}</p>
                   </div>
                 </div>
-                  <span className={styles.badge}>{cupom.itens.length} {cupom.itens.length === 1 ? "item" : "itens"}</span>
+                  <span className={styles.badge}>{listaItens.length} {listaItens.length === 1 ? "item" : "itens"}</span>
               </div>
 
               {cupom.tipo !== 'balcao' &&
@@ -260,14 +271,14 @@ export default function Reimprimir() {
                     </strong>
                   <div className={styles.containerInfo}> 
                     <div className={styles.cardInfoPedido}>
-                      <p className={styles.cardLabel}>◉ Cliente: {cupom.cliente.nome}</p>
-                      <p className={styles.cardLabel}>◉ Usuário: {cupom.vendedor}</p>
-                      <p className={styles.cardLabel}>◉ Realizado: {dataFormatada(cupom.data)}</p>
+                      <p className={styles.cardLabel}>◉ Cliente: {nomeClienteExibicao}</p>
+                      <p className={styles.cardLabel}>◉ Usuário: {cupom.vendedor || cupom.nomeUsuario || "Não informado"}</p>
+                      <p className={styles.cardLabel}>◉ Realizado: {dataFormatada(cupom.data || cupom.criadoEm)}</p>
                     </div>
 
                     <div className={styles.cardInfoPedido}>
                       <p className={styles.cardLabel}> {cupom.dataCarregada ? `◉ Carregado: ${dataFormatada(cupom.dataCarregada)}` : '○ Carregado: Não'} </p>
-                      <p className={styles.cardLabel}> {cupom.dataEntregue ? `◉ Entregue: ${dataFormatada(cupom.dataEntrega)}` : '○ Entrega: pendente' } </p>
+                      <p className={styles.cardLabel}> {cupom.dataEntregue ? `◉ Entregue: ${dataFormatada(cupom.dataEntrega || cupom.dataEntregue)}` : '○ Entrega: pendente' } </p>
                     </div>
                   </div>
 
@@ -284,14 +295,14 @@ export default function Reimprimir() {
                 </div>
 
                 <div className={styles.tabelaBody}>
-                  {cupom.itens.map((item) => (
+                  {listaItens.map((item) => (
                     <div key={item.id} className={styles.itemRow}>
-                      <span className={styles.itemQtd}>{item.quantidade}</span>
+                      <span className={styles.itemQtd}>{item.quantidade || 1}</span>
                       <span className={styles.itemNome}>
-                        {produtos.find((p) => p.id === item.produtoId)?.nome || "Produto não encontrado"}
+                        {produtos.find((p) => p.id === (item.produtoId || item.id))?.nome || item.nome || "Produto"}
                       </span>
-                      <span className={styles.itemValor}>{formatarMoeda(item.valorUnit)}</span>
-                      <span className={styles.itemTotal}>{formatarMoeda(item.valorTotal)}</span>
+                      <span className={styles.itemValor}>{formatarMoeda(item.valorUnit || item.precoVenda || 0)}</span>
+                      <span className={styles.itemTotal}>{formatarMoeda(item.valorTotal || ((item.quantidade || 1) * (item.valorUnit || item.precoVenda || 0)))}</span>
                     </div>
                   ))}
                 </div>
@@ -305,26 +316,26 @@ export default function Reimprimir() {
                 </div>
                 <div className={styles.resumoItem}>
                   <span>Subtotal</span>
-                  <span>{formatarMoeda(cupom.total)}</span>
+                  <span>{formatarMoeda(cupom.total || cupom.valorTotal || 0)}</span>
                 </div>
 
-                {cupom.tipo === 'balcao'
+                {cupom.tipo === 'balcao' && Array.isArray(cupom.pagamentos)
                   ?
                     <div className={styles.resumoItem}>
                       <span>Pagamentos</span>
                         {cupom.pagamentos
-                          .map((p) => `${p.formaPagamento.nome}: R$ ${p.valor.toFixed(2)}`)
+                          .map((p) => `${p.formaPagamento?.nome || p.nomeFormaPagamento || "Outros"}: R$ ${Number(p.valor || 0).toFixed(2)}`)
                           .join(" + ")}
                     </div>                    
                   :
                     <strong className={styles.cardValorPagamento}>
-                        {cupom.formaPagamento?.nome}
+                        {nomeFormaPagamentoExibicao}
                     </strong>
                 }
 
                 <div className={styles.totalFinal}>
                   <span>Total</span>
-                  <span className={styles.valorTotal}>{formatarMoeda(cupom.total)}</span>
+                  <span className={styles.valorTotal}>{formatarMoeda(cupom.total || cupom.valorTotal || 0)}</span>
                 </div>
 
               </div>

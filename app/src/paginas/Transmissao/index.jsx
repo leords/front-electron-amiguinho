@@ -23,6 +23,9 @@ import { BuscarClienteExterno } from "../../operadores/API/cliente/buscarCliente
 import { BuscarProduto } from "../../operadores/API/produto/buscarProduto";
 import { buscarFormaPagamento } from "../../operadores/API/formaPagamento/buscarFormaPagamento";
 import { usarToast } from "../../componentes/Context/toastContext";
+import { lerFormaPagamentoBalcao } from "../../operadores/API/formaPagamento/lerFormaPagamentoBalcao";
+import { lerFormaPagamentoExterna } from "../../operadores/API/formaPagamento/lerFormaPagamentoExterna";
+import { lerFormasPagamento } from "../../operadores/API/formaPagamento/lerFormasPagamento";
 
 
 // Componente botão.
@@ -86,6 +89,9 @@ export default function Transmissao() {
     },
     clientesForce: async () => {
       await buscarFormaPagamento();
+      await lerFormaPagamentoBalcao();
+      await lerFormaPagamentoExterna();
+      await lerFormasPagamento();
       setStatusFormas(agora);
     },
   }

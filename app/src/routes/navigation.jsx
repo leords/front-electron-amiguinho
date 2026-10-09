@@ -27,6 +27,13 @@ import Localizacao from "../paginas/Localizacao/index.jsx";
 import RelatorioVendas from "../paginas/RelatorioDiario/index.jsx";
 import FechamentoFinalizado from "../paginas/FechamentoFinalizado/index.jsx";
 import ConfigurarImpressora from "../paginas/Impressora/index.jsx";
+import Motoristas from "../paginas/Motoristas/index.jsx";
+import Veiculos from "../paginas/Veiculos/index.jsx";
+import Cargas from "../paginas/Cargas/index.jsx";
+import Pendencias from "../paginas/Pendencias/index.jsx";
+import PrestacaoContas from "../paginas/PrestacaoContas/index.jsx";
+import PedidoExterno from "../paginas/PedidoExterno/index.jsx";
+import FechamentoCarga from "../paginas/FechamentoCarga/index.jsx";
 
 export function Navegador() {
   return (
@@ -53,6 +60,8 @@ export function Navegador() {
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/caixa" element={<Caixa />} />
             <Route path="/venda-delivery" element={<VendasDelivery />} />
+            <Route path="/venda-externa" element={<PedidoExterno />} />
+            <Route path="/pedido-externo" element={<PedidoExterno />} />
             <Route
               path="/historico-pedidos-delivery"
               element={<HistoricoDelivery />}
@@ -78,6 +87,13 @@ export function Navegador() {
               path="/configurar-impressora"
               element={<ConfigurarImpressora />}
             />
+            <Route path="/motoristas" element={<Motoristas />} />
+            <Route path="/veiculos" element={<Veiculos />} />
+            <Route path="/cargas" element={<Cargas />} />
+            <Route path="/fechamento-carga" element={<FechamentoCarga />} />
+            <Route path="/fechamento-carga/:id" element={<FechamentoCarga />} />
+            <Route path="/pendencias" element={<Pendencias />} />
+            <Route path="/prestacao-contas" element={<PrestacaoContas />} />
           </Routes>
         </ToastProvedor>
       </AuthProvedor>

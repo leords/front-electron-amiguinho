@@ -95,6 +95,62 @@
   margin: 0 2px 5px;
 }
 
+/* CONTROLE DE DATA */
+.containerData {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calendario {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--gray-300);
+  background-color: var(--white);
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.calendario:hover {
+  border-color: #adb5bd;
+}
+
+.calendario:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
+}
+
+.botaoHoje {
+  padding: 9px 16px;
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1.5px solid var(--orange-mid);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.botaoHoje:hover {
+  background: var(--orange);
+  color: var(--white);
+  border-color: var(--orange);
+}
+
+.balcaoSelector {
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 /* Relógio ao vivo */
 .relogio {
   display: flex;

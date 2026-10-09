@@ -8,6 +8,8 @@ import {
   GpsFixIcon,
   HandCoinsIcon,
   PrinterIcon,
+  IdentificationCardIcon,
+  ReceiptIcon,
 } from "@phosphor-icons/react";
 import styles from "./styles.module.css";
 import Cabecalho from "../../componentes/Cabecalho";
@@ -54,6 +56,22 @@ export default function Gestao() {
             destino="/clientes"
             icone={Storefront}
             cor="orange"
+          />
+
+          <MenuButton
+            titulo="Motoristas"
+            descricao="Cadastro e gestão de motoristas de entrega"
+            destino="/motoristas"
+            icone={IdentificationCardIcon}
+            cor="orange"
+          />
+
+          <MenuButton
+            titulo="Veículos"
+            descricao="Frota, capacidade de carga e disponibilidade"
+            destino="/veiculos"
+            icone={Truck}
+            cor="blue"
           />
 
           <MenuButton

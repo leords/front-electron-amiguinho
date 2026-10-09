@@ -31,6 +31,7 @@ export default function FechamentoBalcaoUsuario() {
   ];
 
   // Estados
+  const [dataFechamento, setDataFechamento] = useState(dataFormatadaCalendario());
   const [duzentos, setDuzentos] = useState(0);
   const [cem, setCem] = useState(0);
   const [cinquenta, setCinquenta] = useState(0);
@@ -51,34 +52,37 @@ export default function FechamentoBalcaoUsuario() {
     resultado: { a_vista: 0, cartao: 0, pix: 0 },
   });
 
-  const horaAtual = new Date();
-
   // Busca fechamento balcão setado ou selecionado pelo adm ...
   useEffect(() => {
-    try {
-      setCarregando(true);
-      const dataFormatada = dataFormatadaCalendario();
-      const buscarVendasDia = async () => {
+    const buscarVendasDia = async () => {
+      try {
+        setCarregando(true);
+        const dataParaBuscar = dataFechamento || dataFormatadaCalendario();
         // Pega nome do balcão cadastrado na máquina, se não pega o que o admin escolher
         const dados = await buscarFechamentoBalcao({
-          data: dataFormatada,
+          data: dataParaBuscar,
           vendedor:
             usuario?.nivelAcesso === "ADMIN"
               ? balcao.value
               : localStorage.getItem("balcao"),
         });
-        setVendaDia(dados);
+        setVendaDia(
+          dados || {
+            total: 0,
+            interno: 0,
+            resultado: { a_vista: 0, cartao: 0, pix: 0 },
+          }
+        );
+      } catch (error) {
+        console.error(error.message);
+        setMensagem(error.message);
+      } finally {
+        setCarregando(false);
+      }
+    };
 
-        console.log("dados: ", dados);
-      };
-      buscarVendasDia();
-      setCarregando(false);
-    } catch (error) {
-      console.log(error.message);
-      setMensagem(error.message);
-      setCarregando(false);
-    }
-  }, [balcao]);
+    buscarVendasDia();
+  }, [balcao, dataFechamento, usuario]);
 
   // Limpar os estados dos campos de notas
   const limpar = () => {
@@ -101,10 +105,18 @@ export default function FechamentoBalcaoUsuario() {
     dois * 2;
 
   const totalNotas = duzentos + cem + cinquenta + vinte + dez + cinco + dois;
-  const diferenca = totalContado - vendaDia.resultado.a_vista;
+  const diferenca = totalContado - (vendaDia?.resultado?.a_vista || 0);
 
   const diferencaStatus =
     diferenca === 0 ? "ok" : diferenca > 0 ? "sobra" : "falta";
+
+  const tratarAlteracaoData = (e) => {
+    setDataFechamento(e.target.value);
+  };
+
+  const tratarSetarHoje = () => {
+    setDataFechamento(dataFormatadaCalendario());
+  };
 
   return (
     <div className={styles.container}>
@@ -126,21 +138,20 @@ export default function FechamentoBalcaoUsuario() {
             </div>
           </div>
 
-          <div className={styles.relogio}>
-            <div className={styles.relogioItem}>
-              <CalendarIcon
-                size={14}
-                weight="bold"
-                className={styles.relogioIcone}
-              />
-              <span>
-                {horaAtual.toLocaleDateString("pt-BR", {
-                  weekday: "short",
-                  day: "2-digit",
-                  month: "short",
-                })}
-              </span>
-            </div>
+          <div className={styles.containerData}>
+            <input
+              className={styles.calendario}
+              type="date"
+              value={dataFechamento}
+              onChange={tratarAlteracaoData}
+            />
+            <button
+              className={styles.botaoHoje}
+              onClick={tratarSetarHoje}
+              type="button"
+            >
+              Hoje
+            </button>
           </div>
         </div>
 
@@ -278,7 +289,7 @@ export default function FechamentoBalcaoUsuario() {
                   <div className={styles.conferenciaLinha}>
                     <span>Dinheiro esperado</span>
                     <strong className={styles.valorNeutro}>
-                      {formatarMoeda(vendaDia.resultado?.a_vista)}
+                      {formatarMoeda(vendaDia?.resultado?.a_vista || 0)}
                     </strong>
                   </div>
                   <div className={styles.conferenciaDivider} />
@@ -300,8 +311,8 @@ export default function FechamentoBalcaoUsuario() {
           {carregando ? (
             <div className={styles.enviandoPedido}>
               <Spinner />
-              <p>Enviando pedido, aguarde um instante...</p>
-              <span>Estabelecendo conexão com o banco de dados...</span>
+              <p>Carregando dados do fechamento...</p>
+              <span>Buscando informações do dia selecionado...</span>
             </div>
           ) : (
             <>
@@ -319,7 +330,7 @@ export default function FechamentoBalcaoUsuario() {
                     </div>
                   </div>
                   <div className={styles.totalGeralWrapper}>
-                    <CartaoContador valor={vendaDia.total} metodo="Total" />
+                    <CartaoContador valor={vendaDia?.total || 0} metodo="Total" />
                   </div>
                 </div>
 
@@ -334,24 +345,28 @@ export default function FechamentoBalcaoUsuario() {
                   </div>
                   <div className={styles.gridCartoes}>
                     <CartaoContador
-                      valor={vendaDia.resultado.a_vista}
+                      valor={vendaDia?.resultado?.a_vista || 0}
                       metodo="Dinheiro"
-                      total={vendaDia.total}
+                      total={vendaDia?.total || 0}
                     />
                     <CartaoContador
-                      valor={vendaDia.resultado.cartão}
+                      valor={
+                        vendaDia?.resultado?.cartão ||
+                        vendaDia?.resultado?.cartao ||
+                        0
+                      }
                       metodo="Cartão"
-                      total={vendaDia.total}
+                      total={vendaDia?.total || 0}
                     />
                     <CartaoContador
-                      valor={vendaDia.resultado.pix}
+                      valor={vendaDia?.resultado?.pix || 0}
                       metodo="PIX"
-                      total={vendaDia.total}
+                      total={vendaDia?.total || 0}
                     />
                     <CartaoContador
-                      valor={vendaDia.interno}
+                      valor={vendaDia?.interno || 0}
                       metodo="Interno"
-                      total={vendaDia.total}
+                      total={vendaDia?.total || 0}
                     />
                   </div>
                 </div>

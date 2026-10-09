@@ -1,0 +1,705 @@
+/* Layout Base */
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f2f4f7;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.principal {
+  flex: 1;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 28px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Cabeçalho */
+.tituloSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.containerTitulo {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.iconeWrapper {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #2f9e44, #51cf66);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 14px rgba(47, 158, 68, 0.35);
+  flex-shrink: 0;
+}
+
+.pageSubtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: #2f9e44;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 2px;
+}
+
+.pageTitulo {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+/* Botão voltar */
+.botaoVoltar {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff5f5;
+  color: #c92a2a;
+  border: 1.5px solid #ffc9c9;
+  transition: all 0.2s;
+}
+
+.botaoVoltar:hover {
+  background: #c92a2a;
+  color: #ffffff;
+  border-color: #c92a2a;
+  transform: translateY(-1px);
+}
+
+/* Cards Resumo KPIs */
+.cardsResumoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.cardResumo {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaecef;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cardResumoIcone {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardResumoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cardResumoInfo span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #868e96;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cardResumoInfo strong {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a1f2e;
+}
+
+.cardResumoSaldo .cardResumoIcone {
+  background: #fff3e0;
+  color: #ff8c00;
+}
+
+.cardResumoVencidas .cardResumoIcone {
+  background: #fff5f5;
+  color: #c92a2a;
+}
+
+.cardResumoRecebido .cardResumoIcone {
+  background: #ebfbee;
+  color: #2f9e44;
+}
+
+/* Filtros */
+.painelFiltros {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaecef;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filtrosHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filtrosGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.filtroGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filtroLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.inputFiltro, .selectFiltro {
+  border: 1.5px solid #dee2e6;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  color: #1a1f2e;
+  background: #ffffff;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.inputFiltro:focus, .selectFiltro:focus {
+  border-color: #2f9e44;
+}
+
+/* Barra de Ações */
+.cabecalhoPage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.badgeContador {
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.botaoNovaPendencia {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #ebfbee;
+  color: #2f9e44;
+  border: 1.5px solid #b2f2bb;
+  transition: all 0.2s;
+}
+
+.botaoNovaPendencia:hover {
+  background: #2f9e44;
+  color: #ffffff;
+  border-color: #2f9e44;
+  transform: translateY(-1px);
+}
+
+/* Card & Tabela */
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid #eaecef;
+  overflow: hidden;
+}
+
+.tabelaWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tituloLista {
+  background: #f8f9fa;
+  padding: 14px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #eaecef;
+}
+
+.gridPendencias {
+  display: grid;
+  grid-template-columns: 60px 1.6fr 80px 100px 100px 110px 120px 90px 130px;
+  align-items: center;
+  gap: 10px;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+}
+
+.itemRow {
+  padding: 14px 20px;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 13px;
+  color: #212529;
+  transition: background 0.15s;
+}
+
+.itemRow:hover {
+  background: #f8f9fa;
+}
+
+.idCell {
+  font-weight: 700;
+  color: #868e96;
+}
+
+.nomeClienteCell {
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.valorPagoTexto {
+  color: #2f9e44;
+  font-weight: 600;
+}
+
+.saldoDevedorTexto {
+  color: #c92a2a;
+  font-weight: 700;
+}
+
+.vencimentoAtrasado {
+  color: #c92a2a;
+  font-weight: 600;
+}
+
+.badgeDiasAtraso {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #c92a2a;
+}
+
+.badgeStatus {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.badgeAberta {
+  background: #fff5f5;
+  color: #c92a2a;
+}
+
+.badgeParcial {
+  background: #fff3e0;
+  color: #ff8c00;
+}
+
+.badgeFechada {
+  background: #ebfbee;
+  color: #2f9e44;
+}
+
+.colunaAcoes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.botaoVisualizar {
+  all: unset;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #495057;
+  background: #f1f3f5;
+  transition: all 0.2s;
+}
+
+.botaoVisualizar:hover {
+  background: #dee2e6;
+  color: #1a1f2e;
+}
+
+.botaoReceber {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2f9e44;
+  background: #ebfbee;
+  transition: all 0.2s;
+}
+
+.botaoReceber:hover {
+  background: #2f9e44;
+  color: #ffffff;
+}
+
+/* Modal Detalhes & Formulários */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 650px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modalContentPequeno {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eaecef;
+}
+
+.modalSubtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: #2f9e44;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.modalTitulo {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 0;
+}
+
+.modalCloseBtn {
+  all: unset;
+  cursor: pointer;
+  color: #868e96;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.modalCloseBtn:hover {
+  color: #c92a2a;
+}
+
+.modalInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eaecef;
+}
+
+.modalInfoItem {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modalInfoItem span {
+  font-size: 11px;
+  color: #868e96;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.modalInfoItem strong {
+  color: #1a1f2e;
+}
+
+.modalPagamentosWrapper {
+  padding: 18px 24px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modalSecaoTitulo {
+  font-size: 13px;
+  font-weight: 700;
+  color: #495057;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.modalTabela {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modalPagamentoRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.modalFormaPag {
+  color: #495057;
+  font-size: 12px;
+}
+
+.modalPagamentoDireita {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modalDataPag {
+  font-size: 11px;
+  color: #868e96;
+}
+
+.semPagamentosModal {
+  color: #868e96;
+  font-size: 13px;
+  margin: 0;
+}
+
+.modalFormBody {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoClienteBox {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.infoClienteBox span {
+  color: #868e96;
+}
+
+.divInputModal {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inputModal {
+  border: 1.5px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  color: #1a1f2e;
+  background: #ffffff;
+}
+
+.inputModal:focus {
+  border-color: #2f9e44;
+}
+
+.ajudaSaldo {
+  font-size: 11px;
+  color: #868e96;
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #eaecef;
+  background: #f8f9fa;
+}
+
+.botaoFecharModal {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #ffffff;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  transition: all 0.2s;
+}
+
+.botaoFecharModal:hover {
+  background: #e9ecef;
+}
+
+.botaoReceberModal {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #2f9e44;
+  color: #ffffff;
+  transition: all 0.2s;
+}
+
+.botaoReceberModal:hover {
+  background: #2b8a3e;
+}
+
+.botaoConfirmarModal {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #2f9e44;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(47, 158, 68, 0.3);
+  transition: all 0.2s;
+}
+
+.botaoConfirmarModal:hover:not(:disabled) {
+  background: #2b8a3e;
+}
+
+.botaoConfirmarModal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Estado Vazio */
+.estadoVazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 12px;
+  color: #868e96;
+  text-align: center;
+}
+
+.iconeVazio {
+  color: #adb5bd;
+}
+
+@media (max-width: 900px) {
+  .cardsResumoGrid {
+    grid-template-columns: 1fr;
+  }
+  .filtrosGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .gridPendencias {
+    grid-template-columns: 50px 1.2fr 70px 80px 80px 80px 90px 70px 100px;
+  }
+}
