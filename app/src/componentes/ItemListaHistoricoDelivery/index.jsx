@@ -29,9 +29,9 @@ export default function PedidoHistoricoDelivery({ pedidos = [] }) {
           </tr>
         </thead>
         <tbody>
-          {pedidos.map((pedido) => (
+          {pedidos.map((pedido, index) => (
             <tr
-              key={pedido.id}
+              key={pedido.uuid || `${pedido.id}-${index}`}
               onClick={() => navegar("/reimprimir", { state: pedido })}
               className={
                 pedido.status?.toLowerCase() === "cancelado"

@@ -278,8 +278,6 @@ export default function PedidoExterno() {
       // Envia requisição para a API
       const respostaAPI = await NovoPedidoExterno(payload);
 
-      
-
       setMensagem(
         respostaAPI?.mensagem || "Pedido externo gerado com sucesso!"
       );

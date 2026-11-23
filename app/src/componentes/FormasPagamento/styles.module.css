@@ -1,0 +1,408 @@
+:root {
+  --orange: #ff8c00;
+  --orange-light: #fff3e0;
+  --orange-mid: #ffd699;
+  --green: #2f9e44;
+  --green-light: #ebfbee;
+  --green-mid: #8ce99a;
+  --blue: #1971c2;
+  --blue-light: #e7f5ff;
+  --blue-mid: #a5d8ff;
+  --purple: #7048e8;
+  --purple-light: #f3f0ff;
+  --purple-mid: #b197fc;
+  --red: #c92a2a;
+  --red-light: #fff5f5;
+  --red-mid: #ffc9c9;
+  --gray-900: #1a1f2e;
+  --gray-700: #495057;
+  --gray-500: #868e96;
+  --gray-300: #dee2e6;
+  --gray-100: #f8f9fa;
+  --white: #ffffff;
+  --border: #eaecef;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.08), 0 6px 24px rgba(0, 0, 0, 0.06);
+  --radius: 14px;
+}
+
+/* Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: fadeUp 0.35s ease both;
+  width: 100%;
+}
+
+/* Barra Superior */
+.barraSuperior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.resumoBadges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badgeGeral {
+  background: var(--purple-light);
+  color: var(--purple);
+  border: 1px solid var(--purple-mid);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badgeAtivos {
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green-mid);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badgeInativos {
+  background: var(--gray-100);
+  color: var(--gray-500);
+  border: 1px solid var(--gray-300);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.acoesSuperiores {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.botaoRecarregar {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-300);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.botaoRecarregar:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-500);
+  color: var(--gray-900);
+}
+
+.botaoNovaForma {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--green), #40c057);
+  color: var(--white);
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(47, 158, 68, 0.25);
+  transition: all 0.2s;
+}
+
+.botaoNovaForma:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(47, 158, 68, 0.35);
+  background: linear-gradient(135deg, #2b8a3e, #37b24d);
+}
+
+/* Card de Filtros */
+.cardFiltros {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.buscaWrapper {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  align-items: center;
+  background: var(--gray-100);
+  border: 1.5px solid var(--gray-300);
+  border-radius: 10px;
+  padding: 0 12px;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.buscaWrapper:focus-within {
+  border-color: var(--purple);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(112, 72, 232, 0.15);
+}
+
+.iconeBusca {
+  color: var(--gray-500);
+  flex-shrink: 0;
+}
+
+.inputBusca {
+  all: unset;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 13.5px;
+  color: var(--gray-900);
+}
+
+.inputBusca::placeholder {
+  color: var(--gray-500);
+}
+
+.selectFiltro {
+  all: unset;
+  box-sizing: border-box;
+  background: var(--gray-100);
+  border: 1.5px solid var(--gray-300);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.selectFiltro:hover,
+.selectFiltro:focus {
+  border-color: var(--purple);
+  background: var(--white);
+}
+
+/* Tabela de Formas */
+.tabelaContainer {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.tabela th {
+  background: var(--gray-100);
+  padding: 14px 18px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tabela td {
+  padding: 14px 18px;
+  font-size: 13.5px;
+  color: var(--gray-900);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.tabela tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela tr:hover td {
+  background: #fafbfc;
+}
+
+.colId {
+  width: 80px;
+  font-weight: 700;
+  color: var(--gray-500);
+}
+
+.nomeForma {
+  font-weight: 700;
+  color: var(--gray-900);
+  letter-spacing: 0.3px;
+}
+
+.badgeTipo {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue-mid);
+  text-transform: uppercase;
+}
+
+/* Badges de Status */
+.statusAtivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 20px;
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green-mid);
+}
+
+.statusInativo {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 20px;
+  background: var(--red-light);
+  color: var(--red);
+  border: 1px solid var(--red-mid);
+}
+
+/* Ações */
+.acoesLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btnAcaoEditar {
+  all: unset;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue-mid);
+  transition: all 0.2s;
+}
+
+.btnAcaoEditar:hover {
+  background: var(--blue);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.btnAcaoInativar {
+  all: unset;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--red-light);
+  color: var(--red);
+  border: 1px solid var(--red-mid);
+  transition: all 0.2s;
+}
+
+.btnAcaoInativar:hover {
+  background: var(--red);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.btnAcaoReativar {
+  all: unset;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green-mid);
+  transition: all 0.2s;
+}
+
+.btnAcaoReativar:hover {
+  background: var(--green);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+/* Estados de Carregamento e Vazio */
+.estadoCarregando,
+.estadoVazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  color: var(--gray-500);
+  gap: 12px;
+}
+
+.estadoVazio p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

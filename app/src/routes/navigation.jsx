@@ -17,6 +17,7 @@ import Estoque from "../paginas/estoque/index.jsx";
 import Gestao from "../paginas/Gestao/index.jsx";
 import Usuarios from "../paginas/Usuarios/index.jsx";
 import Produtos from "../paginas/Produtos/index.jsx";
+import FormasPagamento from "../paginas/FormasPagamento/index.jsx";
 import Clientes from "../paginas/Clientes/index.jsx";
 import Caixa from "../paginas/Caixa/index.jsx";
 import VendasDelivery from "../paginas/VendasDelivery/index.jsx";
@@ -34,6 +35,11 @@ import Pendencias from "../paginas/Pendencias/index.jsx";
 import PrestacaoContas from "../paginas/PrestacaoContas/index.jsx";
 import PedidoExterno from "../paginas/PedidoExterno/index.jsx";
 import FechamentoCarga from "../paginas/FechamentoCarga/index.jsx";
+import Boletos from "../paginas/Boletos/index.jsx";
+import Pagamentos from "../paginas/Pagamentos/index.jsx";
+import RelatorioCliente from "../paginas/RelatorioCliente/index.jsx";
+import GestaoDesempenhoClientes from "../paginas/GestaoDesempenhoClientes/index.jsx";
+import GestaoClientesSemCompras from "../paginas/GestaoClientesSemCompras/index.jsx";
 
 export function Navegador() {
   return (
@@ -57,6 +63,7 @@ export function Navegador() {
             <Route path="/gestao" element={<Gestao />} />
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/produtos" element={<Produtos />} />
+            <Route path="/formas-pagamento" element={<FormasPagamento />} />
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/caixa" element={<Caixa />} />
             <Route path="/venda-delivery" element={<VendasDelivery />} />
@@ -94,6 +101,17 @@ export function Navegador() {
             <Route path="/fechamento-carga/:id" element={<FechamentoCarga />} />
             <Route path="/pendencias" element={<Pendencias />} />
             <Route path="/prestacao-contas" element={<PrestacaoContas />} />
+            <Route path="/boletos" element={<Boletos />} />
+            <Route path="/pagamentos" element={<Pagamentos />} />
+            <Route path="/relatorio-cliente" element={<RelatorioCliente />} />
+            <Route
+              path="/gestao-desempenho-clientes"
+              element={<GestaoDesempenhoClientes />}
+            />
+            <Route
+              path="/gestao-clientes-sem-compras"
+              element={<GestaoClientesSemCompras />}
+            />
           </Routes>
         </ToastProvedor>
       </AuthProvedor>

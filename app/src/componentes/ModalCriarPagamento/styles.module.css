@@ -1,0 +1,597 @@
+/* ── OVERLAY E CONTAINER DO MODAL ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: scaleUp 0.2s ease-out;
+  transition: max-width 0.25s ease;
+}
+
+.modalContentPequeno {
+  max-width: 480px;
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.97);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* ── CABEÇALHO DO MODAL ── */
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f1f3f5;
+  background: #ffffff;
+}
+
+.modalHeaderTituloWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconeHeaderWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #ebfbee;
+  color: #2f9e44;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modalSubtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: #2f9e44;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 0;
+}
+
+.modalTitulo {
+  font-size: 17px;
+  font-weight: 800;
+  color: #1a1f2e;
+  margin: 2px 0 0;
+}
+
+.modalCloseBtn {
+  all: unset;
+  cursor: pointer;
+  color: #868e96;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+
+.modalCloseBtn:hover {
+  background: #f1f3f5;
+  color: #1a1f2e;
+}
+
+.btnVoltarTopo {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #f1f3f5;
+  color: #495057;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.15s;
+  margin-right: 8px;
+}
+
+.btnVoltarTopo:hover {
+  background: #e9ecef;
+  color: #1a1f2e;
+}
+
+/* ── CORPO DO MODAL ── */
+.modalBody {
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+/* ── FILTROS DA LISTA DE PENDÊNCIAS ── */
+.painelFiltros {
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #eaecef;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filtrosLinhaTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.filtrosTitulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btnLimparFiltros {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #868e96;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.btnLimparFiltros:hover {
+  color: #c92a2a;
+  background: #fff5f5;
+}
+
+.filtrosGrid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1.6fr;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .filtrosGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filtroGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filtroLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.inputFiltro,
+.selectFiltro {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 7px;
+  border: 1.5px solid #dee2e6;
+  background: #ffffff;
+  font-size: 12px;
+  color: #1a1f2e;
+  font-weight: 500;
+  transition: all 0.2s;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.inputFiltro:focus,
+.selectFiltro:focus {
+  border-color: #2f9e44;
+  box-shadow: 0 0 0 3px rgba(47, 158, 68, 0.12);
+}
+
+.periodoInputsWrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.botoesAtalhosData {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.btnAtalho {
+  all: unset;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #e9ecef;
+  color: #495057;
+  font-size: 10px;
+  font-weight: 700;
+  transition: all 0.15s;
+}
+
+.btnAtalho:hover {
+  background: #dee2e6;
+  color: #1a1f2e;
+}
+
+/* ── BARRA DE BUSCA RÁPIDA ── */
+.barraBuscaWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputBuscaIcone {
+  position: absolute;
+  left: 12px;
+  color: #868e96;
+}
+
+.inputBusca {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px 0 38px;
+  border-radius: 8px;
+  border: 1.5px solid #dee2e6;
+  background: #ffffff;
+  font-size: 13px;
+  color: #1a1f2e;
+  outline: none;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.inputBusca:focus {
+  border-color: #2f9e44;
+  box-shadow: 0 0 0 3px rgba(47, 158, 68, 0.12);
+}
+
+/* ── LISTAGEM DE PENDÊNCIAS ── */
+.resumoContagem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+.listaPendencias {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.itemPendenciaCard {
+  background: #ffffff;
+  border: 1.5px solid #eaecef;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+
+.itemPendenciaCard:hover {
+  background: #f8fbf9;
+  border-color: #a3e635;
+  box-shadow: 0 3px 10px rgba(47, 158, 68, 0.08);
+  transform: translateY(-1px);
+}
+
+.pendenciaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.pendenciaHeaderLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pendenciaId {
+  font-size: 11px;
+  font-weight: 800;
+  color: #2f9e44;
+  background: #ebfbee;
+  border: 1px solid #b2f2bb;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.pendenciaCliente {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1a1f2e;
+}
+
+.badgeTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f3f5;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.pendenciaDetalhes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: #6c757d;
+  flex-wrap: wrap;
+}
+
+.pendenciaValores {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  min-width: 130px;
+}
+
+.saldoRestanteLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: #868e96;
+  text-transform: uppercase;
+}
+
+.saldoRestante {
+  font-size: 15px;
+  font-weight: 800;
+  color: #c92a2a;
+}
+
+.valorOriginal {
+  font-size: 11px;
+  color: #868e96;
+}
+
+.btnSelecionarPendencia {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 800;
+  background: #2f9e44;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(47, 158, 68, 0.2);
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.btnSelecionarPendencia:hover {
+  background: #2b8a3e;
+  transform: translateY(-1px);
+}
+
+/* ── FORMULÁRIO DE GERAR PAGAMENTO (IDÊNTICO A PRESTAÇÃO DE CONTAS) ── */
+.modalInfoDestaque {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.modalInfoDestaqueItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.modalInfoDestaqueItem span {
+  font-size: 11px;
+  color: #6c757d;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.modalInfoDestaqueItem strong {
+  font-size: 14px;
+  color: #1a1f2e;
+  font-weight: 800;
+}
+
+.divInputModal {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.divInputModal label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #495057;
+}
+
+.inputModal,
+.selectModal {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1.5px solid #dee2e6;
+  background: #ffffff;
+  font-size: 13px;
+  color: #1a1f2e;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.15s;
+}
+
+.inputModal:focus,
+.selectModal:focus {
+  border-color: #2f9e44;
+  box-shadow: 0 0 0 3px rgba(47, 158, 68, 0.12);
+}
+
+.badgeAvisoBaixa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ebfbee;
+  border: 1px solid #b2f2bb;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #2b8a3e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ── RODAPÉ DO MODAL ── */
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid #f1f3f5;
+  background: #f8f9fa;
+}
+
+.btnCancelarModal {
+  all: unset;
+  cursor: pointer;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #495057;
+  background: #e9ecef;
+  transition: all 0.15s;
+}
+
+.btnCancelarModal:hover {
+  background: #dee2e6;
+  color: #1a1f2e;
+}
+
+.btnSalvarModal {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  background: #2f9e44;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(47, 158, 68, 0.25);
+  transition: all 0.15s;
+  box-sizing: border-box;
+}
+
+.btnSalvarModal:hover:not(:disabled) {
+  background: #2b8a3e;
+  transform: translateY(-1px);
+}
+
+.btnSalvarModal:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ── ESTADOS VAZIOS & CARREGANDO ── */
+.estadoVazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  color: #868e96;
+  gap: 10px;
+  text-align: center;
+}
+
+.estadoVazio p {
+  font-size: 14px;
+  font-weight: 700;
+  color: #495057;
+  margin: 0;
+}
+
+.estadoVazio span {
+  font-size: 12px;
+  color: #868e96;
+  margin: 0;
+}

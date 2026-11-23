@@ -46,6 +46,23 @@ export default function PedidoHistorico({ pedidos }) {
     return `${balcao}${operador}`;
   };
 
+  const obterClasseStatus = (status) => {
+    const statusNormalizado = String(status || "").toUpperCase();
+    if (statusNormalizado === "ENTREGUE" || statusNormalizado === "FINALIZADO") {
+      return styles.statusEntregue;
+    }
+    if (statusNormalizado === "CARREGADO" || statusNormalizado === "ROTA") {
+      return styles.statusCarregado;
+    }
+    if (statusNormalizado === "CANCELADO") {
+      return styles.statusCancelado;
+    }
+    if (statusNormalizado === "DEVOLVIDO") {
+      return styles.statusDevolvido;
+    }
+    return styles.statusPadrao;
+  };
+
   return (
     <div className={styles.container}>
       <table className={styles.tabela}>
@@ -57,6 +74,7 @@ export default function PedidoHistorico({ pedidos }) {
             <th className={styles.colCliente}>Cliente</th>
             <th className={styles.colTotal}>Total</th>
             <th className={styles.colPagamento}>Pagamento</th>
+            <th className={styles.colStatus}>Status</th>
             <th className={styles.colConferencia} title="Conferência PIX">
               Conf.
             </th>
@@ -64,13 +82,22 @@ export default function PedidoHistorico({ pedidos }) {
         </thead>
 
         <tbody>
-          {pedidos.map((pedido) => {
+          {pedidos.map((pedido, index) => {
+            const chaveConferencia =
+              pedido.clienteId ||
+              `${pedido.tipo || pedido.setor || "pedido"}-${pedido.id}`;
+
             const conferido =
+              !!clientesConferidos[chaveConferencia] ||
               !!clientesConferidos[pedido.clienteId || pedido.id];
+
+            const chaveUnica =
+              pedido.uuid ||
+              `${pedido.tipo || pedido.setor || "pedido"}-${pedido.id}-${index}`;
 
             return (
               <tr
-                key={pedido.id}
+                key={chaveUnica}
                 onClick={() => navegar("/reimprimir", { state: pedido })}
                 className={`
                   ${pedido.status === "cancelado" ? styles.validaStatus : ""}
@@ -95,11 +122,18 @@ export default function PedidoHistorico({ pedidos }) {
                 <td className={styles.colPagamento}>
                   {extrairPagamento(pedido)}
                 </td>
+                <td className={styles.colStatus}>
+                  <span
+                    className={`${styles.badgeStatus} ${obterClasseStatus(pedido.status)}`}
+                  >
+                    {pedido.status || "pendente"}
+                  </span>
+                </td>
                 <td
                   className={styles.colConferencia}
                   onClick={(e) => {
                     e.stopPropagation();
-                    alternarConferencia(pedido.clienteId || pedido.id);
+                    alternarConferencia(chaveConferencia);
                   }}
                 >
                   <button

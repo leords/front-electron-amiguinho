@@ -205,6 +205,16 @@
   border-radius: 9px;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.botaoPrincipal:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.botaoPrincipal:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .botaoCancelar {
@@ -218,6 +228,16 @@
   border-radius: 9px;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.botaoCancelar:hover:not(:disabled) {
+  background: var(--red-mid);
+}
+
+.botaoCancelar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 /* ─── Spinner ───────────────────────── */

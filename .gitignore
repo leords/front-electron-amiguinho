@@ -33,3 +33,6 @@ dist/
 
 # Others
 *.local
+
+# Scratch / Arquivos temporarios de teste
+scratch/

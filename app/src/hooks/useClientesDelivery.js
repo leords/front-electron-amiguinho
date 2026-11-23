@@ -8,18 +8,19 @@ export function useClientesDelivery() {
     useState(true);
   const [erro, setErro] = useState(null);
 
-  useEffect(() => {
-    const carregar = async () => {
-      try {
-        const lista = await LerClienteDelivery();
-        setClientes(lista);
-      } catch (error) {
-        setErro(error);
-      } finally {
-        setCarregandoClientesDelivery(false);
-      }
-    };
+  const carregar = async () => {
+    setCarregandoClientesDelivery(true);
+    try {
+      const lista = await LerClienteDelivery();
+      setClientes(Array.isArray(lista) ? lista : []);
+    } catch (error) {
+      setErro(error);
+    } finally {
+      setCarregandoClientesDelivery(false);
+    }
+  };
 
+  useEffect(() => {
     carregar();
   }, []);
 
@@ -27,5 +28,6 @@ export function useClientesDelivery() {
     clientes,
     carregandoClientesDelivery,
     erro,
+    recarregarClientes: carregar,
   };
 }

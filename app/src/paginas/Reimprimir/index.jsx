@@ -25,6 +25,8 @@ import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { useState } from "react";
 import { gerarCupomDelivery } from "../../utils/gerarCupomDelivery";
+import { gerarCupomExterno } from "../../utils/gerarCupomExterno";
+import { lerPendencias } from "../../operadores/API/pendencia/lerPendencias";
 import { dataFormatada } from "../../utils/data";
 
 export default function Reimprimir() {
@@ -81,11 +83,51 @@ export default function Reimprimir() {
     } 
   }
 
+  // Função para resolver com segurança o ID real do produto no item
+  const obterIdProduto = (item) => {
+    return (
+      item?.produtoId ??
+      item?.produto_id ??
+      item?.idProduto ??
+      item?.produto?.id ??
+      null
+    );
+  };
+
+  // Função para resolver com segurança o nome do produto no item
+  const obterNomeItem = (item) => {
+    if (!item) return "Produto";
+
+    // 1. Se o próprio item já possui o nome gravado diretamente ou retornado no relacionamento
+    const nomeDireto =
+      item.nome ||
+      item.nomeProduto ||
+      item.produto?.nome ||
+      item.descricao;
+
+    if (nomeDireto && String(nomeDireto).trim() !== "") {
+      return String(nomeDireto).trim();
+    }
+
+    // 2. Busca pelo ID real do produto (NUNCA usa item.id como fallback, pois item.id é o ID da linha do item de pedido!)
+    const idProduto = obterIdProduto(item);
+    if (idProduto !== null && idProduto !== undefined && idProduto !== "") {
+      const prodEncontrado = (produtos || []).find(
+        (p) => String(p.id) === String(idProduto)
+      );
+      if (prodEncontrado?.nome) {
+        return prodEncontrado.nome;
+      }
+    }
+
+    return "Produto";
+  };
+
   // Função para imprimir segunda via.
   const handleImprimirSegundaVia = async () => {
-    setCarregando(true)
+    setCarregando(true);
 
-    if(cupom.tipo === 'balcao') {
+    if (cupom.tipo === "balcao") {
       const cupomFormatado = {
         tipo: "segundaVia",
         motivo: "PRODUTO JÁ CARREGADO!",
@@ -93,63 +135,118 @@ export default function Reimprimir() {
         cliente: cupom.cliente,
         vendedor: cupom.vendedor,
         nomeUsuario: cupom.nomeUsuario,
-        itens: cupom.itens.map((item) => ({
-            produtoId: item.produtoId,
-            nome: produtos.find((p) => 
-            p.id === item.produtoId)?.nome || "",
-            quantidade: item.quantidade,
-            valorUnit: item.valorUnit,
+        itens: (cupom.itens || []).map((item) => ({
+          produtoId: obterIdProduto(item),
+          nome: obterNomeItem(item),
+          quantidade: item.quantidade,
+          valorUnit: item.valorUnit,
         })),
-        pagamentos: cupom.pagamentos.map((pagamento) => ({ 
-          idFormaPagamentoParcial: pagamento.formaPagamento.id, 
-          nomeFormaPagamentoParcial: pagamento.formaPagamento.nome, 
-          valorParcialFormaPagamento: pagamento.valor  
-        }))
+        pagamentos: (cupom.pagamentos || []).map((pagamento) => ({
+          idFormaPagamentoParcial:
+            pagamento.formaPagamento?.id || pagamento.idFormaPagamentoParcial,
+          nomeFormaPagamentoParcial:
+            pagamento.formaPagamento?.nome || pagamento.nomeFormaPagamentoParcial,
+          valorParcialFormaPagamento:
+            pagamento.valor ?? pagamento.valorParcialFormaPagamento,
+        })),
       };
 
-      console.log('cupom formatado - formas: ', cupomFormatado)
+      console.log("cupom formatado - formas: ", cupomFormatado);
 
-        const html = gerarCupom(cupomFormatado);
-        window.IMPRESSORA.imprimir(html);
-
-        setCarregando(false)
-
-    } else {
-        const nomeCliente = typeof cupom.cliente === "object" ? cupom.cliente?.nome : (cupom.cliente || cupom.nomeCliente || "Cliente não informado");
-        const enderecoCliente = typeof cupom.cliente === "object" ? cupom.cliente?.endereco : (cupom.endereco || "");
-        const cidadeCliente = typeof cupom.cliente === "object" ? cupom.cliente?.cidade : (cupom.cidade || "");
-        const telefoneCliente = typeof cupom.cliente === "object" ? cupom.cliente?.telefone : (cupom.telefone || "");
-        const referenciaCliente = typeof cupom.cliente === "object" ? cupom.cliente?.referencia : (cupom.referencia || "");
-        const nomeFormaPagamento = typeof cupom.formaPagamento === "object" ? cupom.formaPagamento?.nome : (cupom.formaPagamento || cupom.formaPagamentoNome || "A VISTA");
-        const listaItens = Array.isArray(cupom.itens) ? cupom.itens : [];
-
-        const cupomFormatado = {
-          tipo: "segundaVia",
-          motivo: "PRODUTO JÁ CARREGADO!",
-          data: cupom.data,
-          cliente: nomeCliente,
-          endereco: enderecoCliente,
-          cidade: cidadeCliente,
-          telefone: telefoneCliente,
-          referencia: referenciaCliente,
-          formaPagamento: nomeFormaPagamento,
-          vendedor: cupom.vendedor || cupom.nomeUsuario || "",
-          nomeUsuario: cupom.vendedor || cupom.nomeUsuario || "",
-          itens: listaItens.map((item) => ({
-              produtoId: item.produtoId || item.id,
-              nome: produtos.find((p) => 
-              p.id === (item.produtoId || item.id))?.nome || item.nome || "Produto",
-              quantidade: item.quantidade || 1,
-              valorUnit: item.valorUnit || item.precoVenda || 0,
-          })),
-        };
-
-        console.log('cupom formatado - 1 forma: ', cupomFormatado)
-
-      const html = gerarCupomDelivery(cupomFormatado);
+      const html = gerarCupom(cupomFormatado);
       window.IMPRESSORA.imprimir(html);
 
-      setCarregando(false)
+      setCarregando(false);
+    } else {
+      const nomeCliente =
+        typeof cupom.cliente === "object"
+          ? cupom.cliente?.nome
+          : cupom.cliente || cupom.nomeCliente || "Cliente não informado";
+      const enderecoCliente =
+        typeof cupom.cliente === "object"
+          ? cupom.cliente?.endereco
+          : cupom.endereco || "";
+      const cidadeCliente =
+        typeof cupom.cliente === "object"
+          ? cupom.cliente?.cidade
+          : cupom.cidade || "";
+      const telefoneCliente =
+        typeof cupom.cliente === "object"
+          ? cupom.cliente?.telefone
+          : cupom.telefone || "";
+      const referenciaCliente =
+        typeof cupom.cliente === "object"
+          ? cupom.cliente?.referencia
+          : cupom.referencia || "";
+      const nomeFormaPagamento =
+        typeof cupom.formaPagamento === "object"
+          ? cupom.formaPagamento?.nome
+          : cupom.formaPagamento || cupom.formaPagamentoNome || "A VISTA";
+      const listaItens = Array.isArray(cupom.itens) ? cupom.itens : [];
+
+      const cupomFormatado = {
+        tipo: "segundaVia",
+        motivo: "PRODUTO JÁ CARREGADO!",
+        data: cupom.data,
+        cliente: nomeCliente,
+        endereco: enderecoCliente,
+        cidade: cidadeCliente,
+        telefone: telefoneCliente,
+        referencia: referenciaCliente,
+        formaPagamento: nomeFormaPagamento,
+        vendedor: cupom.vendedor || cupom.nomeUsuario || "",
+        nomeUsuario: cupom.vendedor || cupom.nomeUsuario || "",
+        itens: listaItens.map((item) => ({
+          produtoId: obterIdProduto(item),
+          nome: obterNomeItem(item),
+          quantidade: item.quantidade || 1,
+          valorUnit: item.valorUnit || item.precoVenda || 0,
+        })),
+      };
+
+      const ehExterno =
+        cupom.tipo === "externo" ||
+        cupom.setor === "externo" ||
+        String(cupom.origem || "").includes("fechamento-carga") ||
+        Boolean(cupom.vendedor);
+
+      let html;
+      if (ehExterno) {
+        let pendenciasCliente = cupom.pendencias || [];
+        let totalPendenciaCliente = cupom.totalPendencia || 0;
+
+        const clienteId = cupom.clienteId || cupom.cliente?.id;
+        if (pendenciasCliente.length === 0 && clienteId) {
+          try {
+            const pends = await lerPendencias({ clienteId, status: "aberta" });
+            if (Array.isArray(pends)) {
+              pendenciasCliente = pends;
+              totalPendenciaCliente = pends.reduce((acc, p) => {
+                const saldo = Number(
+                  p.saldoDevedor !== undefined
+                    ? p.saldoDevedor
+                    : Number(p.valor || 0) - Number(p.valorPago || 0)
+                );
+                return acc + saldo;
+              }, 0);
+            }
+          } catch (e) {
+            console.warn("Erro ao buscar pendências do cliente na reimpressão:", e);
+          }
+        }
+
+        html = gerarCupomExterno({
+          ...cupomFormatado,
+          pendencias: pendenciasCliente,
+          totalPendencia: totalPendenciaCliente,
+        });
+      } else {
+        html = gerarCupomDelivery(cupomFormatado);
+      }
+
+      window.IMPRESSORA.imprimir(html);
+
+      setCarregando(false);
     }
   };
 
@@ -278,7 +375,7 @@ export default function Reimprimir() {
 
                     <div className={styles.cardInfoPedido}>
                       <p className={styles.cardLabel}> {cupom.dataCarregada ? `◉ Carregado: ${dataFormatada(cupom.dataCarregada)}` : '○ Carregado: Não'} </p>
-                      <p className={styles.cardLabel}> {cupom.dataEntregue ? `◉ Entregue: ${dataFormatada(cupom.dataEntrega || cupom.dataEntregue)}` : '○ Entrega: pendente' } </p>
+                      <p className={styles.cardLabel}> {(cupom.dataEntrega || cupom.dataEntregue || cupom.status === 'entregue') ? `◉ Entregue: ${dataFormatada(cupom.dataEntrega || cupom.dataEntregue || cupom.data)}` : '○ Entrega: pendente' } </p>
                     </div>
                   </div>
 
@@ -295,14 +392,25 @@ export default function Reimprimir() {
                 </div>
 
                 <div className={styles.tabelaBody}>
-                  {listaItens.map((item) => (
-                    <div key={item.id} className={styles.itemRow}>
+                  {listaItens.map((item, index) => (
+                    <div
+                      key={item.uuid || `${item.id}-${index}`}
+                      className={styles.itemRow}
+                    >
                       <span className={styles.itemQtd}>{item.quantidade || 1}</span>
                       <span className={styles.itemNome}>
-                        {produtos.find((p) => p.id === (item.produtoId || item.id))?.nome || item.nome || "Produto"}
+                        {obterNomeItem(item)}
                       </span>
-                      <span className={styles.itemValor}>{formatarMoeda(item.valorUnit || item.precoVenda || 0)}</span>
-                      <span className={styles.itemTotal}>{formatarMoeda(item.valorTotal || ((item.quantidade || 1) * (item.valorUnit || item.precoVenda || 0)))}</span>
+                      <span className={styles.itemValor}>
+                        {formatarMoeda(item.valorUnit || item.precoVenda || 0)}
+                      </span>
+                      <span className={styles.itemTotal}>
+                        {formatarMoeda(
+                          item.valorTotal ||
+                            (item.quantidade || 1) *
+                              (item.valorUnit || item.precoVenda || 0)
+                        )}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -341,7 +449,7 @@ export default function Reimprimir() {
               </div>
 
               {/* BOTÃO IMPRIMIR */}
-              {usuario.nivelAcesso !== "DELIVERY" && 
+              {usuario?.nivelAcesso !== "DELIVERY" && 
                 <div className={styles.botoesFinais}>
                   <AlertaRadix
                     titulo="2ª via do pedido"
@@ -375,7 +483,7 @@ export default function Reimprimir() {
             </div>
 
             {/* SÓ RENDERIZA SE USUARIO FOR ADMIN */}
-            {usuario.nivelAcesso === "ADMIN" && 
+            {usuario?.nivelAcesso === "ADMIN" && 
               <div className={styles.botoesFinais}>
                 <div className={styles.botoesFinaisHeader}>
                   <ShieldIcon size={14} />

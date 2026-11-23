@@ -49,8 +49,6 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
   const totalProduto = (preco, qtd, ajuste) => (preco - ajuste) * qtd;
   const ajuste = Number((ajustePreco || "0").replace(",", ".")) || 0;
 
-  console.log("produto selecionado: ", produtoSelecionado);
-
   // Adicionar item na lista da ordem
   const handleAdicionarProduto = () => {
     console.log(produtoSelecionado.precoCompra);
@@ -114,8 +112,6 @@ export default function NovaOrdemCompra({ setView, setMensagem }) {
     const itensValidos = formItens.filter(
       (i) => i.produtoId && i.quantidade > 0 && i.valorUnit >= 0,
     );
-
-    console.log("Itens validados: ", itensValidos);
 
     // Valida a existencia de item
     if (!itensValidos.length) return;

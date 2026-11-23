@@ -1,6 +1,6 @@
 # Diretrizes e Padrões de Desenvolvimento — Amiguinho Balcão
 
-Este documento estabelece as diretrizes arquiteturais, convenções de código e padrões visuais/UX do projeto **Amiguinho / Sistema de Controle Amiguinho** (v2.2.1) para a **Amigão Distribuidora de Bebidas LTDA**. Todas as futuras implementações, refatorações e correções devem seguir rigorosamente estes padrões.
+Este documento estabelece as diretrizes arquiteturais, convenções de código, regras operacionais e padrões visuais/UX do projeto **Amiguinho / Sistema de Controle Amiguinho** (v2.2.4) para a **Amigão Distribuidora de Bebidas LTDA**. Todas as futuras implementações, refatorações e correções devem seguir rigorosamente estes padrões.
 
 ---
 
@@ -11,6 +11,12 @@ Este documento estabelece as diretrizes arquiteturais, convenções de código e
 - **Backend do Electron (`backend/`)**: Rotas e serviços Node.js para integração com IAs (OpenRouter / Groq), clima (OpenWeather), geração de CSVs com BOM UTF-8 (`\uFEFF`) e impressão térmica silenciosa via janela fantasma (`BrowserWindow`).
 - **Estilização**: CSS Modules (`styles.module.css`) por componente/página com variáveis de cores do design system.
 - **Ícones & UI**: `@phosphor-icons/react` (pesos `bold`, `duotone`, `fill`), Radix UI (`@radix-ui/react-alert-dialog`, `@radix-ui/react-toast`), Recharts e Leaflet.
+- **Setores Atendidos**:
+  - **Balcão**: Vendas rápidas, orçamentos, fechamento de caixa por operador e geral do dia.
+  - **Delivery**: Pedidos para entrega, status de envio, controle de motoboys e fechamento de delivery.
+  - **Cargas & Logística**: Criação, montagem, conferência, romaneio, finalização e fechamento formal de cargas (`FechamentoCarga`).
+  - **Prestação de Contas (Externo)**: Conferência de vendas de rota com vendedores externos dinâmicos, métricas detalhadas (dinheiro, cartão, pix, boletos, vasilhames/pendências, devoluções) e fechamento financeiro vinculado ao setor `carga`.
+  - **Gestão**: Usuários, produtos, estoque, formas de pagamento, clientes, motoristas, veículos, caixas, fechamentos finalizados, localização e impressoras.
 
 ---
 
@@ -18,14 +24,14 @@ Este documento estabelece as diretrizes arquiteturais, convenções de código e
 
 1. **Idioma**: Todo o código (variáveis, nomes de funções, comentários, mensagens de erro, estados e arquivos) deve ser escrito em **Português**.
 2. **Funções e Handlers**:
-   - Prefixo `tratar` para eventos gerais (ex.: `tratarAlteracao`, `tratarVoltarMenu`, `tratarSair`).
+   - Prefixo `tratar` para eventos gerais (ex.: `tratarAlteracao`, `tratarVoltarMenu`, `tratarSair`, `tratarVoltarGestao`).
    - Prefixo `iniciar` ou `handle` para fluxos específicos (ex.: `iniciarLogin`, `iniciarBalcaoDestino`, `handleAddProduto`).
 3. **Hooks Customizados**:
    - Localizados em `app/src/hooks/use[Recurso].js`.
-   - Nomes com prefixo `use` ou `usar` (ex.: `usarAuth`, `usarToast`, `useProdutos`, `useFormaPagamentoBalcao`).
+   - Nomes com prefixo `use` ou `usar` (ex.: `usarAuth`, `usarToast`, `useProdutos`, `useFormaPagamentoBalcao`, `useCargas`, `useMotoristas`, `useVeiculos`, `usePendencias`, `useClientesExterno`).
    - Retorno padronizado contendo dados, estado de carregamento e erro (ex.: `{ produtos, carregando, erro }`).
 4. **Estados e Variáveis**:
-   - Nomes semânticos e diretos (ex.: `duzentos`, `cem`, `fechamentoAtual`, `carregandoVendas`, `pagamentosParciais`).
+   - Nomes semânticos e diretos (ex.: `duzentos`, `cem`, `fechamentoAtual`, `carregandoVendas`, `pagamentosParciais`, `vendedorSelecionado`).
 
 ---
 
@@ -35,30 +41,61 @@ Este documento estabelece as diretrizes arquiteturais, convenções de código e
 amiguinho-balcao/
 ├── index.js                    # Processo principal do Electron (Janelas, IPCs, Impressão térmica)
 ├── preload.js                  # Exposição de APIs seguras (IMPRESSORA, ENV, API, PDF, IA, LINK)
+├── package.json                # Configuração e dependências (v2.2.4)
+├── electron-builder.json       # Empacotamento do instalador Windows
 ├── backend/                    # Serviços Node (OpenRouter, Groq, Clima, CSV)
 └── app/
     └── src/
         ├── assets/             # Imagens e logos (mascote, logo-amigao, etc.)
-        ├── componentes/        # Componentes reutilizáveis (Cabecalho, Rodape, ItemContador, ui/)
-        │   └── ui/             # Componentes Radix UI (alerta, notificacao)
-        ├── hooks/              # Custom Hooks React
-        ├── operadores/API/     # Camada de comunicação com a API REST
-        │   └── [modulo]/       # Subpastas modulares (pedido, fechamento, caixa, produto...)
-        ├── paginas/            # Telas da aplicação
-        │   └── [NomePagina]/   # Cada página com seu index.jsx e styles.module.css
-        ├── routes/             # Navegação (navigation.jsx com HashRouter)
-        ├── socket/             # Ouvintes de eventos Socket.IO
-        └── utils/              # Funções utilitárias (data.js, formartarMoeda.js, gerarCupom.js)
+        ├── componentes/        # Componentes reutilizáveis
+        │   ├── Context/        # Contextos React (AuthContext, ToastContext)
+        │   ├── ui/             # Componentes Radix UI (AlertaRadix, ToastRadix)
+        │   ├── Cabecalho/      # Cabeçalho global do topo
+        │   ├── Rodape/         # Rodapé global com atalhos e status
+        │   └── [Modulos]/      # Modais e partes de páginas (AjustarProdutoEstoque, Clientes, etc.)
+        ├── hooks/              # Custom Hooks React (useCargas, useMotoristas, useVeiculos, etc.)
+        ├── operadores/API/     # Camada modular de comunicação com a API REST
+        │   ├── AjusteFechamento/
+        │   ├── carga/          # Criação, adição, remoção, conclusão e fechamento de cargas
+        │   ├── cliente/        # Consulta e cadastro de clientes balcão, delivery e externos
+        │   ├── desconto/       # Métricas e consultas de descontos
+        │   ├── estoque/        # Consulta e ajuste de estoque
+        │   ├── fechamento/     # Fechamentos de balcão, delivery, finalizados e diferenças
+        │   ├── formaPagamento/ # Formas de pagamento disponíveis
+        │   ├── localizacao/    # Rastreamento e rotas
+        │   ├── motorista/      # Cadastro e listagem de motoristas
+        │   ├── pagamento/      # Baixa e criação de pagamentos
+        │   ├── pedido/         # Criação, edição, cancelamento e relatórios de pedidos
+        │   ├── pendencia/      # Vasilhames e pendências de entrega
+        │   ├── produto/        # Produtos, preços e saídas
+        │   ├── usuario/        # Usuários e permissões
+        │   └── veiculo/        # Cadastro e listagem de veículos
+        ├── paginas/            # Telas da aplicação (cada uma com seu index.jsx e styles.module.css)
+        │   ├── Balcao/ Vendas/
+        │   ├── Cargas/
+        │   ├── FechamentoBalcao/ FechamentoBalcaoUsuario/
+        │   ├── FechamentoCarga/
+        │   ├── FechamentoDelivery/ FechamentoDeliveryUsuario/
+        │   ├── FechamentoFinalizado/
+        │   ├── Gestao/         # Hub central com cards de navegação
+        │   ├── Impressora/     # Configuração de impressora térmica
+        │   ├── Localizacao/    # Mapa e rotas em tempo real
+        │   ├── Pedidos/        # Listagem e filtros de pedidos
+        │   ├── PrestacaoContas/# Conferência financeira com vendedores externos
+        │   └── ...
+        ├── routes/             # Navegação desktop (navigation.jsx com HashRouter)
+        ├── socket/             # Ouvintes de eventos Socket.IO em tempo real
+        └── utils/              # Funções utilitárias (data.js, formartarMoeda.js, gerarCupom.js, etc.)
 ```
 
 ---
 
 ## 4. Camada de API (`app/src/operadores/API/`)
 
-- Cada rota/operação da API deve ter seu próprio arquivo isolado (ex.: `novoPedidoBalcao.js`, `buscarPedido.js`).
+- Cada rota/operação da API deve ter seu próprio arquivo isolado (ex.: `novoPedidoBalcao.js`, `buscarPedido.js`, `criarCarga.js`).
 - Utilizar as instâncias do Axios definidas em `app/src/utils/conexaoAxios.js`:
   - `api`: para requisições com timeout padrão (5s).
-  - `apiLong`: para requisições de maior duração (timeout 50s, ex.: criação/edição de pedidos).
+  - `apiLong`: para requisições de maior duração (timeout 50s, ex.: criação/edição de pedidos, relatórios e finalizações).
 - **Tratamento de Erros Obrigatório**:
   ```javascript
   try {
@@ -122,14 +159,92 @@ Toda página interna deve renderizar o `<Cabecalho />` no topo, o `<Rodape />` n
       <h1 className={styles.pageTitulo}>Título da Página</h1>
     </div>
   </div>
-  {/* Ações adicionais ou filtros à direita */}
+  {/* Ações adicionais, filtros ou botão Voltar à direita */}
 </div>
 ```
 
-### Confirmações e Notificações
-1. **Ações Críticas**: Sempre usar `<AlertaRadix />` para pedir confirmação antes de excluir, cancelar, limpar, trocar de caixa ou deslogar.
-2. **Notificações**: Sempre usar `<ToastRadix mensagem={mensagem} />` integrado com `const { mensagem, setMensagem } = usarToast()`.
-3. **Tempo Mínimo de Loading**: Em operações de autenticação e recuperação de senha, aplicar o atraso mínimo de 2 segundos para evitar transições bruscas de interface.
+### Botão "Voltar" Padronizado para Telas de Gestão e Submódulos
+Todas as páginas que são destinos de navegação a partir do hub de **Gestão** (ou submódulos) devem incluir o botão de retorno padronizado no cabeçalho:
+```jsx
+import { ArrowLeft } from "@phosphor-icons/react";
+import { useNavigate } from "react-router-dom";
 
-### Impressão Térmica
-- Usar templates HTML puros em `app/src/utils/gerarCupom.js` e `gerarOrcamento.js` com largura de 72mm/80mm, tipografia monospace e envio silencioso via `window.IMPRESSORA.imprimir(html)`.
+// No componente:
+const navegar = useNavigate();
+
+<button
+  type="button"
+  className={styles.botaoVoltar}
+  onClick={() => navegar("/gestao")}
+  title="Voltar para a tela de Gestão"
+>
+  <ArrowLeft size={16} weight="bold" />
+  Voltar
+</button>
+```
+
+**Estilo Padrão do Botão Voltar (`styles.module.css`):**
+```css
+.botaoVoltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-300);
+  color: var(--gray-700);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.botaoVoltar:hover {
+  background: var(--gray-100);
+  border-color: #adb5bd;
+  color: var(--gray-900);
+}
+```
+
+### Confirmações, Notificações e Estados de Loading
+1. **Ações Críticas**: Sempre usar `<AlertaRadix />` para pedir confirmação antes de excluir, cancelar pedidos/cargas, limpar dados, trocar de caixa ou deslogar.
+2. **Notificações**: Sempre usar `<ToastRadix mensagem={mensagem} />` integrado com `const { mensagem, setMensagem } = usarToast()`.
+3. **Tratamento de Loading em Botões e Formulários**: Em ações com carregamento assíncrono (ex.: ajuste de estoque, criação de pedido, finalização de fechamento), o estado de loading (`salvando` / `carregando`) deve ser controlado dentro de blocos `try / catch / finally` com `setSalvando(false)` no bloco `finally`, prevenindo travamento permanente de botões.
+4. **Tempo Mínimo de Loading**: Em operações de autenticação e recuperação de senha, aplicar o atraso mínimo de 2 segundos para evitar transições bruscas de interface.
+
+---
+
+## 6. Regras Operacionais e Fluxos de Negócio
+
+### 1. Gestão de Cargas & Fechamento de Carga
+- Cargas são associadas a um motorista e a um veículo.
+- Pedidos são vinculados e conferidos antes do despacho.
+- A finalização de carga gera o romaneio e permite o **Fechamento de Carga** formal (`FechamentoCarga`), registrando os valores no backend com o setor `'carga'`.
+
+### 2. Prestação de Contas (Vendedores Externos)
+- Tela `PrestacaoContas` lista vendedores externos com filtros de data.
+- Exibe o resumo analítico de vendas por rota: Total Vendido, Dinheiro, Cartão, PIX, Boletos faturados, Pendências de Vasilhames e Devoluções.
+- Permite salvar e atualizar o fechamento diário do vendedor externo com status visual em tempo real (Pendente / Concluído).
+
+### 3. Filtros Unificados de Pagamento
+- Na tela de **Pedidos**, o filtro de Forma de Pagamento inclui a opção agrupada **"MAQUININHA"**, que filtra simultaneamente transações realizadas em **Cartão** e **PIX**.
+
+### 4. Fechamentos Finalizados
+- Tela centralizada `FechamentoFinalizado` para auditoria e histórico de fechamentos concluídos dos setores:
+  - Balcão
+  - Delivery
+  - Carga / Externo
+
+---
+
+## 7. Impressão Térmica
+
+- Os comprovantes térmicos utilizam templates HTML puros e inline em `app/src/utils/`:
+  - `gerarCupom.js`: Cupom fiscal/não fiscal de venda de balcão e delivery.
+  - `gerarOrcamento.js`: Orçamento com validade e dados do cliente.
+  - `gerarComprovanteFechamentoCarga.js`: Resumo financeiro do fechamento de carga.
+  - `gerarRomaneioCarga.js`: Romaneio de carga para conferência do motorista.
+  - `gerarRelatorioCarregamento.js`: Relatório de conferência de estoque por carga.
+- Largura padrão de bobina térmica: **72mm/80mm**, tipografia monoespaçada (`Courier New`, monospace) e disparo silencioso via `window.IMPRESSORA.imprimir(html)`.

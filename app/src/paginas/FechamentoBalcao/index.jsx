@@ -27,6 +27,7 @@ import {
   TrendUpIcon,
   InfoIcon,
   FileTextIcon,
+  WarningCircleIcon,
 } from "@phosphor-icons/react";
 import ItemContador from "../../componentes/ItemContador";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
@@ -43,7 +44,6 @@ import { buscarMovimentacaoPagamentoEletronico } from "../../operadores/API/movi
 import { criarMovimentacaoPagamentoEletronico } from "../../operadores/API/movimentacaoPagamentosEletronicos/criarMovimentacao";
 import { deletarMovimentacaoPagamentoEletronico } from "../../operadores/API/movimentacaoPagamentosEletronicos/deletarMovimentacao";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
-import { obterOrcamentosLocais } from "../../utils/orcamentosStorage.js";
 import ModalPedidosOrcamento from "../../componentes/ModalPedidosOrcamento";
 
 const tiposMovimentacao = [
@@ -184,9 +184,10 @@ export default function FechamentoBalcao() {
           ? resposta.resultado
           : [];
 
-        // Filtra pedidos com forma de pagamento ORÇAMENTO
+        // Filtra pedidos com forma de pagamento ORÇAMENTO ou status orcamento
         const filtrados = lista.filter((p) => {
           if (p.status?.toLowerCase() === "cancelado") return false;
+          if (p.status?.toLowerCase() === "orcamento") return true;
           const temPagamentoOrcamento = p.pagamentos?.some((pg) => {
             const nome = String(
               pg.formaPagamento?.nome || pg.nomeFormaPagamentoParcial || ""
@@ -220,27 +221,12 @@ export default function FechamentoBalcao() {
     };
   }, [balcao, dataAtual]);
 
-  // Unifica orçamentos da API e locais (armazenados pelo terminal)
+  // Orçamentos carregados diretamente da API
   const listaOrcamentos = useMemo(() => {
-    const locais = obterOrcamentosLocais({
-      data: dataAtual,
-      vendedor: balcao.value,
-    });
-
-    const mapa = new Map();
-    // 1. Orçamentos da API
-    pedidosOrcamentoAPI.forEach((p) => {
-      mapa.set(String(p.id), p);
-    });
-    // 2. Orçamentos locais (caso não estejam na API)
-    locais.forEach((p) => {
-      mapa.set(String(p.id), p);
-    });
-
-    return Array.from(mapa.values()).sort(
+    return [...pedidosOrcamentoAPI].sort(
       (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
     );
-  }, [pedidosOrcamentoAPI, dataAtual, balcao]);
+  }, [pedidosOrcamentoAPI]);
 
   const totalOrcamentos = listaOrcamentos.length;
 
@@ -767,13 +753,88 @@ export default function FechamentoBalcao() {
                         </span>
                       </div>
 
+                      {totalOrcamentos > 0 && (
+                        <div
+                          className={styles.avisoOrcamentoConferencia}
+                          onClick={() => setModalOrcamentosAberto(true)}
+                          role="button"
+                          tabIndex={0}
+                          title="Clique para ver os orçamentos em aberto"
+                        >
+                          <WarningCircleIcon size={16} weight="bold" />
+                          <span>
+                            {totalOrcamentos === 1
+                              ? "Atenção: 1 orçamento em aberto hoje"
+                              : `Atenção: ${totalOrcamentos} orçamentos em aberto hoje`}
+                          </span>
+                        </div>
+                      )}
+
                       {totalContado ? (
                         <AlertaRadix
-                          titulo="Finalizar fechamento"
-                          descricao="Você realmente deseja finalizar este fechamento?"
+                          titulo={
+                            totalOrcamentos > 0
+                              ? "Atenção: Orçamentos em Aberto"
+                              : "Finalizar fechamento"
+                          }
+                          descricao={
+                            totalOrcamentos > 0 ? (
+                              <span
+                                style={{
+                                  display: "block",
+                                  textAlign: "left",
+                                  lineHeight: 1.5,
+                                }}
+                              >
+                                <strong
+                                  style={{
+                                    color: "#e67700",
+                                    display: "block",
+                                    marginBottom: 6,
+                                  }}
+                                >
+                                  ⚠️ Atenção: Consta
+                                  {totalOrcamentos === 1
+                                    ? " 1 pedido registrado como Orçamento"
+                                    : `m ${totalOrcamentos} pedidos registrados como Orçamento`}{" "}
+                                  neste balcão para hoje.
+                                </strong>
+                                <span
+                                  style={{
+                                    display: "block",
+                                    marginBottom: 8,
+                                    color: "#495057",
+                                  }}
+                                >
+                                  Fique atento caso ainda precisem ser faturados
+                                  ou cancelados antes de fechar o caixa.
+                                </span>
+                                <span
+                                  style={{
+                                    display: "block",
+                                    fontWeight: 600,
+                                    color: "#1a1f2e",
+                                  }}
+                                >
+                                  Deseja realmente finalizar o fechamento mesmo
+                                  assim?
+                                </span>
+                              </span>
+                            ) : (
+                              "Você realmente deseja finalizar este fechamento?"
+                            )
+                          }
                           tratar={finalizarFechamento}
-                          confirmarTexto="Sim, finalizar!"
-                          cancelarTexto="Cancelar"
+                          confirmarTexto={
+                            totalOrcamentos > 0
+                              ? "Sim, finalizar mesmo assim"
+                              : "Sim, finalizar!"
+                          }
+                          cancelarTexto={
+                            totalOrcamentos > 0
+                              ? "Voltar e conferir"
+                              : "Cancelar"
+                          }
                           trigger={
                             <button className={styles.botaoFinalizar}>
                               <CheckCircleIcon size={18} weight="bold" />

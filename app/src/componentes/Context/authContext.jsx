@@ -11,23 +11,42 @@ export const usarAuth = () => {
 
 export const AuthProvedor = ({ children }) => {
   const navegar = useNavigate();
-  const [usuario, setUsuario] = useState(null);
-
-  useEffect(() => {
-    // Verificar o token ao carregar o componente
+  const [usuario, setUsuario] = useState(() => {
     const token = localStorage.getItem("token");
     const nome = localStorage.getItem("nomeUsuario");
     const id = localStorage.getItem("idUsuario");
     const nivel = localStorage.getItem("nivelAcesso");
 
-    // Valida token
     if (token) {
-      setUsuario({
+      return {
         id: Number(id),
         nome,
         nivelAcesso: nivel,
-      });
+      };
     }
+    return null;
+  });
+
+  useEffect(() => {
+    const atualizarUsuario = () => {
+      const token = localStorage.getItem("token");
+      const nome = localStorage.getItem("nomeUsuario");
+      const id = localStorage.getItem("idUsuario");
+      const nivel = localStorage.getItem("nivelAcesso");
+
+      if (token) {
+        setUsuario({
+          id: Number(id),
+          nome,
+          nivelAcesso: nivel,
+        });
+      } else {
+        setUsuario(null);
+      }
+    };
+
+    window.addEventListener("storage", atualizarUsuario);
+    return () => window.removeEventListener("storage", atualizarUsuario);
   }, []);
 
   // Função login

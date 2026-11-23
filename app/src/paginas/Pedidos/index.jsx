@@ -12,6 +12,7 @@ import {
   NotepadIcon,
   FunnelIcon,
   XCircleIcon,
+  FileXls,
 } from "@phosphor-icons/react";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido.js";
 import { useFormaPagamentoExterna } from "../../hooks/useFormaPagamentoExterna";
@@ -21,6 +22,40 @@ import { useLocation } from "react-router-dom";
 import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { LerUsuario } from "../../operadores/API/usuario/lerUsuario";
+import { exportarPedidosExcel } from "../../utils/exportarPedidosExcel.js";
+
+// Helper para verificar se a forma de pagamento é Maquininha (Cartão ou Pix)
+const ehMaquininha = (nome) => {
+  if (!nome) return false;
+  const n = String(nome)
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+  return (
+    n.includes("CART") ||
+    n.includes("PIX") ||
+    n.includes("CREDITO") ||
+    n.includes("DEBITO") ||
+    n.includes("MAQUIN")
+  );
+};
+
+// Verifica se um pedido foi pago via Maquininha (Cartão ou Pix)
+const pedidoTemMaquininha = (p) => {
+  if (!p) return false;
+
+  // Balcão: relação 'pagamentos' (array de pagamentos com formaPagamento)
+  if (Array.isArray(p.pagamentos) && p.pagamentos.length > 0) {
+    return p.pagamentos.some((pg) => {
+      const nomeForma = pg.formaPagamento?.nome || pg.formaNome || "";
+      return ehMaquininha(nomeForma);
+    });
+  }
+
+  // Delivery e Externo: relação 'formaPagamento'
+  const nomeForma = p.formaPagamento?.nome || p.formaNome || "";
+  return ehMaquininha(nomeForma);
+};
 
 export default function Pedidos() {
   // Estados
@@ -72,9 +107,9 @@ export default function Pedidos() {
         const listaUsuarios = await LerUsuario();
         if (listaUsuarios) {
           const externos =
-            listaUsuarios.filter((usuario) => {
-              ["EXTERNO", "VENDAS"].includes(usuario.nivelAcesso);
-            }) ?? [];
+            listaUsuarios.filter((usuario) =>
+              ["EXTERNO", "VENDAS"].includes(usuario.nivelAcesso)
+            ) ?? [];
           setOpcaoVendedorExterno(
             externos.map((v) => ({ id: v.id, nome: v.nome, label: v.nome })),
           );
@@ -158,17 +193,24 @@ export default function Pedidos() {
     const filtrarPedidos = async () => {
       setCarregando(true);
       try {
+        const isMaquininha = formaPagamento === "maquininha";
+
         const resultado = await buscarPedido({
           setor,
           vendedor: vendedorSelecionado,
           //cliente: cliente?.value ?? "",
           dataInicio,
           dataFim,
-          formaPagamentoId: formaPagamento,
+          formaPagamentoId: isMaquininha ? undefined : formaPagamento,
           status: statusSelecionado,
         });
 
-        setPedidosFiltrados(resultado);
+        if (isMaquininha) {
+          const pedidosMaquininha = (resultado || []).filter(pedidoTemMaquininha);
+          setPedidosFiltrados(pedidosMaquininha);
+        } else {
+          setPedidosFiltrados(resultado || []);
+        }
       } catch (error) {
         console.error("Erro ao filtrar pedidos:", error);
         alert("Erro ao buscar pedidos. Tente novamente.");
@@ -224,6 +266,31 @@ export default function Pedidos() {
     setDataFim(dataFormatadaCalendario());
   };
 
+  // Exportar pedidos filtrados para planilha Excel (CSV com BOM UTF-8)
+  const tratarExportarExcel = () => {
+    try {
+      if (!pedidosFiltrados || pedidosFiltrados.length === 0) {
+        setMensagem(
+          "Nenhum pedido localizado para exportar com os filtros atuais.",
+        );
+        return;
+      }
+
+      const resultado = exportarPedidosExcel(pedidosFiltrados, {
+        dataInicio,
+        dataFim,
+        setor,
+      });
+
+      setMensagem(
+        `Exportados ${resultado.quantidade} pedidos para "${resultado.nomeArquivo}" com sucesso!`,
+      );
+    } catch (error) {
+      console.error("Erro ao exportar pedidos para Excel:", error);
+      setMensagem(error.message || "Erro ao gerar arquivo Excel.");
+    }
+  };
+
   const mostrarSelectCliente = setor !== "balcao" && setor !== "";
 
   return (
@@ -244,10 +311,23 @@ export default function Pedidos() {
             </div>
           </div>
 
-          <button className={styles.botaoLimpar} onClick={limparFiltros}>
-            <XCircleIcon size={16} weight="bold" />
-            Limpar filtros
-          </button>
+          <div className={styles.acoesCabecalho}>
+            <button
+              type="button"
+              className={styles.botaoExportarExcel}
+              onClick={tratarExportarExcel}
+              disabled={carregando || pedidosFiltrados.length === 0}
+              title="Exportar pedidos filtrados para planilha Excel"
+            >
+              <FileXls size={18} weight="bold" />
+              <span>Exportar Excel</span>
+            </button>
+
+            <button className={styles.botaoLimpar} onClick={limparFiltros}>
+              <XCircleIcon size={16} weight="bold" />
+              Limpar filtros
+            </button>
+          </div>
         </div>
 
         {/* Filtros */}
@@ -346,16 +426,21 @@ export default function Pedidos() {
               <select
                 value={formaPagamento}
                 onChange={(e) => {
-                  const id = e.target.value;
-                  setFormaPagamento(id);
-                  setNomeFormaPagamento(
-                    listaFormaPagamento.find((f) => f.id === Number(id))
-                      ?.nome || "",
-                  );
+                  const valor = e.target.value;
+                  setFormaPagamento(valor);
+                  if (valor === "maquininha") {
+                    setNomeFormaPagamento("MAQUININHA");
+                  } else {
+                    setNomeFormaPagamento(
+                      listaFormaPagamento.find((f) => f.id === Number(valor))
+                        ?.nome || "",
+                    );
+                  }
                 }}
                 className={styles.selectInput}
               >
                 <option value="">Todas as formas</option>
+                <option value="maquininha">MAQUININHA (Cartão + PIX)</option>
                 {listaFormaPagamento?.map((forma) => (
                   <option key={forma.id} value={forma.id}>
                     {forma.nome}

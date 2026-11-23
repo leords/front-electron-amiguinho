@@ -1,4 +1,5 @@
-import { CheckCircleIcon, PrinterIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, PrinterIcon, ArrowLeft } from "@phosphor-icons/react";
+import { useNavigate } from "react-router-dom";
 import Cabecalho from "../../componentes/Cabecalho";
 import { usarToast } from "../../componentes/Context/toastContext";
 import Rodape from "../../componentes/Rodape";
@@ -8,6 +9,8 @@ import { useEffect, useState } from "react";
 import { AlertaRadix } from "../../componentes/ui/alerta/alerta";
 
 export default function ConfigurarImpressora() {
+  const navegar = useNavigate();
+
   // Hooks
   const { mensagem, setMensagem } = usarToast();
   const [listaImpressoras, setListaImpressoras] = useState([]);
@@ -15,15 +18,19 @@ export default function ConfigurarImpressora() {
 
   useEffect(() => {
     const retornarImpressorasDisponiveis = async () => {
-      const impressoras = await window.IMPRESSORA.retornarImpressoras();
-      setListaImpressoras(impressoras);
+      if (window.IMPRESSORA?.retornarImpressoras) {
+        const impressoras = await window.IMPRESSORA.retornarImpressoras();
+        setListaImpressoras(impressoras || []);
+      }
     };
 
     retornarImpressorasDisponiveis();
   }, []);
 
   const selecionarImpressora = async () => {
-    await window.IMPRESSORA.salvarImpressoras(impressoraSelecionada);
+    if (window.IMPRESSORA?.salvarImpressoras) {
+      await window.IMPRESSORA.salvarImpressoras(impressoraSelecionada);
+    }
     setMensagem("Impressora selecionada com sucesso!");
   };
 
@@ -45,6 +52,16 @@ export default function ConfigurarImpressora() {
               </h1>
             </div>
           </div>
+
+          <button
+            type="button"
+            className={styles.botaoVoltar}
+            onClick={() => navegar("/gestao")}
+            title="Voltar para a tela de Gestão"
+          >
+            <ArrowLeft size={16} weight="bold" />
+            Voltar
+          </button>
         </div>
 
         {/* FORMULÁRIO */}
@@ -63,9 +80,12 @@ export default function ConfigurarImpressora() {
               <option value="" disabled>
                 Escolha uma impressora
               </option>
-              {listaImpressoras?.map((impressora) => (
-                <option key={impressora.name} value={impressora.name}>
-                  {impressora.displayName}
+              {listaImpressoras?.map((impressora, index) => (
+                <option
+                  key={impressora?.name || impressora?.displayName || index}
+                  value={impressora?.name || impressora?.displayName || impressora}
+                >
+                  {impressora?.displayName || impressora?.name || impressora}
                 </option>
               ))}
             </select>

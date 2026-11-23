@@ -58,7 +58,13 @@ import {
   gerarRelatorioCarregamentoHTML,
   agruparProdutosCarga,
 } from "../../utils/gerarRelatorioCarregamento";
+import {
+  gerarRelatorioVasilhamesHTML,
+  agruparVasilhamesCarga,
+} from "../../utils/gerarRelatorioVasilhames";
+import { LerProduto } from "../../operadores/API/produto/lerProduto";
 import { gerarCupomExterno } from "../../utils/gerarCupomExterno";
+import { lerPendencias } from "../../operadores/API/pendencia/lerPendencias";
 import Spinner from "../../componentes/Spinner";
 
 export default function Cargas() {
@@ -82,6 +88,8 @@ export default function Cargas() {
   const [motoristas, setMotoristas] = useState([]);
   const [veiculos, setVeiculos] = useState([]);
   const [vendedores, setVendedores] = useState([]);
+  const [pendenciasAbertas, setPendenciasAbertas] = useState([]);
+  const [produtosCatalogo, setProdutosCatalogo] = useState([]);
 
   // Estados para Montagem de Carga.
   const [motoristaSelecionadoId, setMotoristaSelecionadoId] = useState("");
@@ -136,10 +144,12 @@ export default function Cargas() {
   // Carregar motoristas, veículos e vendedores
   const carregarApoio = async () => {
     try {
-      const [resM, resV, resU] = await Promise.allSettled([
+      const [resM, resV, resU, resP, resProd] = await Promise.allSettled([
         lerMotoristas(),
         lerVeiculos(),
         LerUsuario(),
+        lerPendencias({ status: "aberta" }),
+        LerProduto(),
       ]);
 
       if (resM.status === "fulfilled") {
@@ -164,6 +174,31 @@ export default function Cargas() {
             ["EXTERNO", "ADMIN"].includes(u.nivelAcesso.toUpperCase())
         );
         setVendedores(externos);
+      }
+
+      if (resP.status === "fulfilled") {
+        const listaP = Array.isArray(resP.value)
+          ? resP.value
+          : Array.isArray(resP.value?.resultado)
+          ? resP.value.resultado
+          : [];
+        setPendenciasAbertas(listaP);
+      }
+
+      if (resProd.status === "fulfilled") {
+        const val = resProd.value;
+        const listaProd = Array.isArray(val)
+          ? val
+          : Array.isArray(val?.produtos)
+          ? val.produtos
+          : Array.isArray(val?.resultado)
+          ? val.resultado
+          : Array.isArray(val?.dados)
+          ? val.dados
+          : Array.isArray(val?.data)
+          ? val.data
+          : [];
+        setProdutosCatalogo(listaProd);
       }
     } catch (err) {
       console.error("Erro ao carregar dados de apoio:", err);
@@ -237,7 +272,6 @@ export default function Cargas() {
     try {
       const params = {
         setor: "externo",
-        status: "pendente",
         semCarga: true,
       };
       if (vendedorPedido) params.vendedor = vendedorPedido;
@@ -246,9 +280,7 @@ export default function Cargas() {
         params.dataFim = dataPedido;
       }
 
-      console.log("[Cargas] Buscando pedidos externos com parâmetros:", params);
       const lista = await buscarPedido(params);
-      console.log("[Cargas] Resposta da API buscarPedido:", lista);
 
       const arrayValido = Array.isArray(lista)
         ? lista
@@ -258,7 +290,10 @@ export default function Cargas() {
 
       // Filtra estritamente para garantir que nenhum pedido já associado a carga seja exibido
       const pedidosSemCarga = arrayValido.filter(
-        (p) => p.cargaId === null || p.cargaId === undefined
+        (p) =>
+          (p.cargaId === null || p.cargaId === undefined) &&
+          p.status !== "cancelado" &&
+          p.status !== "devolvido"
       );
 
       setPedidosPendentes(pedidosSemCarga);
@@ -303,6 +338,8 @@ export default function Cargas() {
   // Filtragem local dos pedidos da montagem por data, vendedor e texto (Cliente / ID)
   const pedidosMontagemFiltrados = pedidosPendentes.filter((p) => {
     if (p.cargaId !== null && p.cargaId !== undefined) return false;
+    if (p.status === "cancelado" || p.status === "devolvido") return false;
+
     if (dataPedido) {
       const dataPed =
         p.criadoEm ||
@@ -314,16 +351,32 @@ export default function Cargas() {
       const ymdPed = extrairDataYMD(dataPed);
       if (ymdPed && ymdPed !== dataPedido) return false;
     }
+
     if (vendedorPedido) {
-      const vNome = (p.vendedor || p.usuario?.nome || "").toLowerCase();
-      if (!vNome.includes(vendedorPedido.toLowerCase())) return false;
+      const vNome = (p.vendedor || p.usuario?.nome || "").trim().toLowerCase();
+      const vFiltro = vendedorPedido.trim().toLowerCase();
+      if (vNome !== vFiltro && !vNome.includes(vFiltro)) return false;
     }
+
     if (!buscaPedidoTexto.trim()) return true;
-    const termo = buscaPedidoTexto.toLowerCase();
+
+    const termo = buscaPedidoTexto.toLowerCase().trim();
+    const termoSemHash = termo.replace(/^#/, "");
     const clienteNome = (p.cliente?.nome || p.nomeCliente || "").toLowerCase();
-    const idMatch = String(p.id).includes(termo);
-    const vendedorMatch = (p.vendedor || p.usuario?.nome || "").toLowerCase().includes(termo);
-    return clienteNome.includes(termo) || idMatch || vendedorMatch;
+    const clienteCidade = (p.cliente?.cidade || p.cidade || "").toLowerCase();
+    const idMatch =
+      String(p.id).includes(termo) ||
+      (termoSemHash ? String(p.id).includes(termoSemHash) : false);
+    const vendedorMatch = (p.vendedor || p.usuario?.nome || "")
+      .toLowerCase()
+      .includes(termo);
+
+    return (
+      clienteNome.includes(termo) ||
+      clienteCidade.includes(termo) ||
+      idMatch ||
+      vendedorMatch
+    );
   });
 
   // Selecionar ou desselecionar todos os pedidos visíveis
@@ -487,6 +540,26 @@ export default function Cargas() {
         }))
       : [];
 
+    const clienteIdPed = Number(pedido.clienteId || pedido.cliente?.id || 0);
+    const pendenciasCliente = (pedido.cliente?.pendencias || pendenciasAbertas || []).filter((p) => {
+      const idMatch = Number(p.clienteId || p.cliente?.id || 0) === clienteIdPed;
+      const s = String(p.status || "").toLowerCase();
+      const emAberto = s !== "fechada" && s !== "cancelada";
+      return idMatch && emAberto;
+    });
+
+    const totalPendenciasCliente =
+      pedido.cliente?.totalPendencia !== undefined && Number(pedido.cliente.totalPendencia) > 0
+        ? Number(pedido.cliente.totalPendencia)
+        : pendenciasCliente.reduce((acc, p) => {
+            const saldo = Number(
+              p.saldoDevedor !== undefined
+                ? p.saldoDevedor
+                : Number(p.valor || 0) - Number(p.valorPago || 0)
+            );
+            return acc + saldo;
+          }, 0);
+
     return {
       tipo: "viaNormal",
       data: pedido.criadoEm || pedido.createdAt || new Date(),
@@ -502,6 +575,8 @@ export default function Cargas() {
         pedido.formaPagamento ||
         "Não informado",
       itens: itensFormatados,
+      pendencias: pendenciasCliente,
+      totalPendencia: totalPendenciasCliente,
     };
   };
 
@@ -536,6 +611,51 @@ export default function Cargas() {
     } catch (error) {
       console.error("Erro ao imprimir relatório de carregamento:", error);
       setMensagem("Erro ao imprimir relatório de carregamento.");
+    }
+  };
+
+  // Impressão direta do Relatório de Vasilhames da Carga
+  const tratarImprimirRelatorioVasilhames = async () => {
+    if (!cargaDetalhe) return;
+    try {
+      if (!window.IMPRESSORA || typeof window.IMPRESSORA.imprimir !== "function") {
+        setMensagem("Interface de impressão não disponível nesta plataforma.");
+        return;
+      }
+
+      let catalogo = produtosCatalogo;
+      if (!Array.isArray(catalogo) || catalogo.length === 0) {
+        try {
+          const res = await LerProduto();
+          catalogo = Array.isArray(res)
+            ? res
+            : Array.isArray(res?.resultado)
+            ? res.resultado
+            : Array.isArray(res?.produtos)
+            ? res.produtos
+            : [];
+          if (catalogo.length > 0) {
+            setProdutosCatalogo(catalogo);
+          }
+        } catch (e) {
+          console.warn("Aviso: Falha ao carregar catálogo de produtos para vasilhames:", e);
+        }
+      }
+
+      const vasilhames = agruparVasilhamesCarga(cargaDetalhe.pedidos, catalogo);
+      console.log("[Vasilhames] Vasilhames calculados para a carga:", vasilhames);
+
+      if (vasilhames.length === 0) {
+        setMensagem("Nenhum vasilhame retornável encontrado nesta carga.");
+        return;
+      }
+      const totalItens = vasilhames.reduce((acc, v) => acc + v.quantidade, 0);
+      const html = gerarRelatorioVasilhamesHTML(cargaDetalhe, catalogo);
+      window.IMPRESSORA.imprimir(html);
+      setMensagem(`Relatório de Vasilhames da Carga #${cargaDetalhe.id} (${totalItens} vasilhames) enviado para impressão!`);
+    } catch (error) {
+      console.error("Erro ao imprimir relatório de vasilhames:", error);
+      setMensagem("Erro ao imprimir relatório de vasilhames.");
     }
   };
 
@@ -658,7 +778,6 @@ export default function Cargas() {
     try {
       const lista = await buscarPedido({
         setor: "externo",
-        status: "pendente",
         semCarga: true,
       });
       const arrayValido = Array.isArray(lista)
@@ -668,7 +787,10 @@ export default function Cargas() {
         : [];
       // Garante que apenas pedidos sem nenhuma carga sejam adicionáveis
       const pedidosDisponiveis = arrayValido.filter(
-        (p) => p.cargaId === null || p.cargaId === undefined
+        (p) =>
+          (p.cargaId === null || p.cargaId === undefined) &&
+          p.status !== "cancelado" &&
+          p.status !== "devolvido"
       );
       setPedidosParaAdicionar(pedidosDisponiveis);
     } catch (error) {
@@ -1347,6 +1469,17 @@ export default function Cargas() {
                     Relatório de Carregamento
                   </button>
 
+                  {/* RELATÓRIO DE VASILHAMES */}
+                  <button
+                    type="button"
+                    className={styles.botaoAcaoVasilhames}
+                    onClick={tratarImprimirRelatorioVasilhames}
+                    title="Imprimir Relatório de Vasilhames a retornar da carga na impressora térmica"
+                  >
+                    <ArrowCounterClockwise size={16} weight="bold" />
+                    Relatorio de vasilhames
+                  </button>
+
                   {/* IMPRIMIR TODOS OS PEDIDOS */}
                   <button
                     type="button"
@@ -1531,9 +1664,18 @@ export default function Cargas() {
                         {pedidosParaAdicionar
                           .filter((p) => {
                             if (!buscaAdicionarTexto.trim()) return true;
-                            const termo = buscaAdicionarTexto.toLowerCase();
+                            const termo = buscaAdicionarTexto.toLowerCase().trim();
+                            const termoSemHash = termo.replace(/^#/, "");
                             const nome = (p.cliente?.nome || p.nomeCliente || "").toLowerCase();
-                            return nome.includes(termo) || String(p.id).includes(termo);
+                            const cidade = (p.cliente?.cidade || p.cidade || "").toLowerCase();
+                            const vendedor = (p.vendedor || p.usuario?.nome || "").toLowerCase();
+                            return (
+                              nome.includes(termo) ||
+                              cidade.includes(termo) ||
+                              vendedor.includes(termo) ||
+                              String(p.id).includes(termo) ||
+                              (termoSemHash ? String(p.id).includes(termoSemHash) : false)
+                            );
                           })
                           .map((p) => {
                             const isSel = pedidosParaAdicionarSelIds.includes(p.id);

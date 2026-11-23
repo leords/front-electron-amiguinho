@@ -14,7 +14,6 @@ import { usarToast } from "../../componentes/Context/toastContext";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { gerarOrcamento } from "../../utils/gerarOrcamento";
 import { formatarMoeda } from "../../utils/formartarMoeda";
-import { salvarOrcamentoLocal } from "../../utils/orcamentosStorage.js";
 import {
   ShoppingCartIcon,
   PlusCircleIcon,
@@ -274,9 +273,9 @@ export default function Vendas() {
       const pedido = {
         cliente: nome || "",
         //formaPagamentoId: formaPagamento,
-        vendedor: usuario.nivelAcesso === "ADMIN" ? balcao.value : nomeMaquina,
-        nomeUsuario: usuario.nome,
-        usuarioId: usuario.id,
+        vendedor: usuario?.nivelAcesso === "ADMIN" ? balcao.value : nomeMaquina,
+        nomeUsuario: usuario?.nome || "",
+        usuarioId: usuario?.id || 1,
         itens: cupom.map((item) => ({
           produtoId: item.id,
           quantidade: item.quantidade,
@@ -290,7 +289,7 @@ export default function Vendas() {
       };
 
       const vendedorTerminal =
-        usuario.nivelAcesso === "ADMIN"
+        usuario?.nivelAcesso === "ADMIN"
           ? balcao.label
           : nomeMaquina === "b1"
             ? "Balcao 01"
@@ -323,20 +322,17 @@ export default function Vendas() {
 
       // Função imprimir condicional
       if (orcamento) {
-        salvarOrcamentoLocal({
-          data: new Date(),
-          vendedor:
-            usuario.nivelAcesso === "ADMIN"
-              ? balcao.value
-              : nomeMaquina || "b1",
-          nomeUsuario: usuario.nome,
-          cliente: nome || "Consumidor",
-          itens: pedidoImprimir.itens,
-          total: totalPedidoCentavos / 100,
+        // Envia o orçamento exclusivamente para o banco de dados
+        const retornoAPI = await NovoPedidoBalcao("balcao", {
+          ...pedido,
+          status: "orcamento",
         });
+
         window.IMPRESSORA.imprimir(gerarOrcamento(pedidoImprimir));
         setStatusPedido(false);
-        setMensagem("Orçamento gerado com sucesso!");
+        setMensagem(
+          retornoAPI?.mensagem || "Orçamento gerado com sucesso!",
+        );
       } else {
         // Enviando o pedido para o banco
         const retornoAPI = await NovoPedidoBalcao("balcao", pedido);

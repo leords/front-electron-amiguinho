@@ -1,52 +1,54 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
 import styles from "./styles.module.css";
 import Spinner from "../../componentes/Spinner";
+
 // Ícones
 import {
   UsersIcon,
-  MotorcycleIcon,
-  PackageIcon,
   CreditCardIcon,
   CloudArrowUpIcon,
-  CheckCircleIcon,
-  WarningCircleIcon,
-  HardDrivesIcon,
-  PowerIcon
+  ArrowLeft,
+  CheckCircle,
 } from "@phosphor-icons/react";
 
 // Chamadas de API externas
-import { BuscarClienteDelivery } from "../../operadores/API/cliente/buscarClienteDelivery";
 import { BuscarClienteExterno } from "../../operadores/API/cliente/buscarClienteExterno";
-import { BuscarProduto } from "../../operadores/API/produto/buscarProduto";
 import { buscarFormaPagamento } from "../../operadores/API/formaPagamento/buscarFormaPagamento";
-import { usarToast } from "../../componentes/Context/toastContext";
 import { lerFormaPagamentoBalcao } from "../../operadores/API/formaPagamento/lerFormaPagamentoBalcao";
 import { lerFormaPagamentoExterna } from "../../operadores/API/formaPagamento/lerFormaPagamentoExterna";
-import { lerFormasPagamento } from "../../operadores/API/formaPagamento/lerFormasPagamento";
+import { usarToast } from "../../componentes/Context/toastContext";
+import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 
-
-// Componente botão.
-function BotaoCarga({ icone: Icone, cor, titulo, descricao, status, onClick }) {
+// Componente botão de carga
+function BotaoCarga({
+  icone: Icone,
+  cor,
+  titulo,
+  descricao,
+  status,
+  onClick,
+}) {
   return (
     <button
       className={styles.botaoCarga}
       data-cor={cor}
       onClick={onClick}
-    
+      type="button"
     >
       <div className={styles.botaoIcone} data-cor={cor}>
-          <Icone size={28} weight="fill" />
+        <Icone size={28} weight="fill" />
       </div>
 
       <div className={styles.botaoTexto}>
         <strong className={styles.botaoTitulo}>{titulo}</strong>
-        <p className={styles.botaoDescricao}>
-          {descricao}
-        </p>
-        {status && ( <p className={styles.historicoCarga}>última carga: {status}</p> )}
+        <p className={styles.botaoDescricao}>{descricao}</p>
+        {status && (
+          <p className={styles.historicoCarga}>última carga: {status}</p>
+        )}
       </div>
 
       <div className={styles.botaoArrow}>
@@ -57,69 +59,65 @@ function BotaoCarga({ icone: Icone, cor, titulo, descricao, status, onClick }) {
 }
 
 export default function Transmissao() {
+  const navegar = useNavigate();
+  const [carregando, setCarregando] = useState(false);
 
-  const [carregando, setCarregando] = useState(false)
+  // Controladores de última carga
+  const [statusExterno, setStatusExterno] = useState(
+    localStorage.getItem("clientesExternoForce")
+  );
+  const [statusFormas, setStatusFormas] = useState(
+    localStorage.getItem("clientesForce")
+  );
 
-  // Controladores de ultima carga
-  const [statusDelivery, setStatusDelivery] = useState(localStorage.getItem('clientesDeliveryForce'))
-  const [statusExterno, setStatusExterno] = useState(localStorage.getItem('clientesExternoForce'))
-  const [statusProdutos, setStatusProdutos] = useState(localStorage.getItem('produtosForce'))
-  const [statusFormas, setStatusFormas] = useState(localStorage.getItem('clientesForce'))
+  // Hook Toast
+  const { mensagem, setMensagem } = usarToast();
 
-  // Data atual
-  const agora = new Date().toLocaleString('pt-BR')
+  const tratarVoltarMenu = () => {
+    navegar("/gestao");
+  };
 
-
-  // Hook
-  const { setMensagem } = usarToast();
-
-  // Array de funções
+  // Funções de carga ativas
   const acoes = {
-    clientesDeliveryForce: async () => {
-      await BuscarClienteDelivery();
-      setStatusDelivery(agora);
-    },
     clientesExternoForce: async () => {
+      const agora = new Date().toLocaleString("pt-BR");
       await BuscarClienteExterno();
       setStatusExterno(agora);
-    },
-    produtosForce: async () => {
-      await BuscarProduto();
-      setStatusProdutos(agora);
+      localStorage.setItem("clientesExternoForce", agora);
     },
     clientesForce: async () => {
+      const agora = new Date().toLocaleString("pt-BR");
       await buscarFormaPagamento();
       await lerFormaPagamentoBalcao();
       await lerFormaPagamentoExterna();
-      await lerFormasPagamento();
       setStatusFormas(agora);
+      localStorage.setItem("clientesForce", agora);
     },
-  }
+  };
 
-  // Função que chama a função conforme o parametro
-  const carregar = async (opcao) => { 
+  // Função disparada para executar carga
+  const carregar = async (opcao) => {
     try {
-      setCarregando(true)
+      setCarregando(true);
 
-      if(acoes[opcao]){
+      if (acoes[opcao]) {
         await acoes[opcao]();
-        localStorage.setItem(opcao, agora)
+        setMensagem("Carga de dados concluída com sucesso!");
       }
-
     } catch (error) {
-      console.log(error.message)
-      setMensagem(error.message)
+      console.error(error);
+      setMensagem(error.message || "Erro inesperado ao transmitir dados");
     } finally {
-      setCarregando(false)
+      setCarregando(false);
     }
-   };
+  };
 
   return (
     <div className={styles.container}>
+      <ToastRadix mensagem={mensagem} />
       <Cabecalho />
 
       <main className={styles.principal}>
-
         {/* Cabeçalho */}
         <div className={styles.cabecalhoPage}>
           <div className={styles.tituloSection}>
@@ -131,55 +129,47 @@ export default function Transmissao() {
               <h1 className={styles.pageTitulo}>Transmissão de dados</h1>
             </div>
           </div>
+
+          <button className={styles.botaoVoltar} onClick={tratarVoltarMenu}>
+            <ArrowLeft size={14} weight="bold" />
+            Voltar
+          </button>
         </div>
+
+        {/* Banner Informativo sobre Módulos Nativos */}
+        <div className={styles.avisoNativo}>
+          <CheckCircle size={22} weight="fill" />
+          <span>
+            <strong>Gestão Nativa Ativa:</strong> Os cadastros de{" "}
+            <strong>Produtos</strong>, <strong>Clientes Delivery</strong> e{" "}
+            <strong>Formas de Pagamento</strong> agora são gerenciados de forma 100% nativa
+            pelo sistema (com suporte a inclusão, edição e inativação). As cargas manuais desses
+            módulos foram removidas desta tela para garantir a integridade dos dados e evitar
+            sobreposições acidentais por outros usuários.
+          </span>
+        </div>
+
         <p className={styles.instrucao}>
-          Clique em cada botão para carregar listas no servidor.
+          Selecione o conjunto de dados para sincronizar com o servidor:
         </p>
 
-        {carregando 
-           // Div de carregamento 
-        ? <div className={styles.carregamento}>
+        {carregando ? (
+          <div className={styles.carregamento}>
             <Spinner />
             <p>Carregando dados, aguarde!</p>
-          </div> 
-        : // Grid de botões */}
+          </div>
+        ) : (
           <div className={styles.grid}>
-            <BotaoCarga
-              icone={MotorcycleIcon}
-              cor="orange"
-              titulo="Clientes Delivery"
-              descricao="Carregar lista de clientes do setor delivery"
-              status={statusDelivery}
-              onClick={() => carregar('clientesDeliveryForce')}
-            />
             <BotaoCarga
               icone={UsersIcon}
               cor="blue"
               titulo="Clientes Externo"
-              descricao="Carregar lista de clientes do setor externo"
+              descricao="Carregar lista de clientes do setor externo (Google Sheets)"
               status={statusExterno}
-              onClick={() => carregar('clientesExternoForce')}
-            />
-            <BotaoCarga
-              icone={PackageIcon}
-              cor="purple"
-              titulo="Produtos"
-              descricao="Carregar catálogo de produtos disponíveis"
-              status={statusProdutos}
-              onClick={() => carregar('produtosForce')}
-            />
-            <BotaoCarga
-              icone={CreditCardIcon}
-              cor="green"
-              titulo="Formas de pagamento"
-              descricao="Carregar métodos de pagamento aceitos"
-              status={statusFormas}
-              onClick={() => carregar('clientesForce')}
+              onClick={() => carregar("clientesExternoForce")}
             />
           </div>
-        }
-       
-
+        )}
       </main>
 
       <Rodape />

@@ -8,6 +8,45 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Fallbacks seguros para testes no navegador quando fora do Electron
+      if (!window.IMPRESSORA) {
+        window.IMPRESSORA = {
+          imprimir: (html) => console.log("[MOCK IMPRESSORA] imprimir"),
+          retornarImpressoras: async () => ["Impressora Térmica Mock 80mm"],
+          salvarImpressoras: async (nome) => true,
+        };
+      }
+      if (!window.ENV) {
+        window.ENV = {
+          pegarNomeMaquina: async () => "b1",
+        };
+      }
+      if (!window.API) {
+        window.API = {
+          buscarClima: async () => ({ main: { temp: 26 }, weather: [{ description: "Ensolarado" }] }),
+        };
+      }
+      if (!window.PDF) {
+        window.PDF = {
+          gerarPDFEstoque: async () => true,
+          gerarPDFSaidaProdutos: async () => true,
+          baixarCSV: async () => true,
+          gerarPDFRelatorioCliente: async () => true,
+        };
+      }
+      if (!window.LINK) {
+        window.LINK = {
+          abrirLinkExterno: async (url) => window.open(url, "_blank"),
+        };
+      }
+      if (!window.electronAPI) {
+        window.electronAPI = {
+          fecharJanela: () => {},
+          limparStorages: () => localStorage.clear(),
+        };
+      }
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -27,17 +27,17 @@
   --radius: 14px;
 }
 
-/* Layout */
+/* Container */
 .container {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 24px 0;
-  animation: fadeUp 0.4s ease both;
+  animation: fadeUp 0.35s ease both;
+  width: 100%;
 }
 
-/* Cabeçalho */
-.cabecalhoPage {
+/* Barra de Ações Superiores */
+.barraSuperior {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -45,101 +45,149 @@
   gap: 12px;
 }
 
-.input {
+.resumoBadges {
   display: flex;
   align-items: center;
-  background: var(--gray-100);
-  border: 1.5px solid var(--gray-300);
-  border-radius: 10px;
-  padding: 0 14px;
-  transition: all 0.2s;
-  height: 40px;
-  font-size: 14px;
-  color: var(--gray-700);
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.input:focus-within {
-  border-color: var(--orange);
-  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
-  background: var(--white);
-}
-
-.tituloSection {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.iconeWrapper {
-  width: 46px;
-  height: 46px;
-  background: linear-gradient(135deg, #ff8c00, #ffb347);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--white);
-  box-shadow: 0 4px 14px rgba(255, 140, 0, 0.35);
-  flex-shrink: 0;
-}
-
-.pageSubtitulo {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--orange);
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  margin: 0 0 2px;
-}
-
-.pageTitulo {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--gray-900);
-  margin: 0;
-  letter-spacing: -0.5px;
-}
-
-/* Badge contador  */
-.badge {
+.badgeGeral {
   background: var(--orange-light);
   color: var(--orange);
   border: 1px solid var(--orange-mid);
-  padding: 8px 12px;
-  border-radius: 10px;
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 12px;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* link */
-.link {
+.badgeAtivos {
   background: var(--green-light);
   color: var(--green);
   border: 1px solid var(--green-mid);
-  padding: 8px 12px;
-  border-radius: 10px;
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 12px;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badgeInativos {
+  background: var(--gray-100);
+  color: var(--gray-500);
+  border: 1px solid var(--gray-300);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.acoesSuperiores {
   display: flex;
-  justify-content: center;
-  gap: 5px;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.link:hover {
+.botaoRecarregar {
+  all: unset;
   cursor: pointer;
-  background: var(--green);
-  color: var(--green-light);
-  border: 1px solid var(--green-mid);
-  transition: all 0.5s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-300);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
 }
 
-/* Painel de busca */
-.painelBusca {
+.botaoRecarregar:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-500);
+  color: var(--gray-900);
+}
+
+.botaoNovoProduto {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--green), #40c057);
+  color: var(--white);
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(47, 158, 68, 0.25);
+  transition: all 0.2s;
+}
+
+.botaoNovoProduto:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(47, 158, 68, 0.35);
+  background: linear-gradient(135deg, #2b8a3e, #37b24d);
+}
+
+.botaoExportarExcel {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1971c2, #1c7ed6);
+  color: var(--white);
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(25, 113, 194, 0.25);
+  transition: all 0.2s ease;
+}
+
+.botaoExportarExcel:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(25, 113, 194, 0.35);
+  background: linear-gradient(135deg, #1864ab, #1971c2);
+}
+
+.botaoExportarExcel:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Painel de Filtros e Busca */
+.painelFiltros {
   background: var(--white);
   border-radius: var(--radius);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
-  padding: 14px 18px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.linhaFiltros {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: center;
 }
 
 .inputBuscaWrapper {
@@ -151,6 +199,7 @@
   border-radius: 10px;
   padding: 0 14px;
   transition: all 0.2s;
+  height: 40px;
 }
 
 .inputBuscaWrapper:focus-within {
@@ -166,14 +215,13 @@
 
 .inputBusca {
   flex: 1;
-  padding: 10px 0;
   border: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--gray-900);
   outline: none;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: inherit;
 }
 
 .inputBusca::placeholder {
@@ -202,131 +250,395 @@
   color: var(--white);
 }
 
-/* Card wrapper */
-.card {
+/* Select de Filtro */
+.selectFiltroWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gray-100);
+  border: 1.5px solid var(--gray-300);
+  border-radius: 10px;
+  padding: 0 12px;
+  height: 40px;
+  transition: all 0.2s;
+}
+
+.selectFiltroWrapper:focus-within {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
+  background: var(--white);
+}
+
+.selectFiltro {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-900);
+  outline: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.botaoLimparFiltros {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--red);
+  background: var(--red-light);
+  border: 1.5px solid var(--red-mid);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.botaoLimparFiltros:hover {
+  background: var(--red);
+  color: var(--white);
+  border-color: var(--red);
+}
+
+/* Tabela e Card */
+.cardTabela {
   background: var(--white);
   border-radius: var(--radius);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Tabela */
 .tabelaWrapper {
   overflow-x: auto;
+  width: 100%;
 }
 
-.tituloLista {
+.gridProdutos {
   display: grid;
-  padding: 10px 16px;
+  grid-template-columns: 65px minmax(220px, 2fr) minmax(110px, 1fr) minmax(110px, 1fr) minmax(120px, 1.2fr) 110px 105px 100px 125px;
+  gap: 12px;
+  align-items: center;
+  min-width: 1010px;
+}
+
+.cabecalhoTabela {
+  padding: 12px 18px;
   background: var(--gray-100);
   border-bottom: 1px solid var(--border);
   font-size: 11px;
   font-weight: 700;
   color: var(--gray-500);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  min-width: 700px;
+  letter-spacing: 0.6px;
+  user-select: none;
 }
 
-.lista {
+.listaLinhas {
   display: flex;
   flex-direction: column;
-  max-height: 480px;
+  max-height: 520px;
   overflow-y: auto;
-  min-width: 700px;
 }
 
-.lista::-webkit-scrollbar {
-  width: 4px;
+.listaLinhas::-webkit-scrollbar {
+  width: 5px;
 }
-.lista::-webkit-scrollbar-track {
+.listaLinhas::-webkit-scrollbar-track {
   background: var(--gray-100);
 }
-.lista::-webkit-scrollbar-thumb {
+.listaLinhas::-webkit-scrollbar-thumb {
   background: var(--gray-300);
   border-radius: 4px;
 }
 
-.itemRow {
-  display: grid;
-  padding: 10px 16px;
+.linhaProduto {
+  padding: 12px 18px;
   border-bottom: 1px solid #f1f3f5;
   font-size: 13px;
   color: var(--gray-700);
-  font-weight: 400;
-  transition: background 0.15s;
-  align-items: center;
-  cursor: default;
+  transition: background 0.15s ease;
 }
 
-.itemRow:last-child {
+.linhaProduto:last-child {
   border-bottom: none;
 }
 
-.itemRow:hover {
-  background: var(--orange-light);
-  color: var(--gray-900);
+.linhaProduto:hover {
+  background: #fff9f2;
 }
 
-/* células especiais */
+.linhaProduto.inativo {
+  background: #fbfbfb;
+  opacity: 0.78;
+}
+
+.linhaProduto.inativo:hover {
+  background: #f3f4f6;
+  opacity: 1;
+}
+
+/* Células customizadas */
 .idCell {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--gray-500);
+  font-family: monospace;
 }
 
-.nomeCell {
-  font-weight: 400;
-  color: var(--gray-800);
+.nomeWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-/* ── Grids de colunas ────────────────────────────────────── */
-/* externo: ID | Nome | CNPJ | Cidade | Endereço | Telefone | Vendedor | Atendimento | Frequência */
-.gridExterno {
-  grid-template-columns: 40px 1.5fr 1fr 1.3fr 1.2fr 0.9fr 1.1fr 0.7fr 0.7fr;
-  gap: 12px;
+.nomeTexto {
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.3;
 }
 
-/* ── Estado vazio ────────────────────────────────────────── */
+.detalhesSubTexto {
+  font-size: 11px;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tagSegmento {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue-mid);
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.tagEmbalagem {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.tagFornecedor {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.precoVendaTexto {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--green);
+}
+
+.estoqueBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border: 1px solid var(--gray-300);
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.estoqueCritico {
+  background: var(--red-light);
+  color: var(--red);
+  border-color: var(--red-mid);
+}
+
+/* Badges de Status */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+.statusAtivo {
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green-mid);
+}
+
+.statusInativo {
+  background: var(--gray-100);
+  color: var(--gray-500);
+  border: 1px solid var(--gray-300);
+}
+
+.pontoStatus {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Coluna de Ações */
+.colunaAcoes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnAcaoRelatorio {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--purple-light, #f3f0ff);
+  color: var(--purple, #7048e8);
+  border: 1px solid #d0bfff;
+  transition: all 0.2s;
+}
+
+.btnAcaoRelatorio:hover {
+  background: var(--purple, #7048e8);
+  color: var(--white, #ffffff);
+  transform: translateY(-1px);
+}
+
+.btnAcaoEditar {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue-mid);
+  transition: all 0.2s;
+}
+
+.btnAcaoEditar:hover {
+  background: var(--blue);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.btnAcaoStatus {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.btnAcaoStatus.inativar {
+  background: var(--red-light);
+  color: var(--red);
+  border: 1px solid var(--red-mid);
+}
+
+.btnAcaoStatus.inativar:hover {
+  background: var(--red);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.btnAcaoStatus.reativar {
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green-mid);
+}
+
+.btnAcaoStatus.reativar:hover {
+  background: var(--green);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+/* Estado Vazio */
 .estadoVazio {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 52px 20px;
+  padding: 56px 20px;
   text-align: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .iconeVazio {
   color: var(--gray-300);
 }
 
-.estadoVazio p {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--gray-500);
+.tituloVazio {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-700);
   margin: 0;
 }
 
-.estadoVazio span {
+.subtituloVazio {
   font-size: 13px;
-  color: var(--gray-300);
+  color: var(--gray-500);
+  margin: 0;
+  max-width: 420px;
 }
 
-/* ── Spinner ─────────────────────────────────────────────── */
+/* Spinner de Carregamento */
+.spinnerWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 12px;
+}
+
 .spinner {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border: 3px solid var(--gray-300);
   border-top-color: var(--orange);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  margin: 0 auto;
 }
 
-/* ── Animações ───────────────────────────────────────────── */
+.textoCarregando {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+
+/* Animações */
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -336,7 +648,7 @@
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -344,13 +656,17 @@
   }
 }
 
-/* ── Responsividade ──────────────────────────────────────── */
-@media (max-width: 768px) {
-  .pageTitulo {
-    font-size: 20px;
+/* Responsividade */
+@media (max-width: 900px) {
+  .linhaFiltros {
+    grid-template-columns: 1fr 1fr;
   }
-  .cabecalhoPage {
+  .barraSuperior {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .acoesSuperiores {
+    width: 100%;
+    justify-content: space-between;
   }
 }

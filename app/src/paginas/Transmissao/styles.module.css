@@ -87,6 +87,47 @@
   letter-spacing: -0.5px;
 }
 
+/* Botão voltar */
+.botaoVoltar {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--red-light, #fff5f5);
+  color: var(--red, #c92a2a);
+  border: 1.5px solid var(--red-mid, #ffc9c9);
+  transition: all 0.2s;
+}
+
+.botaoVoltar:hover {
+  background: var(--red, #c92a2a);
+  color: var(--white, #ffffff);
+  border-color: var(--red, #c92a2a);
+  transform: translateY(-1px);
+}
+
+.avisoNativo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #e7f5ff;
+  border: 1px solid #a5d8ff;
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: #1864ab;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.avisoNativo strong {
+  color: #1971c2;
+}
+
 .instrucao {
   font-size: 14px;
   color: var(--gray-500);
@@ -175,12 +216,48 @@
 /* Texto */
 .botaoTexto { flex: 1; text-align: left; }
 
+.tituloLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
 .botaoTitulo {
-  display: block;
+  display: inline-block;
   font-size: 15px;
   font-weight: 700;
   color: var(--gray-900);
-  margin-bottom: 4px;
+  margin-bottom: 0;
+}
+
+.badgeNativo {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue-mid);
+}
+
+.badgeLegado {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1px solid var(--orange-mid);
 }
 
 .botaoDescricao {

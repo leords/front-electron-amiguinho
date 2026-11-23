@@ -26,8 +26,10 @@ import {
   Bank,
 } from "@phosphor-icons/react";
 import { concluirCarga } from "../../operadores/API/carga/concluirCarga";
+import { criarFechamento } from "../../operadores/API/AjusteFechamento/criarFechamento";
+import { editarFechamento } from "../../operadores/API/AjusteFechamento/editarFechamento";
 import { lerCargas } from "../../operadores/API/carga/lerCargas";
-import { lerFormasPagamento } from "../../operadores/API/formaPagamento/lerFormasPagamento";
+import { lerFormaPagamentoExterna } from "../../operadores/API/formaPagamento/lerFormaPagamentoExterna";
 import { lerPendencias } from "../../operadores/API/pendencia/lerPendencias";
 import { devolverPedidoExterno } from "../../operadores/API/pedido/devolverPedidoExterno";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido";
@@ -120,7 +122,7 @@ export default function FechamentoCarga() {
 
         // Formas de pagamento
         try {
-          const fps = await lerFormasPagamento();
+          const fps = await lerFormaPagamentoExterna();
           if (Array.isArray(fps)) setFormasPagamento(fps);
         } catch (e) {
           console.warn("Erro ao ler formas de pagamento:", e);
@@ -170,8 +172,8 @@ export default function FechamentoCarga() {
             return {
               ...p,
               valorTotal,
-              statusEntrega: "entregue", // 'entregue' | 'devolvido'
-              motivoDevolucao: "",
+              statusEntrega: p.status === "devolvido" ? "devolvido" : "entregue",
+              motivoDevolucao: p.status === "devolvido" ? "Devolução da Carga" : "",
               formaAlterada: false,
               pagamentos: [
                 {
@@ -658,6 +660,42 @@ export default function FechamentoCarga() {
         },
       };
 
+      // 1. Registra o fechamento formal no setor 'carga' para compor os Fechamentos Finalizados
+      try {
+        const veiculoNome =
+          carga.veiculo?.nome || carga.veiculo?.modelo || "Veículo";
+        const motoristaNome = carga.motorista?.nome || "Motorista";
+        const identificadorCarga = `Carga #${carga.id} — ${veiculoNome} - ${motoristaNome}`;
+        const dataReferencia = dataFormatadaCalendario(
+          carga.data ? new Date(carga.data) : new Date()
+        );
+
+        const fechamentoCarga = await criarFechamento("carga", {
+          vendedor: identificadorCarga,
+          data: dataReferencia,
+        });
+
+        if (fechamentoCarga?.id) {
+          await editarFechamento(fechamentoCarga.id, {
+            totalSistema: totais.dinheiroFinal ?? 0,
+            totalInformado: totalCedulasContado ?? 0,
+            nota200: duzentos,
+            nota100: cem,
+            nota50: cinquenta,
+            nota20: vinte,
+            nota10: dez,
+            nota5: cinco,
+            nota2: dois,
+          });
+        }
+      } catch (errFechamento) {
+        console.warn(
+          "Aviso ao registrar fechamento formal da carga:",
+          errFechamento
+        );
+      }
+
+      // 2. Conclui a carga na rota de cargas
       await concluirCarga(carga.id, payloadFechamento);
 
       // Limpa os ajustes em memória da carga finalizada
@@ -996,6 +1034,11 @@ export default function FechamentoCarga() {
                         </div>
 
                         <div className={styles.pedidoInfoDireita}>
+                          {ped.status === "entregue" && !isDevolvido && (
+                            <span className={styles.tagEntregueApp} title="Confirmado pelo aplicativo de entrega">
+                              ✓ Entregue no App
+                            </span>
+                          )}
                           {isDevolvido ? (
                             <span className={styles.tagDevolvido}>
                               ⛔ DEVOLVIDO

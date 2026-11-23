@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { lerFormasPagamento } from "../operadores/API/formaPagamento/lerFormasPagamento.js";
 import { lerFormaPagamentoExterna } from "../operadores/API/formaPagamento/lerFormaPagamentoExterna.js";
 
 export function useFormasPagamento() {
@@ -11,18 +10,8 @@ export function useFormasPagamento() {
   useEffect(() => {
     const carregar = async () => {
       try {
-        try {
-          const lista = await lerFormasPagamento();
-          if (Array.isArray(lista) && lista.length > 0) {
-            setListaFormasPagamento(lista);
-            return;
-          }
-        } catch (e) {
-          console.warn("Tentando fallback de formas de pagamento:", e);
-        }
-
-        const fallbackLista = await lerFormaPagamentoExterna();
-        setListaFormasPagamento(fallbackLista ?? []);
+        const lista = await lerFormaPagamentoExterna();
+        setListaFormasPagamento(Array.isArray(lista) ? lista : []);
       } catch (error) {
         setErroHookFormaPagamento(error);
       } finally {

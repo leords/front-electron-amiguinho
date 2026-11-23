@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Cabecalho from "../../componentes/Cabecalho";
 import Rodape from "../../componentes/Rodape";
 import styles from "./styles.module.css";
@@ -7,10 +8,16 @@ import {
   HandCoinsIcon,
   CalculatorIcon,
   ArchiveIcon,
+  TruckIcon,
+  StorefrontIcon,
+  PackageIcon,
+  ArrowLeft,
 } from "@phosphor-icons/react";
 import { ToastRadix } from "../../componentes/ui/notificacao/notificacao";
 import { usarToast } from "../../componentes/Context/toastContext";
 import { buscarFechamentoFinalizado } from "../../operadores/API/fechamento/buscarFechamentoFinalizado";
+import { LerUsuario } from "../../operadores/API/usuario/LerUsuario";
+import { lerCargas } from "../../operadores/API/carga/lerCargas";
 
 // Ordem de exibição da contagem de cédulas
 const CEDULAS = [
@@ -97,7 +104,9 @@ function CardFechamento({ titulo, fechamento, carregando }) {
       </div>
 
       <div className={styles.infoLinha}>
-        <span className={styles.infoLabel}>Vendedor</span>
+        <span className={styles.infoLabel}>
+          {fechamento.setor === "carga" ? "Identificação" : "Vendedor"}
+        </span>
         <span className={styles.infoValor}>{fechamento.vendedor}</span>
       </div>
       <div className={styles.infoLinha}>
@@ -149,11 +158,15 @@ function CardFechamento({ titulo, fechamento, carregando }) {
 }
 
 export default function FechamentoFinalizado() {
+  const navegar = useNavigate();
   const [carregando, setCarregando] = useState(false);
 
   const [fechamentoDelivery, setFechamentoDelivery] = useState(null);
   const [fechamentoBalcao1, setFechamentoBalcao1] = useState(null);
   const [fechamentoBalcao2, setFechamentoBalcao2] = useState(null);
+  const [fechamentosExternos, setFechamentosExternos] = useState([]);
+  const [vendedoresExternos, setVendedoresExternos] = useState([]);
+  const [cargasProcessadas, setCargasProcessadas] = useState([]);
 
   // setando o dia atual já no estado.
   const [dataAtual, setDataAtual] = useState(dataFormatadaCalendario());
@@ -174,10 +187,38 @@ export default function FechamentoFinalizado() {
 
     const buscarVendasDia = async () => {
       try {
-        const [dadosDelivery, dadosBalcao1, dadosBalcao2] = await Promise.all([
+        const [
+          dadosDelivery,
+          dadosBalcao1,
+          dadosBalcao2,
+          dadosExternos,
+          usuariosCadastrados,
+          dadosCargasFechadas,
+          cargasCadastradas,
+        ] = await Promise.all([
           buscarFechamentoFinalizado("delivery", "delivery", dataAtual),
           buscarFechamentoFinalizado("balcao", "b1", dataAtual),
           buscarFechamentoFinalizado("balcao", "b2", dataAtual),
+          buscarFechamentoFinalizado("externo", undefined, dataAtual).catch(
+            (e) => {
+              console.warn("Erro ao buscar fechamentos externos:", e);
+              return [];
+            }
+          ),
+          LerUsuario().catch((e) => {
+            console.warn("Erro ao buscar usuários para rotas:", e);
+            return [];
+          }),
+          buscarFechamentoFinalizado("carga", undefined, dataAtual).catch(
+            (e) => {
+              console.warn("Erro ao buscar fechamentos de cargas:", e);
+              return [];
+            }
+          ),
+          lerCargas().catch((e) => {
+            console.warn("Erro ao buscar lista de cargas:", e);
+            return [];
+          }),
         ]);
 
         if (!ativo) return;
@@ -185,6 +226,109 @@ export default function FechamentoFinalizado() {
         setFechamentoDelivery(dadosDelivery);
         setFechamentoBalcao1(dadosBalcao1);
         setFechamentoBalcao2(dadosBalcao2);
+
+        // 1. Processa os fechamentos externos retornados pela API
+        const listaFechamentos = Array.isArray(dadosExternos)
+          ? dadosExternos
+          : dadosExternos
+            ? [dadosExternos]
+            : [];
+        setFechamentosExternos(listaFechamentos);
+
+        // Identifica vendedores externos a partir dos usuários cadastrados
+        let listaNomesExternos = [];
+        if (Array.isArray(usuariosCadastrados) && usuariosCadastrados.length > 0) {
+          const filtrados = usuariosCadastrados.filter(
+            (u) =>
+              (u.nivelAcesso || "").toUpperCase() === "EXTERNO" ||
+              (u.nome || "").toUpperCase().includes("EMERSON")
+          );
+          listaNomesExternos = filtrados
+            .map((u) => (u.nome || "").toUpperCase().trim())
+            .filter(Boolean);
+        }
+
+        // Se não encontrou vendedores com tag EXTERNO, garante ao menos o padrão EMERSON
+        if (listaNomesExternos.length === 0) {
+          listaNomesExternos.push("EMERSON");
+        }
+
+        // Garante que qualquer vendedor que tenha efetuado fechamento na data também apareça
+        listaFechamentos.forEach((f) => {
+          const nomeVend = (f.vendedor || "").toUpperCase().trim();
+          if (nomeVend && !listaNomesExternos.includes(nomeVend)) {
+            listaNomesExternos.push(nomeVend);
+          }
+        });
+
+        setVendedoresExternos(listaNomesExternos);
+
+        // 2. Processa Fechamentos de Cargas
+        const listaFechamentosCargas = Array.isArray(dadosCargasFechadas)
+          ? dadosCargasFechadas
+          : dadosCargasFechadas
+            ? [dadosCargasFechadas]
+            : [];
+
+        // Filtra cargas cadastradas que foram finalizadas na data selecionada
+        const cargasFinalizadasDia = (
+          Array.isArray(cargasCadastradas) ? cargasCadastradas : []
+        ).filter((c) => {
+          if ((c.status || "").toLowerCase() !== "finalizada") return false;
+          try {
+            const dataC = c.data
+              ? dataFormatadaCalendario(new Date(c.data))
+              : "";
+            return dataC === dataAtual;
+          } catch {
+            return false;
+          }
+        });
+
+        // Unifica os fechamentos de carga garantindo o padrão: Carga #${carga.id} — ${veiculo} - ${motorista}
+        const mapaCargas = new Map();
+
+        // 2.1 Adiciona as cargas finalizadas encontradas via lerCargas()
+        cargasFinalizadasDia.forEach((c) => {
+          const veiculoNome =
+            c.veiculo?.nome || c.veiculo?.modelo || "Veículo";
+          const motoristaNome = c.motorista?.nome || "Motorista";
+          const titulo = `Carga #${c.id} — ${veiculoNome} - ${motoristaNome}`;
+
+          // Localiza fechamento persistido correspondente ao ID da carga
+          const f = listaFechamentosCargas.find(
+            (fc) =>
+              (fc.vendedor || "").includes(`Carga #${c.id}`) ||
+              (fc.vendedor || "").includes(`CARGA #${c.id}`)
+          );
+
+          mapaCargas.set(c.id, {
+            id: c.id,
+            titulo,
+            fechamento: f || null,
+          });
+        });
+
+        // 2.2 Adiciona qualquer fechamento persistido do setor 'carga' que ainda não esteja no mapa
+        listaFechamentosCargas.forEach((fc) => {
+          const matchId = (fc.vendedor || "").match(/Carga\s*#(\d+)/i);
+          const cargaId = matchId ? Number(matchId[1]) : fc.id;
+
+          if (!mapaCargas.has(cargaId)) {
+            mapaCargas.set(cargaId, {
+              id: cargaId,
+              titulo: fc.vendedor || `Carga #${cargaId}`,
+              fechamento: fc,
+            });
+          } else {
+            const item = mapaCargas.get(cargaId);
+            if (!item.fechamento) {
+              item.fechamento = fc;
+            }
+          }
+        });
+
+        setCargasProcessadas(Array.from(mapaCargas.values()));
       } catch (erro) {
         if (!ativo) return;
         console.log(erro.message);
@@ -219,40 +363,125 @@ export default function FechamentoFinalizado() {
             </div>
           </div>
 
-          {/* DATA */}
-          <div className={styles.containerData}>
-            <input
-              className={styles.calendario}
-              type="date"
-              value={dataAtual}
-              onChange={tratarAlteracao}
-            />
-            <button className={styles.botaoHoje} onClick={setarHoje}>
-              Hoje
+          {/* AÇÕES: DATA + BOTÃO VOLTAR */}
+          <div className={styles.headerAcoes}>
+            <div className={styles.containerData}>
+              <input
+                className={styles.calendario}
+                type="date"
+                value={dataAtual}
+                onChange={tratarAlteracao}
+              />
+              <button className={styles.botaoHoje} onClick={setarHoje}>
+                Hoje
+              </button>
+            </div>
+
+            <button
+              type="button"
+              className={styles.botaoVoltar}
+              onClick={() => navegar("/gestao")}
+              title="Voltar para a tela de Gestão"
+            >
+              <ArrowLeft size={16} weight="bold" />
+              Voltar
             </button>
           </div>
         </div>
 
-        {/* CARDS: Delivery, Balcão 1 e Balcão 2 lado a lado */}
-        <div className={styles.cardsGrid}>
-          <CardFechamento
-            titulo="Delivery"
-            fechamento={fechamentoDelivery}
-            carregando={carregando}
-          />
+        {/* SEÇÃO 1: CAIXAS INTERNOS (BALCÃO E DELIVERY) */}
+        <section className={styles.secaoBloco}>
+          <div className={styles.secaoHeader}>
+            <div className={styles.secaoHeaderLeft}>
+              <StorefrontIcon size={20} weight="bold" />
+              <h2>Balcão e Delivery</h2>
+            </div>
+            <span className={styles.secaoTag}>3 caixas</span>
+          </div>
 
-          <CardFechamento
-            titulo="Balcão 1"
-            fechamento={fechamentoBalcao1}
-            carregando={carregando}
-          />
+          <div className={styles.cardsGrid}>
+            <CardFechamento
+              titulo="Delivery"
+              fechamento={fechamentoDelivery}
+              carregando={carregando}
+            />
 
-          <CardFechamento
-            titulo="Balcão 2"
-            fechamento={fechamentoBalcao2}
-            carregando={carregando}
-          />
-        </div>
+            <CardFechamento
+              titulo="Balcão 1"
+              fechamento={fechamentoBalcao1}
+              carregando={carregando}
+            />
+
+            <CardFechamento
+              titulo="Balcão 2"
+              fechamento={fechamentoBalcao2}
+              carregando={carregando}
+            />
+          </div>
+        </section>
+
+        {/* SEÇÃO 2: VENDEDORES EXTERNOS (ROTAS) */}
+        <section className={styles.secaoBloco}>
+          <div className={styles.secaoHeader}>
+            <div className={styles.secaoHeaderLeft}>
+              <TruckIcon size={20} weight="bold" />
+              <h2>Vendedores Externos (Rotas)</h2>
+            </div>
+            <span className={styles.secaoTag}>
+              {vendedoresExternos.length} vendedor(es)
+            </span>
+          </div>
+
+          <div className={styles.cardsGridExternos}>
+            {vendedoresExternos.map((nomeVendedor) => {
+              const fechamentoVend = fechamentosExternos.find(
+                (f) => (f.vendedor || "").toUpperCase() === nomeVendedor
+              );
+              return (
+                <CardFechamento
+                  key={nomeVendedor}
+                  titulo={`Rota — ${nomeVendedor}`}
+                  fechamento={fechamentoVend}
+                  carregando={carregando}
+                />
+              );
+            })}
+          </div>
+        </section>
+
+        {/* SEÇÃO 3: FECHAMENTOS DE CARGAS */}
+        <section className={styles.secaoBloco}>
+          <div className={styles.secaoHeader}>
+            <div className={styles.secaoHeaderLeft}>
+              <PackageIcon size={20} weight="bold" />
+              <h2>Fechamentos de Cargas</h2>
+            </div>
+            <span className={styles.secaoTag}>
+              {cargasProcessadas.length} carga(s)
+            </span>
+          </div>
+
+          <div className={styles.cardsGridExternos}>
+            {cargasProcessadas.length > 0 ? (
+              cargasProcessadas.map((item) => (
+                <CardFechamento
+                  key={item.id}
+                  titulo={item.titulo}
+                  fechamento={item.fechamento}
+                  carregando={carregando}
+                />
+              ))
+            ) : (
+              <div className={styles.cardAvisoVazio}>
+                <ArchiveIcon size={32} className={styles.iconeVazio} />
+                <p>Nenhum fechamento de carga finalizado nesta data</p>
+                <span>
+                  As cargas finalizadas neste dia aparecerão listadas aqui
+                </span>
+              </div>
+            )}
+          </div>
+        </section>
       </main>
       <Rodape />
     </div>

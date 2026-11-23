@@ -867,6 +867,33 @@
   cursor: not-allowed;
 }
 
+.botaoAcaoVasilhames {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 8px;
+  background: #f3f0ff;
+  color: #7048e8;
+  border: 1px solid #d0bfff;
+  transition: all 0.2s;
+}
+
+.botaoAcaoVasilhames:hover:not(:disabled) {
+  background: #7048e8;
+  color: #ffffff;
+  border-color: #7048e8;
+}
+
+.botaoAcaoVasilhames:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .botaoAcaoImprimirTodos {
   all: unset;
   cursor: pointer;

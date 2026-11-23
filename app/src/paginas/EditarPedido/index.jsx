@@ -46,10 +46,24 @@ export default function EditarPedido() {
     return Number(prod.precoVenda ?? prod.precoUndVenda ?? 0);
   };
 
+  // Obtém ID da forma de pagamento original do pedido
+  const obterFormaPagamentoInicial = () => {
+    const idDireto =
+      state?.formaPagamento?.id ??
+      state?.formaPagamentoId ??
+      state?.idFormaPagamento;
+
+    if (idDireto !== undefined && idDireto !== null && idDireto !== "") {
+      return Number(idDireto);
+    }
+
+    return 1;
+  };
+
   // Estados
   const [itens, setItens] = useState(state.itens);
   const [novaQuantidade, setNovaQuantidade] = useState(1);
-  const [formaPagamento, setFormaPagamento] = useState(1);
+  const [formaPagamento, setFormaPagamento] = useState(obterFormaPagamentoInicial);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [valorTotal, setValorTotal] = useState();
   const [formasPagamento, setFormasPagamento] = useState(
@@ -63,6 +77,41 @@ export default function EditarPedido() {
   const { listaFormaPagamento } = useFormaPagamentoExterna();
   const { produtos } = useProdutos();
   const { mensagem, setMensagem } = usarToast();
+
+  // Sincroniza a forma de pagamento do pedido com a lista externa carregada
+  useEffect(() => {
+    if (!listaFormaPagamento || listaFormaPagamento.length === 0) return;
+
+    const idOriginal =
+      state?.formaPagamento?.id ??
+      state?.formaPagamentoId ??
+      state?.idFormaPagamento;
+
+    if (idOriginal !== undefined && idOriginal !== null && idOriginal !== "") {
+      const encontradaPorId = listaFormaPagamento.find(
+        (fp) => Number(fp.id) === Number(idOriginal),
+      );
+      if (encontradaPorId) {
+        setFormaPagamento(Number(encontradaPorId.id));
+        return;
+      }
+    }
+
+    const nomeOriginal =
+      typeof state?.formaPagamento === "string"
+        ? state.formaPagamento
+        : state?.formaPagamento?.nome || state?.formaPagamentoNome;
+
+    if (nomeOriginal) {
+      const nomeLimpo = String(nomeOriginal).trim().toLowerCase();
+      const encontradaPorNome = listaFormaPagamento.find(
+        (fp) => String(fp.nome || "").trim().toLowerCase() === nomeLimpo,
+      );
+      if (encontradaPorNome) {
+        setFormaPagamento(Number(encontradaPorNome.id));
+      }
+    }
+  }, [listaFormaPagamento, state]);
 
   // Mapeando produtos para o <Select /> com preço do setor
   const options = useMemo(() => {
@@ -369,7 +418,10 @@ export default function EditarPedido() {
               <span className={styles.infoLabel}>Forma de pagamento</span>
               {state.tipo !== "balcao" ? (
                 <span className={styles.infoValor}>
-                  {state.formaPagamento.nome}
+                  {state.formaPagamento?.nome ||
+                    state.formaPagamentoNome ||
+                    state.formaPagamento ||
+                    "A VISTA"}
                 </span>
               ) : (
                 <span className={styles.infoValor}>
@@ -509,7 +561,7 @@ export default function EditarPedido() {
               <select
                 value={formaPagamento}
                 onChange={(e) => {
-                  const id = e.target.value;
+                  const id = Number(e.target.value);
                   setFormaPagamento(id);
                 }}
                 className={styles.selectFormaPagamento}

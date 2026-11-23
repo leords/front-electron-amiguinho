@@ -33,7 +33,7 @@ export default function Historico() {
   const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [totalVendas, setTotalVendas] = useState(0);
-  const [balcao, setBalcao] = useState([balcaoOptions[2]]);
+  const [balcao, setBalcao] = useState(balcaoOptions[2]);
 
   // Hooks
   const { setMensagem } = usarToast();
@@ -46,22 +46,46 @@ export default function Historico() {
 
   // Filtrando pedidos
   useEffect(() => {
-    if (!dataAtual || !balcao) return;
+    if (!dataAtual) return;
 
     const filtrarPedidos = async () => {
       setCarregando(true);
       try {
+        const terminalMaquina =
+          nomeMaquina || localStorage.getItem("balcao") || undefined;
+
+        // Se for ADMIN, usa o balcão escolhido no select (b1, b2 ou undefined para geral)
+        // Se for BALCAO, restringe estritamente ao terminal desta máquina
+        const vendedorFiltro =
+          usuario?.nivelAcesso === "ADMIN" ? balcao?.value : terminalMaquina;
+
         const resultado = await buscarPedido({
           setor: "balcao",
-          vendedor: usuario.nivelAcesso === "ADMIN" ? balcao.value : balcao,
+          vendedor: vendedorFiltro,
           dataInicio: dataAtual,
           dataFim: dataAtual,
           status: "finalizado",
         });
 
-        setPedidosFiltrados(resultado);
+        const lista = Array.isArray(resultado)
+          ? resultado
+          : Array.isArray(resultado?.resultado)
+          ? resultado.resultado
+          : [];
+
+        // Dupla validação: se for operador de BALCAO, garante que apenas pedidos do terminal da máquina sejam exibidos
+        const pedidosFiltradosFinal =
+          usuario?.nivelAcesso === "ADMIN" || !terminalMaquina
+            ? lista
+            : lista.filter(
+                (p) =>
+                  String(p.vendedor || "").toLowerCase() ===
+                  String(terminalMaquina).toLowerCase()
+              );
+
+        setPedidosFiltrados(pedidosFiltradosFinal);
       } catch (error) {
-        console.log(error.message);
+        console.error("Erro ao buscar histórico de vendas:", error.message);
         setMensagem(error.message);
       } finally {
         setCarregando(false);
@@ -69,7 +93,7 @@ export default function Historico() {
     };
 
     filtrarPedidos();
-  }, [dataAtual, nomeMaquina, balcao]);
+  }, [dataAtual, nomeMaquina, balcao, usuario?.nivelAcesso, setMensagem]);
 
   // Soma o total de pedidos filtrados
   useEffect(() => {
@@ -81,9 +105,6 @@ export default function Historico() {
     );
     setTotalVendas(total);
   }, [pedidosFiltrados]);
-
-  // Pega o valor de data selecionado no input
-  //const tratarAlteracao = (e) => setDataAtual(e.target.value);
 
   // Formatação de data
   const dataSelecionada = dataAtual

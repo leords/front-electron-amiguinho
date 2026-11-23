@@ -60,7 +60,11 @@ export default function ModalPedidosOrcamento({
       const clienteMatch = String(p.cliente || "").toLowerCase().includes(termo);
       const vendedorMatch = String(p.vendedor || "").toLowerCase().includes(termo);
       const itemMatch = Array.isArray(p.itens)
-        ? p.itens.some((i) => String(i.nome || "").toLowerCase().includes(termo))
+        ? p.itens.some((i) =>
+            String(i.nome || i.produto?.nome || "")
+              .toLowerCase()
+              .includes(termo)
+          )
         : false;
       return idMatch || clienteMatch || vendedorMatch || itemMatch;
     });
@@ -86,7 +90,7 @@ export default function ModalPedidosOrcamento({
           itens: Array.isArray(pedido.itens)
             ? pedido.itens.map((it) => ({
                 quantidade: it.quantidade,
-                nome: it.nome,
+                nome: it.nome || it.produto?.nome || "Item",
                 valorUnit: it.valorUnit || it.precoUndVenda || 0,
               }))
             : [],
@@ -326,7 +330,7 @@ export default function ModalPedidosOrcamento({
                                   <td className={styles.colQtd}>
                                     {item.quantidade}x
                                   </td>
-                                  <td>{item.nome}</td>
+                                  <td>{item.nome || item.produto?.nome || "Produto"}</td>
                                   <td className={styles.colValorUnit}>
                                     {formatarMoeda(valorUnit)}
                                   </td>

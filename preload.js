@@ -26,6 +26,8 @@ contextBridge.exposeInMainWorld("PDF", {
   gerarPDFSaidaProdutos: (setor, dados) =>
     ipcRenderer.invoke("gerar-pdf-saida-produto", setor, dados),
   baixarCSV: (dados) => ipcRenderer.invoke("gerar-csv-saida-produto", dados),
+  gerarPDFRelatorioCliente: (dados) =>
+    ipcRenderer.invoke("gerar-pdf-relatorio-cliente", dados),
 });
 
 // // IA Groq

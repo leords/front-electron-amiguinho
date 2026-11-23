@@ -12,7 +12,6 @@ export const lerCargas = async (params = {}) => {
     });
 
     const data = resposta.data;
-    console.log("[lerCargas] Parâmetros:", params, "Resposta bruta:", data);
 
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") {

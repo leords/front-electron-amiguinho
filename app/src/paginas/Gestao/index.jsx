@@ -10,6 +10,10 @@ import {
   PrinterIcon,
   IdentificationCardIcon,
   ReceiptIcon,
+  CloudArrowUpIcon,
+  CreditCard,
+  ChartLineUp,
+  UserMinus,
 } from "@phosphor-icons/react";
 import styles from "./styles.module.css";
 import Cabecalho from "../../componentes/Cabecalho";
@@ -44,18 +48,42 @@ export default function Gestao() {
 
           <MenuButton
             titulo="Produtos"
-            descricao="Visualizar produtos e acessar planilha"
+            descricao="Cadastro, edição e gestão completa de produtos"
             destino="/produtos"
             icone={Package}
             cor="green"
           />
 
           <MenuButton
+            titulo="Formas de Pagamento"
+            descricao="Cadastro, edição e ativação de formas de pagamento"
+            destino="/formas-pagamento"
+            icone={CreditCard}
+            cor="orange"
+          />
+
+          <MenuButton
             titulo="Clientes"
-            descricao="Visualizar clientes de delivery e acessar planilha"
+            descricao="Clientes Externos e Clientes Delivery"
             destino="/clientes"
             icone={Storefront}
             cor="orange"
+          />
+
+          <MenuButton
+            titulo="Desempenho de Clientes"
+            descricao="Vendas, pedidos, última compra e crescimento vs mês anterior"
+            destino="/gestao-desempenho-clientes"
+            icone={ChartLineUp}
+            cor="orange"
+          />
+
+          <MenuButton
+            titulo="Clientes sem Compras"
+            descricao="Clientes inativos filtrados por vendedor e dias sem comprar"
+            destino="/gestao-clientes-sem-compras"
+            icone={UserMinus}
+            cor="blue"
           />
 
           <MenuButton
@@ -103,6 +131,14 @@ export default function Gestao() {
             descricao="Configurar impressora destino"
             destino="/configurar-impressora"
             icone={PrinterIcon}
+            cor="blue"
+          />
+
+          <MenuButton
+            titulo="Transmissão"
+            descricao="Realizar cargas forçadas"
+            destino="/transmissao"
+            icone={CloudArrowUpIcon}
             cor="blue"
           />
         </div>

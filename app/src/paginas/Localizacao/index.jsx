@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { MapPin, Moped, Path } from "@phosphor-icons/react";
+import { useNavigate } from "react-router-dom";
+import { MapPin, Moped, Path, ArrowLeft } from "@phosphor-icons/react";
 
 import BuscaPedidos from "../../componentes/BuscaPedidos/index.jsx";
 import BuscarRotas from "../../componentes/BuscarRotas/index.jsx";
@@ -9,6 +10,8 @@ import Mapa from "../../componentes/Mapa/index.jsx";
 import styles from "./styles.module.css";
 
 export default function Localizacao() {
+  const navegar = useNavigate();
+
   // Estados
   const [tipoBusca, setTipoBusca] = useState("delivery"); // 'delivery' | 'rota'
   const [latitude, setLatitude] = useState(null);
@@ -45,6 +48,16 @@ export default function Localizacao() {
               <h1 className={styles.pageTitulo}>Localização e Rotas</h1>
             </div>
           </div>
+
+          <button
+            type="button"
+            className={styles.botaoVoltar}
+            onClick={() => navegar("/gestao")}
+            title="Voltar para a tela de Gestão"
+          >
+            <ArrowLeft size={16} weight="bold" />
+            Voltar
+          </button>
         </div>
 
         <div className={styles.conteudo}>

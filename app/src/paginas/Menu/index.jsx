@@ -6,7 +6,6 @@ import {
   CurrencyCircleDollarIcon,
   HandWithdrawIcon,
   ClipboardTextIcon,
-  CloudArrowUpIcon,
   GearIcon,
   PackageIcon,
   Motorcycle,
@@ -17,6 +16,8 @@ import {
   HandCoinsIcon,
   ReceiptIcon,
   Storefront,
+  Barcode,
+  CreditCard,
 } from "@phosphor-icons/react";
 import MenuButton from "../../componentes/Botao/index";
 import styles from "./styles.module.css";
@@ -63,7 +64,7 @@ export default function Menu() {
 
         {/* BOTÕES */}
         <div className={styles.menuBotoes}>
-          {["ADMIN", "BALCAO", "DELIVERY"].includes(usuario.nivelAcesso) && (
+          {["ADMIN", "BALCAO", "DELIVERY"].includes(usuario?.nivelAcesso) && (
             <>
               <MenuButton
                 titulo="Vendas balcão"
@@ -89,7 +90,7 @@ export default function Menu() {
             </>
           )}
 
-          {["ADMIN", "DELIVERY"].includes(usuario.nivelAcesso) && (
+          {["ADMIN", "DELIVERY"].includes(usuario?.nivelAcesso) && (
             <>
               <MenuButton
                 titulo="Vendas Delivery"
@@ -115,7 +116,7 @@ export default function Menu() {
             </>
           )}
 
-          {["ADMIN", "EXTERNO"].includes(usuario.nivelAcesso) && (
+          {["ADMIN", "EXTERNO"].includes(usuario?.nivelAcesso) && (
             <>
               <MenuButton
                 titulo="Vendas Externas"
@@ -127,7 +128,7 @@ export default function Menu() {
             </>
           )}
 
-          {["ADMIN"].includes(usuario.nivelAcesso) && (
+          {["ADMIN"].includes(usuario?.nivelAcesso) && (
             <>
               <MenuButton
                 titulo="Dashboard"
@@ -136,6 +137,7 @@ export default function Menu() {
                 icone={ChartLineIcon}
                 cor="gray"
               />
+
               <MenuButton
                 titulo="Fechar balcão"
                 descricao="Finalizar operações do dia"
@@ -143,6 +145,7 @@ export default function Menu() {
                 icone={CurrencyCircleDollarIcon}
                 cor="gray"
               />
+
               <MenuButton
                 titulo="Vales internos"
                 descricao="Consultar histórico de vales"
@@ -150,6 +153,7 @@ export default function Menu() {
                 icone={HandWithdrawIcon}
                 cor="gray"
               />
+
               <MenuButton
                 titulo="Pedidos"
                 descricao="Conferir pedidos realizados"
@@ -157,13 +161,7 @@ export default function Menu() {
                 icone={ClipboardTextIcon}
                 cor="gray"
               />
-              <MenuButton
-                titulo="Transmissão"
-                descricao="Realizar cargas forçadas"
-                destino="/transmissao"
-                icone={CloudArrowUpIcon}
-                cor="gray"
-              />
+
               <MenuButton
                 titulo="Estoque"
                 descricao="Controle de estoque"
@@ -171,6 +169,7 @@ export default function Menu() {
                 icone={PackageIcon}
                 cor="gray"
               />
+
               <MenuButton
                 titulo="Cargas"
                 descricao="Montagem de carga e despacho"
@@ -178,6 +177,7 @@ export default function Menu() {
                 icone={Truck}
                 cor="gray"
               />
+
               <MenuButton
                 titulo="Pendências"
                 descricao="Contas a receber de externos"
@@ -185,13 +185,31 @@ export default function Menu() {
                 icone={HandCoinsIcon}
                 cor="gray"
               />
+
               <MenuButton
-                titulo="Prestação de contas"
-                descricao="Conferência e baixa de pagamentos"
+                titulo="Fechar VDE"
+                descricao="Conferência e acerto de contas do vendedor"
                 destino="/prestacao-contas"
                 icone={ReceiptIcon}
                 cor="gray"
               />
+
+              <MenuButton
+                titulo="Boletos"
+                descricao="Controle e baixa de boletos bancários"
+                destino="/boletos"
+                icone={Barcode}
+                cor="blue"
+              />
+
+              <MenuButton
+                titulo="Pagamentos"
+                descricao="Histórico e consulta de pagamentos realizados"
+                destino="/pagamentos"
+                icone={CreditCard}
+                cor="green"
+              />
+
               <MenuButton
                 titulo="Gestão"
                 descricao="Gerencie os registros do sistema"
@@ -199,6 +217,7 @@ export default function Menu() {
                 icone={GearIcon}
                 cor="gray"
               />
+
               <MenuButton
                 titulo="Fechar delivery"
                 descricao="Finalizar operações do dia"
@@ -206,9 +225,10 @@ export default function Menu() {
                 icone={CurrencyCircleDollarIcon}
                 cor="gray"
               />
+
               <MenuButton
                 titulo="Vendas diária"
-                descricao="Acompanhar vendas do dia - construção"
+                descricao="Acompanhar vendas do dia"
                 destino="/buscar-relatorio-diario"
                 icone={ChartLineUpIcon}
                 cor="gray"

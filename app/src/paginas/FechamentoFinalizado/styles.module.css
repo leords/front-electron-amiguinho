@@ -107,12 +107,123 @@
   border-color: var(--orange);
 }
 
+.headerAcoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.botaoVoltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-300);
+  color: var(--gray-700);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.botaoVoltar:hover {
+  background: var(--gray-100);
+  border-color: #adb5bd;
+  color: var(--gray-900);
+}
+
+/* ===== SEÇÕES DA PÁGINA ===== */
+.secaoBloco {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.secaoHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.secaoHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--gray-900);
+}
+
+.secaoHeaderLeft svg {
+  color: var(--orange);
+}
+
+.secaoHeaderLeft h2 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.secaoTag {
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border: 1px solid var(--gray-300);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* ===== GRID DOS 3 CARDS (Delivery / Balcão 1 / Balcão 2) ===== */
 .cardsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 22px;
   align-items: start;
+}
+
+/* ===== GRID DOS VENDEDORES EXTERNOS (ROTAS) ===== */
+.cardsGridExternos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 22px;
+  align-items: start;
+}
+
+/* ===== AVISO VAZIO EM SEÇÃO DE GRID ===== */
+.cardAvisoVazio {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  border: 1.5px dashed var(--gray-300);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--gray-500);
+  text-align: center;
+  grid-column: 1 / -1;
+}
+
+.cardAvisoVazio p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+
+.cardAvisoVazio span {
+  font-size: 12px;
+  color: var(--gray-500);
 }
 
 /* ===== CARD ===== */

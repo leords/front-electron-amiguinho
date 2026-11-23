@@ -12,18 +12,19 @@ import {
   X,
 } from "@phosphor-icons/react";
 import { AlertaRadix } from "../ui/alerta/alerta";
+import { formatarEstoque } from "../../utils/formatarEstoque";
 
 export default function AjustarProdutoEstoque({ setAtualizarLista }) {
-  //LocalStoraged
+  // LocalStorage
   const usuarioId = localStorage.getItem("idUsuario");
 
   // Estados
   const [tipo, setTipo] = useState("ENTRADA");
-  const [quantidade, setQuantidade] = useState();
-  const [produtoSelecionado, setProdutoSelecionado] = useState();
-  const [salvando, setSalvando] = useState();
+  const [quantidade, setQuantidade] = useState("");
+  const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+  const [salvando, setSalvando] = useState(false);
 
-  //Hooks
+  // Hooks
   const { setMensagem } = usarToast();
   const { produtos } = useProdutos();
 
@@ -32,14 +33,30 @@ export default function AjustarProdutoEstoque({ setAtualizarLista }) {
 
   // Função salvar ajuste
   async function salvarAjuste() {
-    try {
-      const qtd = parseInt(quantidade, 10);
-      if (!qtd || qtd <= 0) {
-        setMensagem("Informe uma quantidade válida.");
-        return;
-      }
-      setSalvando(true);
+    if (!produtoSelecionado?.id) {
+      setMensagem("Selecione um produto para realizar o ajuste.");
+      return;
+    }
 
+    const qtd = parseInt(quantidade, 10);
+    if (!qtd || qtd <= 0) {
+      setMensagem("Informe uma quantidade válida maior que zero.");
+      return;
+    }
+
+    if (!usuarioId) {
+      setMensagem("Usuário não identificado. Faça login novamente.");
+      return;
+    }
+
+    // Se for saída, valida se o estoque comporta
+    if (tipo === "SAIDA" && Number(produtoSelecionado.estoque || 0) < qtd) {
+      setMensagem("Estoque insuficiente para realizar esta saída.");
+      return;
+    }
+
+    setSalvando(true);
+    try {
       const ajuste = await ajusteEstoque(
         produtoSelecionado.id,
         qtd,
@@ -47,17 +64,36 @@ export default function AjustarProdutoEstoque({ setAtualizarLista }) {
         tipo,
       );
 
-      if (!ajuste) {
-        setSalvando(false);
-        setMensagem("Informe uma quantidade válida.");
+      if (ajuste) {
+        setMensagem(
+          `Ajuste de ${tipo === "ENTRADA" ? "entrada" : "saída"} de ${qtd} un. realizado com sucesso!`,
+        );
+
+        // Atualiza o estoque local do produto selecionado
+        setProdutoSelecionado((prev) => {
+          if (!prev) return null;
+          const delta = tipo === "ENTRADA" ? qtd : -qtd;
+          return {
+            ...prev,
+            estoque: Math.max(0, Number(prev.estoque || 0) + delta),
+          };
+        });
+
+        // Limpa campo de quantidade
+        setQuantidade("");
+
+        // Atualiza a lista da tela pai
+        if (typeof setAtualizarLista === "function") {
+          setAtualizarLista((prev) => !prev);
+        }
+      } else {
+        setMensagem("Não foi possível concluir o ajuste.");
       }
-
-      setAtualizarLista((prev) => !prev);
-
-      setMensagem("Ajuste realizado com sucesso!");
     } catch (error) {
-      console.log(error.message);
-      setMensagem(error.messages);
+      console.error("Erro ao salvar ajuste de estoque:", error);
+      setMensagem(error.message || "Erro inesperado ao realizar ajuste.");
+    } finally {
+      setSalvando(false);
     }
   }
 
@@ -94,7 +130,7 @@ export default function AjustarProdutoEstoque({ setAtualizarLista }) {
         <div className={styles.modalProduto}>
           <p className={styles.modalProdutoNome}>{produtoSelecionado?.nome}</p>
           <span className={styles.modalProdutoEstoque}>
-            Estoque atual: <strong>{produtoSelecionado?.estoque}</strong>
+            Estoque atual: <strong>{formatarEstoque(produtoSelecionado?.estoque)}</strong>
           </span>
         </div>
 
@@ -134,7 +170,7 @@ export default function AjustarProdutoEstoque({ setAtualizarLista }) {
         </div>
 
         {/* PREVIEW NOVO ESTOQUE */}
-        {quantidade && parseInt(quantidade) > 0 && (
+        {quantidade && parseInt(quantidade, 10) > 0 && produtoSelecionado && (
           <div
             className={`${styles.preview} ${tipo === "ENTRADA" ? styles.previewEntrada : styles.previewSaida}`}
           >
@@ -144,7 +180,10 @@ export default function AjustarProdutoEstoque({ setAtualizarLista }) {
                 <ArrowDown size={14} weight="bold" />
                 Novo estoque:{" "}
                 <strong>
-                  {produtoSelecionado?.estoque + parseInt(quantidade)}
+                  {formatarEstoque(
+                    Number(produtoSelecionado.estoque || 0) +
+                      parseInt(quantidade, 10),
+                  )}
                 </strong>
               </>
             ) : (
@@ -152,15 +191,19 @@ export default function AjustarProdutoEstoque({ setAtualizarLista }) {
                 <ArrowUp size={14} weight="bold" />
                 Novo estoque:{" "}
                 <strong>
-                  {Math.max(
-                    0,
-                    produtoSelecionado?.estoque - parseInt(quantidade),
+                  {formatarEstoque(
+                    Math.max(
+                      0,
+                      Number(produtoSelecionado.estoque || 0) -
+                        parseInt(quantidade, 10),
+                    ),
                   )}
                 </strong>
-                {parseInt(quantidade) > produtoSelecionado.estoque && (
+                {parseInt(quantidade, 10) >
+                  Number(produtoSelecionado.estoque || 0) && (
                   <span className={styles.previewAviso}>
                     {" "}
-                    — estoque ficará negativo!
+                    — estoque insuficiente!
                   </span>
                 )}
               </>
@@ -171,23 +214,44 @@ export default function AjustarProdutoEstoque({ setAtualizarLista }) {
 
       {/* BOTÕES */}
       <div className={styles.modalFooter}>
-        {/* BOTÕES CANCELAR */}
-        <button className={styles.botaoCancelar} disabled={salvando}>
+        {/* BOTÃO CANCELAR */}
+        <button
+          type="button"
+          className={styles.botaoCancelar}
+          disabled={salvando}
+          onClick={() => {
+            setQuantidade("");
+            setProdutoSelecionado(null);
+          }}
+        >
           Cancelar
         </button>
 
-        {/* BOTÕES SALVAR*/}
+        {/* BOTÃO SALVAR */}
         <AlertaRadix
-          titulo="Novo ajuste de estoque"
-          descricao="Você realmente deseja salvar o ajuste?"
+          titulo={`Confirmar ajuste de ${tipo === "ENTRADA" ? "entrada" : "saída"}`}
+          descricao={
+            produtoSelecionado
+              ? `Deseja realmente confirmar a ${tipo === "ENTRADA" ? "entrada" : "saída"} de ${quantidade || 0} un. do produto "${produtoSelecionado.nome}"?`
+              : "Você realmente deseja salvar o ajuste?"
+          }
           tratar={() => {
-            if (salvando || !quantidade) return;
+            if (salvando || !quantidade || !produtoSelecionado) return;
             salvarAjuste();
           }}
           confirmarTexto="Confirmar"
-          cancelarTexto="Sair"
+          cancelarTexto="Voltar"
           trigger={
-            <button className={styles.botaoPrincipal}>
+            <button
+              type="button"
+              className={styles.botaoPrincipal}
+              disabled={
+                salvando ||
+                !produtoSelecionado ||
+                !quantidade ||
+                parseInt(quantidade, 10) <= 0
+              }
+            >
               {salvando ? (
                 <>
                   <CircleNotch size={16} className={styles.spinnerIcon} />

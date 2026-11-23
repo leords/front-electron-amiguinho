@@ -1,0 +1,577 @@
+/* ============================================================
+   MODAL DE RELATÓRIO DO PRODUTO (ANÁLISE ANUAL JAN~DEZ)
+   ============================================================ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: animOverlay 0.2s ease-out;
+}
+
+@keyframes animOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modalCard {
+  background: var(--white, #ffffff);
+  width: 100%;
+  max-width: 1160px;
+  max-height: 92vh;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: animModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--border, #eaecef);
+}
+
+@keyframes animModal {
+  from {
+    transform: scale(0.96) translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   CABEÇALHO DO MODAL
+   ============================================================ */
+.modalHeader {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border, #eaecef);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #ffffff;
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.headerIconWrapper {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7048e8, #9775fa);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(112, 72, 232, 0.35);
+  flex-shrink: 0;
+}
+
+.subtitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--purple, #7048e8);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 2px;
+}
+
+.titulo {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--gray-900, #1a1f2e);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.3px;
+}
+
+.badgeId {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--gray-100, #f8f9fa);
+  color: var(--gray-700, #495057);
+  border: 1px solid var(--gray-300, #dee2e6);
+}
+
+.detalhesProduto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--gray-500, #868e96);
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.tagPequena {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: var(--gray-100, #f8f9fa);
+  border: 1px solid var(--border, #eaecef);
+  font-weight: 600;
+  color: var(--gray-700, #495057);
+}
+
+.botaoFechar {
+  all: unset;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500, #868e96);
+  background: var(--gray-100, #f8f9fa);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.botaoFechar:hover {
+  background: var(--red-light, #fff5f5);
+  color: var(--red, #c92a2a);
+  transform: rotate(90deg);
+}
+
+/* ============================================================
+   CORPO DO MODAL COM ROLAGEM
+   ============================================================ */
+.modalCorpo {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #f8f9fa;
+}
+
+/* ============================================================
+   BARRA DE FILTROS (ANO, SETOR, AÇÕES)
+   ============================================================ */
+.painelFiltros {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--border, #eaecef);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.filtrosControles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filtroItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filtroLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-700, #495057);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.selectInput {
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900, #1a1f2e);
+  background: #ffffff;
+  border: 1.5px solid var(--gray-300, #dee2e6);
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.selectInput:focus {
+  border-color: var(--purple, #7048e8);
+  box-shadow: 0 0 0 3px rgba(112, 72, 232, 0.15);
+}
+
+.acoesFiltros {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.botaoRecarregar {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--gray-100, #f8f9fa);
+  color: var(--gray-700, #495057);
+  border: 1.5px solid var(--gray-300, #dee2e6);
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.botaoRecarregar:hover:not(:disabled) {
+  background: #ffffff;
+  color: var(--gray-900, #1a1f2e);
+  border-color: var(--gray-500, #868e96);
+}
+
+.botaoExportarCSV {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--green-light, #ebfbee);
+  color: #237834;
+  border: 1.5px solid var(--green, #2f9e44);
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.botaoExportarCSV:hover:not(:disabled) {
+  background: var(--green, #2f9e44);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(47, 158, 68, 0.25);
+  transform: translateY(-1px);
+}
+
+.spinnerIcone {
+  animation: girar 1s linear infinite;
+}
+
+@keyframes girar {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================
+   GRID DE CARDS KPIS DE RESUMO
+   ============================================================ */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.kpiCard {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--border, #eaecef);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.kpiCard[data-tema="azul"] {
+  border-left: 4px solid var(--blue, #1971c2);
+}
+.kpiCard[data-tema="laranja"] {
+  border-left: 4px solid var(--orange, #ff8c00);
+}
+.kpiCard[data-tema="verde"] {
+  border-left: 4px solid var(--green, #2f9e44);
+}
+.kpiCard[data-tema="roxo"] {
+  border-left: 4px solid var(--purple, #7048e8);
+}
+.kpiCard[data-tema="cinza"] {
+  border-left: 4px solid var(--gray-700, #495057);
+}
+
+.kpiTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kpiLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-500, #868e96);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpiIcone {
+  color: var(--gray-500, #868e96);
+}
+
+.kpiValor {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gray-900, #1a1f2e);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.kpiSub {
+  font-size: 11px;
+  color: var(--gray-500, #868e96);
+  font-weight: 500;
+}
+
+/* ============================================================
+   SEÇÃO DO GRÁFICO (RECHARTS)
+   ============================================================ */
+.secaoGrafico {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--border, #eaecef);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.graficoCabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.graficoTitulo {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gray-900, #1a1f2e);
+  margin: 0;
+}
+
+.graficoSub {
+  font-size: 12px;
+  color: var(--gray-500, #868e96);
+  margin: 2px 0 0;
+}
+
+.abasGrafico {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--gray-100, #f8f9fa);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #eaecef);
+}
+
+.abaBotao {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-700, #495057);
+  transition: all 0.2s;
+}
+
+.abaBotao:hover {
+  color: var(--gray-900, #1a1f2e);
+}
+
+.abaAtiva {
+  background: #ffffff;
+  color: var(--purple, #7048e8);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.graficoContainer {
+  width: 100%;
+  height: 300px;
+  margin-top: 6px;
+}
+
+/* ============================================================
+   SEÇÃO DA TABELA ANALÍTICA MÊS A MÊS
+   ============================================================ */
+.secaoTabela {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--border, #eaecef);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.tabelaWrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border, #eaecef);
+}
+
+.tabelaAnalitica {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.tabelaAnalitica thead th {
+  background: var(--gray-100, #f8f9fa);
+  padding: 12px 14px;
+  font-weight: 700;
+  color: var(--gray-700, #495057);
+  border-bottom: 1.5px solid var(--gray-300, #dee2e6);
+  white-space: nowrap;
+}
+
+.tabelaAnalitica tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border, #eaecef);
+  color: var(--gray-900, #1a1f2e);
+  white-space: nowrap;
+}
+
+.tabelaAnalitica tbody tr:hover {
+  background: #fafbfc;
+}
+
+.tabelaAnalitica tfoot td {
+  padding: 13px 14px;
+  background: var(--gray-100, #f8f9fa);
+  border-top: 2px solid var(--gray-300, #dee2e6);
+  font-weight: 800;
+  color: var(--gray-900, #1a1f2e);
+  white-space: nowrap;
+}
+
+.textRight {
+  text-align: right;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.badgePositivacao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.positivacaoAlta {
+  background: var(--green-light, #ebfbee);
+  color: var(--green, #2f9e44);
+  border: 1px solid #b2f2bb;
+}
+
+.positivacaoMedia {
+  background: var(--orange-light, #fff3e0);
+  color: var(--orange, #ff8c00);
+  border: 1px solid #ffe8cc;
+}
+
+.positivacaoBaixa {
+  background: var(--gray-100, #f8f9fa);
+  color: var(--gray-500, #868e96);
+  border: 1px solid var(--gray-300, #dee2e6);
+}
+
+/* ============================================================
+   ESTADOS DE CARREGAMENTO E VAZIO
+   ============================================================ */
+.carregandoContainer {
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--gray-500, #868e96);
+}
+
+.spinner {
+  width: 38px;
+  height: 38px;
+  border: 3.5px solid var(--gray-300, #dee2e6);
+  border-top-color: var(--purple, #7048e8);
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+@media (max-width: 768px) {
+  .modalHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .painelFiltros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filtrosControles {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .acoesFiltros {
+    justify-content: flex-end;
+  }
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+}

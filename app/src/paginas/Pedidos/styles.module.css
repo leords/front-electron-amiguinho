@@ -63,6 +63,41 @@
   line-height: 1.2;
 }
 
+/* Ações do cabeçalho */
+.acoesCabecalho {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.botaoExportarExcel {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, #2b8a3e, #2f9e44);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(47, 158, 68, 0.25);
+  transition: all 0.2s ease;
+}
+
+.botaoExportarExcel:hover:not(:disabled) {
+  background: linear-gradient(135deg, #237032, #2b8a3e);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(47, 158, 68, 0.35);
+}
+
+.botaoExportarExcel:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 /* Botão limpar filtros */
 .botaoLimpar {
   display: flex;

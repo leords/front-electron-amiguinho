@@ -555,6 +555,27 @@
   transform: translateY(-1px);
 }
 
+.avisoOrcamentoConferencia {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff9db;
+  border: 1px solid #ffe066;
+  color: #d97706;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.avisoOrcamentoConferencia:hover {
+  background: #fff3bf;
+  border-color: #f59e0b;
+}
+
 /* ============================================================
    COLUNA DIREITA
    ============================================================ */

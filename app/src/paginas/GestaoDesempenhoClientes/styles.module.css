@@ -1,0 +1,472 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--gray-100);
+}
+
+.principal {
+  flex: 1;
+  padding: 24px 32px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* CABEÇALHO */
+.cabecalhoPage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.tituloSection {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconeWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  background: var(--orange-light);
+  color: var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pageSubtitulo {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pageTitulo {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.acoesCabecalho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.botaoSecundario,
+.botaoVoltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--gray-700);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.botaoSecundario:hover:not(:disabled),
+.botaoVoltar:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-300);
+}
+
+.botaoExcel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--green);
+  border: none;
+  color: var(--white);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(47, 158, 68, 0.25);
+  transition: all 0.2s ease;
+}
+
+.botaoExcel:hover:not(:disabled) {
+  background: #2b8a3e;
+  transform: translateY(-1px);
+}
+
+.botaoExcel:disabled,
+.botaoSecundario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* KPIS */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.kpiCard {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpiIconeWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiVerde .kpiIconeWrapper {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.kpiAzul .kpiIconeWrapper {
+  background: var(--blue-light);
+  color: var(--blue);
+}
+
+.kpiRoxo .kpiIconeWrapper {
+  background: var(--purple-light);
+  color: var(--purple);
+}
+
+.kpiLaranja .kpiIconeWrapper {
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+.kpiConteudo {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpiRotulo {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.kpiValor {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+.kpiSub {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 4px;
+}
+
+/* BARRA DE FILTROS */
+.filtrosBarra {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.buscaWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 280px;
+  max-width: 420px;
+}
+
+.iconeBusca {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-500);
+}
+
+.inputBusca {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  outline: none;
+  background: var(--gray-100);
+  color: var(--gray-900);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.inputBusca:focus {
+  border-color: var(--orange);
+  background: var(--white);
+}
+
+.filtrosControle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.filtroItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.selectFiltro {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900);
+  cursor: pointer;
+  outline: none;
+}
+
+.selectFiltro:focus {
+  border-color: var(--orange);
+}
+
+/* TABELA */
+.tabelaContainer {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.tabelaWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tabela th {
+  background: #f8f9fa;
+  padding: 14px 16px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tabela td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--gray-900);
+}
+
+.tabela tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela tr:hover td {
+  background-color: #fafbfc;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.textRight {
+  text-align: right;
+}
+
+.clienteInfoCelula {
+  display: flex;
+  flex-direction: column;
+}
+
+.clienteNomeTabela {
+  font-size: 14px;
+  color: var(--gray-900);
+}
+
+.clienteDocTabela {
+  font-size: 11px;
+  color: var(--gray-500);
+}
+
+.badgeSetor {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.setorExterno {
+  background: var(--blue-light);
+  color: var(--blue);
+}
+
+.setorDelivery {
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+.vendedorTexto {
+  font-size: 13px;
+  color: var(--gray-700);
+}
+
+.totalVendasTexto {
+  font-size: 14px;
+  color: var(--gray-900);
+}
+
+.badgeQtdPedidos {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+.ultimaCompraInfo {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
+.diasAtrasBadge {
+  font-size: 11px;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+.nuncaComprouTexto {
+  font-size: 12px;
+  color: var(--gray-500);
+  font-style: italic;
+}
+
+/* BADGES DE TENDÊNCIA */
+.badgeTendencia {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.tendenciaCrescimento {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.tendenciaQueda {
+  background: var(--red-light);
+  color: var(--red);
+}
+
+.tendenciaEstavel {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+/* BOTÃO DE AÇÃO: VER RELATÓRIO DO CLIENTE */
+.btnVerRelatorio {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--purple-light);
+  color: var(--purple);
+  border: 1px solid #d0bfff;
+  transition: all 0.2s ease;
+}
+
+.btnVerRelatorio:hover {
+  background: var(--purple);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.tabelaVazia {
+  text-align: center;
+  padding: 50px !important;
+  color: var(--gray-500);
+}
+
+.tabelaVazia p {
+  margin: 10px 0 0 0;
+  font-size: 14px;
+}
+
+.girando {
+  animation: rotacionar 1s linear infinite;
+}
+
+@keyframes rotacionar {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

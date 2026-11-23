@@ -175,7 +175,7 @@ const extrairFormasPagamento = (pedidosBrutos) => {
   pedidosBrutos.forEach((p) => {
     if (!p) return;
     const st = String(p.status || "").toLowerCase();
-    if (st === "cancelado" || st === "devolvido") return;
+    if (st === "cancelado" || st === "devolvido" || st === "orcamento") return;
 
     const pagamentosArr =
       Array.isArray(p.pagamentos) && p.pagamentos.length > 0
@@ -230,6 +230,54 @@ const extrairFormasPagamento = (pedidosBrutos) => {
       percentual: totalFormasSum > 0 ? (f.total / totalFormasSum) * 100 : 0,
     }))
     .sort((a, b) => b.total - a.total);
+};
+
+const extrairMixProdutos = (pedidosBrutos, listaProdutos = []) => {
+  const mapaMix = {};
+
+  pedidosBrutos.forEach((p) => {
+    if (!p) return;
+    const st = String(p.status || "").toLowerCase();
+    if (st === "cancelado" || st === "devolvido" || st === "orcamento") return;
+
+    const itens = Array.isArray(p.itens)
+      ? p.itens
+      : Array.isArray(p.itensPedido)
+      ? p.itensPedido
+      : [];
+
+    if (itens.length < 2) return;
+
+    const nomesProdutos = Array.from(
+      new Set(
+        itens
+          .map((it) => {
+            const nome =
+              it.nome ||
+              it.nomeProduto ||
+              it.produto?.nome ||
+              listaProdutos.find(
+                (prod) => String(prod.id) === String(it.produtoId || it.id)
+              )?.nome;
+            return nome ? String(nome).trim() : null;
+          })
+          .filter(Boolean)
+      )
+    );
+
+    for (let i = 0; i < nomesProdutos.length; i++) {
+      for (let j = 0; j < nomesProdutos.length; j++) {
+        if (i === j) continue;
+        const prodA = nomesProdutos[i];
+        const prodB = nomesProdutos[j];
+
+        if (!mapaMix[prodA]) mapaMix[prodA] = {};
+        mapaMix[prodA][prodB] = (mapaMix[prodA][prodB] || 0) + 1;
+      }
+    }
+  });
+
+  return mapaMix;
 };
 
 // Tooltips
@@ -649,7 +697,7 @@ export default function Dashboard() {
         pedidosBrutos.forEach((p) => {
           if (!p) return;
           const st = String(p.status || "").toLowerCase();
-          if (st === "cancelado" || st === "devolvido") return;
+          if (st === "cancelado" || st === "devolvido" || st === "orcamento") return;
 
           // Agrupamento por dia
           const dataPed =
@@ -751,7 +799,13 @@ export default function Dashboard() {
             }
           });
         });
-        setMixProdutos(mixConsolidado);
+        // Mix de produtos calculado no front-end filtrando orçamentos
+        const mixCalculadoFront = extrairMixProdutos(pedidosBrutos, produtos);
+        if (Object.keys(mixCalculadoFront).length > 0) {
+          setMixProdutos(mixCalculadoFront);
+        } else {
+          setMixProdutos(mixConsolidado);
+        }
 
         // 7. Pedidos por Vendedor consolidado
         const pvValidos = pvList
@@ -823,7 +877,7 @@ export default function Dashboard() {
         pedidosBrutos.forEach((p) => {
           if (!p) return;
           const st = String(p.status || "").toLowerCase();
-          if (st === "cancelado" || st === "devolvido") return;
+          if (st === "cancelado" || st === "devolvido" || st === "orcamento") return;
 
           // Agrupamento por dia
           const dataPed =
@@ -860,7 +914,7 @@ export default function Dashboard() {
           pedidosBrutos.forEach((p) => {
             if (!p) return;
             const st = String(p.status || "").toLowerCase();
-            if (st === "cancelado" || st === "devolvido") return;
+            if (st === "cancelado" || st === "devolvido" || st === "orcamento") return;
 
             const nomeVendedor = (p.vendedor || p.usuario?.nome || "Vendedor").trim();
             const val = Number(p.total || p.valorTotal || 0);
@@ -911,7 +965,13 @@ export default function Dashboard() {
               Number(b.valorTotalVendido || 0) - Number(a.valorTotalVendido || 0)
           );
         setTopProdutos(tpOrdenado);
-        setMixProdutos(mp);
+        // Mix de produtos calculado no front-end filtrando orçamentos
+        const mixCalculadoFrontSetor = extrairMixProdutos(pedidosBrutos, produtos);
+        if (Object.keys(mixCalculadoFrontSetor).length > 0) {
+          setMixProdutos(mixCalculadoFrontSetor);
+        } else {
+          setMixProdutos(mp || {});
+        }
         setPedidosPorVendedor(pv);
       }
 
@@ -930,7 +990,7 @@ export default function Dashboard() {
     } finally {
       setCarregando(false);
     }
-  }, [setor, dataInicio, dataFim, vendedorExterno]);
+  }, [setor, dataInicio, dataFim, vendedorExterno, produtos]);
 
   useEffect(() => {
     buscarDados();

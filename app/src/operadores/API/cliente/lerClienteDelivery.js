@@ -20,7 +20,10 @@ export const LerClienteDelivery = async (params = {}) => {
     // 🔥 erro vindo do backend (AppError)
     if (error.response) {
       console.log("error response: ", error.response);
-      const mensagem = error.response.data?.erro.mensagem || "Erro inesperado";
+      const mensagem =
+        error.response.data?.erro?.mensagem ||
+        error.response.data?.mensagem ||
+        "Erro inesperado ao consultar clientes delivery";
       throw new Error(mensagem);
     }
 

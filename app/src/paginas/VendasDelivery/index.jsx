@@ -42,21 +42,21 @@ import { useFormaPagamentoExterna } from "../../hooks/useFormaPagamentoExterna";
 import { buscarPedido } from "../../operadores/API/pedido/buscarPedido";
 import { dataFormatadaCalendario } from "../../utils/data";
 import { tempoMedioEntregaDelivery } from "../../operadores/API/delivery/tempoMedioEntregaDelivery";
-import { BuscarClienteDelivery } from "../../operadores/API/cliente/buscarClienteDelivery";
 
 export default function VendasDelivery() {
   // Hooks
   const { usuario } = usarAuth();
   const { mensagem, setMensagem } = usarToast();
   const { produtos, carregando } = useProdutos();
-  const { clientes, carregandoClientesDelivery } = useClientesDelivery();
+  const { clientes, carregandoClientesDelivery, recarregarClientes } =
+    useClientesDelivery();
   const { listaFormaPagamento } = useFormaPagamentoExterna();
 
-  // Formas de pagamento permitidas no Delivery: Apenas A VISTA, CARTÃO e PIX
+  // Formas de pagamento permitidas no Delivery: A VISTA, CARTÃO, PIX e BOLETO
   const listaFormasPagamentoFiltrada = useMemo(() => {
     if (!Array.isArray(listaFormaPagamento)) return [];
 
-    const permitidas = ["A VISTA", "CARTÃO", "PIX"];
+    const permitidas = ["A VISTA", "CARTÃO", "PIX", "BOLETO"];
     return listaFormaPagamento.filter((forma) =>
       permitidas.includes(String(forma?.nome || "").trim().toUpperCase())
     );
@@ -73,7 +73,7 @@ export default function VendasDelivery() {
   const [ajusteTaxa, setAjusteTaxa] = useState(0);
   const [quantidadePedidos, setQuantidadePedidos] = useState(null);
   const [tempoEntrega, setTempoEntrega] = useState(null);
-  const [carregandoClientes, setCarregando] = useState(false);
+  const [carregandoPedidos, setCarregandoPedidos] = useState(false);
   const [controleNovoPedido, setControleNovopedido] = useState(false);
   const [ajustePrecoProduto, setAjustePrecoProduto] = useState("");
   const [atualizarRelatorio, setAtualizarRelatorio] = useState(false);
@@ -101,14 +101,15 @@ export default function VendasDelivery() {
     setCarregarSincronizacaoClientes(true);
 
     try {
-      await BuscarClienteDelivery();
+      await recarregarClientes();
 
       const agora = new Date().toLocaleString("pt-BR");
       localStorage.setItem("clientesDeliveryForce", agora);
 
-      setMensagem("Sincronização de clientes realizada");
+      setMensagem("Lista de clientes delivery atualizada!");
     } catch (error) {
       console.log(error);
+      setMensagem(error.message || "Erro ao sincronizar clientes");
     } finally {
       setCarregarSincronizacaoClientes(false);
     }
@@ -195,16 +196,20 @@ export default function VendasDelivery() {
   };
 
   // Mapeando produtos para ser utilizado no Select
-  const options = produtos.map((p) => ({
-    value: p.id,
-    label: p.nome,
-  }));
+  const options = Array.isArray(produtos)
+    ? produtos.map((p) => ({
+        value: p.id,
+        label: p.nome,
+      }))
+    : [];
 
   // Mapeando clientes delivery para ser utilizado no Select
-  const listaClientesDelivery = clientes.map((p) => ({
-    value: p.id,
-    label: p.nome,
-  }));
+  const listaClientesDelivery = Array.isArray(clientes)
+    ? clientes.map((p) => ({
+        value: p.id,
+        label: p.nome,
+      }))
+    : [];
 
   // Remove produto
   const handleRemoveProduto = (id) => {
@@ -409,7 +414,7 @@ export default function VendasDelivery() {
   // BUSCA QUANTIDADE DE PEDIDOS POR STATUS
   useEffect(() => {
     const buscarPedidos = async () => {
-      setCarregando(true);
+      setCarregandoPedidos(true);
 
       try {
         const resultado = await buscarPedido({
@@ -426,7 +431,7 @@ export default function VendasDelivery() {
 
         alert("Erro ao buscar pedidos. Tente novamente.");
       } finally {
-        setCarregando(false);
+        setCarregandoPedidos(false);
       }
     };
 
@@ -477,7 +482,7 @@ export default function VendasDelivery() {
 
           {/* CONTROLE DE STATUS DOS PEDIDOS */}
 
-          {carregandoClientes ? (
+          {carregandoPedidos ? (
             <Spinner />
           ) : (
             <div className={styles.containerPedidos}>
@@ -819,7 +824,7 @@ export default function VendasDelivery() {
                   </div>
 
                   {/* DESCONTO - ACESSO ADM */}
-                  {usuario.nivelAcesso === "ADMIN" && (
+                  {usuario?.nivelAcesso === "ADMIN" && (
                     <div className={styles.campoMetade}>
                       <label className={styles.label}>Ajuste R$</label>
 

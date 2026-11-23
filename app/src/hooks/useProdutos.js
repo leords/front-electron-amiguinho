@@ -7,18 +7,19 @@ export function useProdutos() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  useEffect(() => {
-    const carregar = async () => {
-      try {
-        const lista = await LerProduto();
-        setProduto(lista);
-      } catch (error) {
-        setErro(error);
-      } finally {
-        setCarregando(false);
-      }
-    };
+  const carregar = async () => {
+    setCarregando(true);
+    try {
+      const lista = await LerProduto();
+      setProduto(Array.isArray(lista) ? lista : []);
+    } catch (error) {
+      setErro(error);
+    } finally {
+      setCarregando(false);
+    }
+  };
 
+  useEffect(() => {
     carregar();
   }, []);
 
@@ -26,5 +27,7 @@ export function useProdutos() {
     produtos,
     carregando,
     erro,
+    recarregarProdutos: carregar,
   };
 }
+

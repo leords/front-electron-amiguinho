@@ -4,15 +4,22 @@ import styles from "./styles.module.css";
 
 export function AlertaRadix({
   trigger,
+  children,
   titulo,
   descricao,
   tratar,
-  confirmarTexto,
-  cancelarTexto,
+  onConfirm,
+  confirmarTexto = "Confirmar",
+  cancelarTexto = "Cancelar",
 }) {
+  const elementoGatilho = trigger || children;
+  const funcaoConfirmar = tratar || onConfirm;
+
   return (
     <AlertDialog.Root>
-      <AlertDialog.Trigger asChild>{trigger}</AlertDialog.Trigger>
+      {elementoGatilho && (
+        <AlertDialog.Trigger asChild>{elementoGatilho}</AlertDialog.Trigger>
+      )}
 
       <AlertDialog.Portal>
         <AlertDialog.Overlay className={styles.overlay} />
@@ -32,7 +39,7 @@ export function AlertaRadix({
             </AlertDialog.Cancel>
 
             <AlertDialog.Action asChild>
-              <button className={styles.confirm} onClick={tratar}>
+              <button className={styles.confirm} onClick={funcaoConfirmar}>
                 {confirmarTexto}
               </button>
             </AlertDialog.Action>

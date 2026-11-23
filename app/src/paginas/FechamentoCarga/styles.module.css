@@ -656,6 +656,20 @@
   font-weight: 800;
 }
 
+.tagEntregueApp {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid #b2f2bb;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 /* ── PENDÊNCIAS EM ABERTO DO CLIENTE NO CARD DO PEDIDO (DISCRETO) ── */
 .pendenciasDiscretasWrapper {
   display: flex;
